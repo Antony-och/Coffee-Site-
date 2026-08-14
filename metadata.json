@@ -1,0 +1,6 @@
+{
+  "name": "Kenyan Highland Coffee & Tea Co.",
+  "description": "Premium single-origin Kenyan Arabica coffees, rare purple teas, CTC & Orthodox teas straight from the high-altitude volcanic soils of Mount Kenya and Kericho.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
