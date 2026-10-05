@@ -39,6 +39,52 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) =>
     },
   ];
 
+  const coffeeJourney = [
+    {
+      step: '01',
+      title: 'Harvested at Peak Ripeness',
+      text: 'Our farmers hand-pick only fully ripe cherry from high-altitude farms in Nyeri, Kirinyaga, and Embu, selecting the sweetest fruit for premium Kenyan coffee.',
+    },
+    {
+      step: '02',
+      title: 'Washed, Fermented & Dried',
+      text: 'The cherries are pulped, washed in mountain spring water, and sun-dried on raised beds to develop clarity, sweetness, and those signature Kenyan fruit notes.',
+    },
+    {
+      step: '03',
+      title: 'Roasted for Character',
+      text: 'We roast in small artisan batches to preserve the bean’s natural acidity, body, and layered flavors, from citrus brightness to cacao depth.',
+    },
+    {
+      step: '04',
+      title: 'Brewed for Your Cup',
+      text: 'From espresso to pour-over, each cup is crafted to bring out the floral aroma, vibrant acidity, and lingering finish that make Kenyan coffee unforgettable.',
+    },
+  ];
+
+  const teaJourney = [
+    {
+      step: '01',
+      title: 'Picked Before Dawn',
+      text: 'Tea leaves are plucked at first light with the standard of two leaves and a bud, capturing the tenderest flavor and the highest concentration of natural antioxidants.',
+    },
+    {
+      step: '02',
+      title: 'Withered & Rolled',
+      text: 'Fresh leaves are withered to soften the cell structure and then rolled or cut to release the sugars, oils, and aromatic compounds that define each tea style.',
+    },
+    {
+      step: '03',
+      title: 'Oxidized & Fired',
+      text: 'Black, green, and purple teas are processed to different oxidation levels before drying, with precise control to preserve body, color, and freshness.',
+    },
+    {
+      step: '04',
+      title: 'Steeped for the Final Pour',
+      text: 'Each cup is steeped to order, unlocking bright floral, malty, or berry notes that showcase the heritage and craftsmanship of Kenya’s tea gardens.',
+    },
+  ];
+
   return (
     <section id="about" className="bg-[#F6F1EA] py-20 text-[#2A2522]">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -160,6 +206,87 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) =>
               </p>
             </div>
           ))}
+        </div>
+
+        <div className="mt-20">
+          <div className="mb-8 flex justify-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#C7B8A2] bg-[#F5EFE7] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-[#2A2522] shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]">
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#D8B185] text-[9px] text-[#2A2522]">
+                <ArrowRight className="h-2.5 w-2.5" />
+              </span>
+              <span>From farm to cup</span>
+            </div>
+          </div>
+
+          <h2 className="text-center font-serif-display text-[2.2rem] leading-[0.95] tracking-[-0.06em] text-[#2A2522] uppercase sm:text-[3rem] lg:text-[3.5rem]">
+            The Journey Behind Every Sip
+          </h2>
+
+          <div className="mt-7 grid gap-5 lg:grid-cols-2">
+            <div className="rounded-[1.5rem] border border-[#D9CDB9] bg-[#F7F0E8] p-4 sm:p-5">
+              <div className="mb-4 flex items-center justify-between gap-3 pb-2">
+                <div className="font-serif-display text-[1rem] uppercase tracking-[0.08em] text-[#2A2522] sm:text-[1.3rem]">
+                  Coffee
+                </div>
+                <div className="inline-flex items-center rounded-full border border-[#D7C3A0] bg-[#EAE0D3] px-2 py-1 text-[8px] font-bold uppercase tracking-[0.16em] text-[#2A2522]">
+                  4 steps
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {coffeeJourney.map((item) => (
+                  <div
+                    key={item.step}
+                    className="flex items-start gap-3 rounded-[1rem] border border-[#E2D7C5] bg-[#F3E9DF] p-3"
+                  >
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#D8B185] text-[0.7rem] font-bold text-[#2A2522]">
+                      {item.step}
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="font-serif-display text-[0.96rem] uppercase tracking-[0.06em] text-[#2A2522] sm:text-[1.05rem]">
+                        {item.title}
+                      </h4>
+                      <p className="mt-1 text-[0.68rem] leading-[1.6] text-[#5F5A56] sm:text-[0.72rem]">
+                        {item.text}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-[1.5rem] border border-[#D9CDB9] bg-[#F7F0E8] p-4 sm:p-5">
+              <div className="mb-4 flex items-center justify-between gap-3 pb-2">
+                <div className="font-serif-display text-[1rem] uppercase tracking-[0.08em] text-[#2A2522] sm:text-[1.3rem]">
+                  Tea
+                </div>
+                <div className="inline-flex items-center rounded-full border border-[#D7C3A0] bg-[#EAE0D3] px-2 py-1 text-[8px] font-bold uppercase tracking-[0.16em] text-[#2A2522]">
+                  4 steps
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {teaJourney.map((item) => (
+                  <div
+                    key={item.step}
+                    className="flex items-start gap-3 rounded-[1rem] border border-[#E2D7C5] bg-[#F3E9DF] p-3"
+                  >
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#D8B185] text-[0.7rem] font-bold text-[#2A2522]">
+                      {item.step}
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="font-serif-display text-[0.96rem] uppercase tracking-[0.06em] text-[#2A2522] sm:text-[1.05rem]">
+                        {item.title}
+                      </h4>
+                      <p className="mt-1 text-[0.68rem] leading-[1.6] text-[#5F5A56] sm:text-[0.72rem]">
+                        {item.text}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="mx-auto mt-14 max-w-5xl rounded-[2rem] bg-[#2A2522] px-8 py-10 text-center text-white shadow-[0_22px_35px_rgba(42,37,34,0.18)] sm:px-10 lg:px-12">
