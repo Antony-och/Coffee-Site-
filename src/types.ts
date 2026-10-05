@@ -110,7 +110,7 @@ export interface OrderShippingDetails {
   country: string;
   postalCode: string;
   shippingMethod: 'direct_air_express' | 'air_cargo' | 'ocean_freight';
-  paymentMethod: 'card' | 'mpesa' | 'wire' | 'cod';
+  paymentMethod: 'card' | 'mpesa' | 'wire' | 'cod' | 'not_required';
   mpesaPhone?: string;
   cardLastFour?: string;
 }

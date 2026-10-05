@@ -47,7 +47,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   currency,
   onPlaceOrder,
 }) => {
-  const [step, setStep] = useState<'details' | 'payment' | 'confirmation'>('details');
+  const [step, setStep] = useState<'details' | 'confirmation'>('details');
   const [copiedId, setCopiedId] = useState(false);
   const [copiedPayload, setCopiedPayload] = useState(false);
   const [whatsappSent, setWhatsappSent] = useState(false);
@@ -66,17 +66,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     country: 'Kenya',
     postalCode: '',
     shippingMethod: 'direct_air_express',
-    paymentMethod: 'card',
+    paymentMethod: 'not_required',
     mpesaPhone: '',
     cardLastFour: '',
-  });
-
-  // Credit Card Form State
-  const [cardInfo, setCardInfo] = useState({
-    cardNumber: '',
-    expiry: '',
-    cvv: '',
-    nameOnCard: '',
   });
 
   if (!isOpen) return null;
@@ -96,16 +88,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const totalKes = subtotalKes + shippingFees.kes;
   const totalEur = subtotalEur + shippingFees.eur;
 
-  const handleNextToPayment = (e: React.FormEvent) => {
+  const handleCompleteOrder = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!shippingDetails.fullName || !shippingDetails.email || !shippingDetails.streetAddress || !shippingDetails.city) {
       return;
     }
-    setStep('payment');
-  };
-
-  const handleCompleteOrder = (e: React.FormEvent) => {
-    e.preventDefault();
 
     const randomNum = Math.floor(10000 + Math.random() * 90000);
     const orderId = `ORD-KHC-${randomNum}`;
@@ -132,7 +120,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       currency,
       shippingDetails: {
         ...shippingDetails,
-        cardLastFour: cardInfo.cardNumber ? cardInfo.cardNumber.slice(-4) : '4242',
+        paymentMethod: 'not_required',
+        cardLastFour: 'N/A',
       },
       trackingNumber: trackingNum,
       estimatedDelivery: '3 - 5 Business Days via Direct In-House Air Express',
@@ -142,13 +131,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     onPlaceOrder(newOrder);
     setStep('confirmation');
 
-    // Automatically trigger WhatsApp transmission on user submission
     try {
       const waUrl = generateWhatsAppOrderUrl(newOrder, EXPORT_WHATSAPP_PHONE);
       window.open(waUrl, '_blank');
       setWhatsappSent(true);
+      window.location.href = generateEmailOrderUrl(newOrder, EXPORT_EMAIL_ADDRESS);
+      setEmailSent(true);
     } catch {
-      // User can still click the prominent transmission button in the confirmation center
+      // User can still click the prominent transmission buttons in the confirmation area.
     }
   };
 
@@ -177,64 +167,268 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     setTimeout(() => setCopiedPayload(false), 2500);
   };
 
-  return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 animate-fadeIn">
-      <div className="relative bg-white text-[#2A2522] w-full max-w-2xl rounded-3xl shadow-2xl border border-[#E5E1DA] overflow-hidden flex flex-col my-8">
-        
-        {/* Modal Header */}
-        <div className="bg-[#2D241E] text-white px-6 py-5 flex items-center justify-between border-b border-[#D4C3A3]/20">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-[#D97706]/20 text-[#D97706] flex items-center justify-center">
-              <ShieldCheck className="w-5 h-5" />
+  const handlePrintReceipt = (order: Order) => {
+    const printWindow = window.open('', '_blank', 'width=900,height=700');
+    if (!printWindow) {
+      window.print();
+      return;
+    }
+
+    const itemsHtml = order.items
+      .map(
+        (item) => `
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.quantity}</td>
+            <td>${item.format}</td>
+            <td>${formatPrice(item.priceUsd * item.quantity, item.priceKes * item.quantity, item.priceEur * item.quantity, currency)}</td>
+          </tr>
+        `
+      )
+      .join('');
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>First Cup Coffee & Tea Receipt</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+            body {
+              font-family: 'Inter', Arial, sans-serif;
+              margin: 0;
+              padding: 32px;
+              background: #F7F2EC;
+              color: #2A2522;
+            }
+            .receipt {
+              max-width: 760px;
+              margin: 0 auto;
+              background: linear-gradient(180deg, #FFFDF9 0%, #F7F2EC 100%);
+              border: 1px solid #E5E1DA;
+              border-radius: 20px;
+              box-shadow: 0 16px 40px rgba(42, 37, 34, 0.08);
+              padding: 30px 32px 24px;
+            }
+            .header {
+              display:flex;
+              justify-content:space-between;
+              align-items:flex-start;
+              border-bottom: 2px solid #E5E1DA;
+              padding-bottom: 18px;
+              margin-bottom: 22px;
+            }
+            .brand-wrap {
+              display: flex;
+              flex-direction: column;
+              gap: 6px;
+            }
+            .brand {
+              font-family: 'Cormorant Garamond', serif;
+              font-size: 34px;
+              font-weight: 700;
+              letter-spacing: 0.08em;
+              color: #2A2522;
+              line-height: 1;
+            }
+            .tagline {
+              font-size: 11px;
+              letter-spacing: 0.22em;
+              text-transform: uppercase;
+              color: #D97706;
+              font-weight: 700;
+            }
+            .meta {
+              font-size: 12px;
+              color: #7A746E;
+              line-height: 1.8;
+              text-align: right;
+            }
+            h1 {
+              margin: 0 0 10px;
+              font-family: 'Cormorant Garamond', serif;
+              font-size: 36px;
+              color: #2A2522;
+              letter-spacing: 0.02em;
+            }
+            .customer-box {
+              background: #FAF7F2;
+              border: 1px solid #E5E1DA;
+              border-radius: 14px;
+              padding: 14px 16px;
+              margin-bottom: 18px;
+            }
+            .customer-box div {
+              font-size: 12px;
+              line-height: 1.8;
+              color: #4A413D;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 12px;
+              background: rgba(255,255,255,0.25);
+              border-radius: 12px;
+              overflow: hidden;
+            }
+            th, td {
+              text-align: left;
+              padding: 12px 10px;
+              border-bottom: 1px solid #E5E1DA;
+              font-size: 12px;
+            }
+            th {
+              background: #F0E7DE;
+              color: #2A2522;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.08em;
+              font-size: 10px;
+            }
+            tbody tr:last-child td { border-bottom: none; }
+            .totals {
+              margin-top: 18px;
+              margin-left: auto;
+              width: 300px;
+            }
+            .totals-row {
+              display:flex;
+              justify-content:space-between;
+              padding: 8px 0;
+              font-size: 13px;
+              color: #4A413D;
+            }
+            .grand {
+              font-size: 18px;
+              font-weight: 700;
+              color: #2A2522;
+              border-top: 1px solid #E5E1DA;
+              padding-top: 12px;
+              margin-top: 6px;
+            }
+            .grand span:last-child {
+              color: #D97706;
+            }
+            @media print {
+              body { margin: 0; background: #fff; }
+              .receipt { border: none; box-shadow: none; border-radius: 0; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="receipt">
+            <div class="header">
+              <div class="brand-wrap">
+                <div class="brand">FIRST CUP</div>
+                <div class="tagline">Coffee & Tea</div>
+              </div>
+              <div class="meta">
+                <div><strong>Receipt #</strong> ${order.id}</div>
+                <div>${order.date}</div>
+                <div>${order.status}</div>
+              </div>
             </div>
-            <div>
-              <h2 className="font-serif-display text-lg font-bold text-white">
-                {step === 'confirmation' ? 'Order Placed Successfully!' : 'Highland Reserve Checkout'}
-              </h2>
-              <p className="text-[11px] text-[#D4C3A3]/80">
-                {step === 'details' && 'Step 1 of 2: Shipping & Delivery Details'}
-                {step === 'payment' && 'Step 2 of 2: Secure Payment & Invoice Method'}
-                {step === 'confirmation' && `Order ID: ${placedOrder?.id}`}
-              </p>
+
+            <h1>Order Receipt</h1>
+            <div class="customer-box">
+              <div><strong>Customer:</strong> ${order.shippingDetails.fullName}</div>
+              <div><strong>Email:</strong> ${order.shippingDetails.email}</div>
+              <div><strong>Phone:</strong> ${order.shippingDetails.phone}</div>
+              <div><strong>Shipping:</strong> ${order.shippingDetails.streetAddress}, ${order.shippingDetails.city}, ${order.shippingDetails.country}</div>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Format</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsHtml}
+              </tbody>
+            </table>
+
+            <div class="totals">
+              <div class="totals-row"><span>Subtotal</span><span>${formatPrice(order.subtotalUsd, order.subtotalKes, order.subtotalEur, currency)}</span></div>
+              <div class="totals-row"><span>Shipping</span><span>${formatPrice(order.shippingFeeUsd, order.shippingFeeKes, order.shippingFeeEur, currency)}</span></div>
+              <div class="totals-row grand"><span>Total</span><span>${formatPrice(order.totalUsd, order.totalKes, order.totalEur, currency)}</span></div>
             </div>
           </div>
+        </body>
+      </html>
+    `;
 
-          <button
-            onClick={onClose}
-            className="p-2 rounded-full hover:bg-white/10 text-[#D4C3A3] transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => printWindow.print(), 300);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#201B1A]/65 backdrop-blur-[2px] flex items-center justify-center p-4 sm:p-6 animate-fadeIn">
+      <div className="relative w-full max-w-2xl overflow-hidden rounded-[2rem] border border-[#EAE0D7] bg-[#F9F5F0] text-[#2A2522] shadow-[0_30px_90px_rgba(32,27,26,0.18)] flex flex-col my-8">
+        
+        {/* Modal Header */}
+        <div className="border-b border-[#E9E1D8] bg-[#F6F0EA] px-5 py-5 sm:px-7 sm:py-6">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#F0E3D2] text-[#A85A12] ring-1 ring-[#E7D0AB] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <div className="pt-0.5">
+                <p className="text-[9px] uppercase tracking-[0.22em] text-[#7A746E]">First Cup Coffee & Tea</p>
+                <h2 className="font-serif-display text-[2rem] sm:text-[2.4rem] font-semibold tracking-[-0.05em] text-[#201B1A] leading-[0.92] mt-1.5">
+                  {step === 'confirmation' ? 'Order Confirmed' : 'Checkout'}
+                </h2>
+              </div>
+            </div>
+
+            <button
+              onClick={onClose}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-[#E5E1DA] bg-white text-[#6F665F] transition hover:bg-[#F3EEE8]"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="mt-4 flex items-center justify-between rounded-[1rem] border border-[#E9E1D8] bg-white/80 px-3.5 py-2.5 text-[10px] uppercase tracking-[0.18em] text-[#7A746E] shadow-[0_8px_18px_rgba(42,37,34,0.04)]">
+            <span>{step === 'details' ? 'Shipping & delivery' : 'Order confirmed'}</span>
+            <span className="font-bold text-[#A85A12]">{step === 'confirmation' ? placedOrder?.id || '—' : 'Step 1'}</span>
+          </div>
         </div>
 
         {/* Modal Content */}
-        <div className="p-6 sm:p-8 space-y-6 max-h-[80vh] overflow-y-auto">
+        <div className="max-h-[80vh] overflow-y-auto p-5 sm:p-6 md:p-7 space-y-6 bg-[radial-gradient(circle_at_top,_rgba(217,119,6,0.04),transparent_32%)]">
 
           {/* STEP 1: SHIPPING & BUYER DETAILS */}
           {step === 'details' && (
-            <form onSubmit={handleNextToPayment} className="space-y-6">
+            <form onSubmit={handleCompleteOrder} className="space-y-6">
               
               {/* Items Summary Accordion */}
-              <div className="bg-[#FAF7F2] border border-[#E5E1DA] rounded-2xl p-4 space-y-3">
-                <div className="flex justify-between items-center text-xs font-bold border-b border-[#E5E1DA] pb-2">
-                  <span className="text-[#2A2522] uppercase tracking-wider">
-                    Ordered Items ({cartItems.reduce((acc, i) => acc + i.quantity, 0)})
+              <div className="rounded-[1.5rem] border border-[#E9E1D8] bg-[#FBF7F3] p-4 sm:p-5 shadow-[0_12px_25px_rgba(42,37,34,0.03)]">
+                <div className="mb-3 flex items-center justify-between gap-3 border-b border-[#EAE0D7] pb-3">
+                  <span className="text-[10px] uppercase tracking-[0.18em] text-[#7A746E]">
+                    Items ({cartItems.reduce((acc, i) => acc + i.quantity, 0)})
                   </span>
-                  <span className="text-[#D97706]">
-                    Subtotal: {formatPrice(subtotalUsd, subtotalKes, subtotalEur, currency)}
+                  <span className="text-base font-semibold text-[#B45E10]">
+                    {formatPrice(subtotalUsd, subtotalKes, subtotalEur, currency)}
                   </span>
                 </div>
-                <div className="max-h-36 overflow-y-auto space-y-2 pr-1">
+                <div className="max-h-40 space-y-2.5 overflow-y-auto pr-1">
                   {cartItems.map((item) => (
-                    <div key={item.id} className="flex justify-between items-center text-xs">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <img src={item.image} alt={item.name} className="w-8 h-8 rounded-lg object-cover" />
-                        <div className="truncate">
-                          <span className="font-bold text-[#2A2522] block truncate">{item.name}</span>
-                          <span className="text-[10px] text-[#7A746E] block">Qty: {item.quantity} • {item.format}</span>
+                    <div key={item.id} className="flex items-center justify-between gap-3 rounded-[1rem] bg-white px-3 py-2.5 ring-1 ring-[#EDE4DB] shadow-[0_4px_14px_rgba(42,37,34,0.02)]">
+                      <div className="flex min-w-0 items-center gap-2.5">
+                        <img src={item.image} alt={item.name} className="h-10 w-10 rounded-xl object-cover ring-1 ring-[#E5E1DA]" />
+                        <div className="min-w-0">
+                          <span className="block truncate text-sm font-semibold text-[#2A2522]">{item.name}</span>
+                          <span className="block text-[10px] text-[#7A746E]">Qty: {item.quantity} • {item.format}</span>
                         </div>
                       </div>
-                      <span className="font-bold text-[#D97706] shrink-0 ml-2">
+                      <span className="shrink-0 text-sm font-semibold text-[#2A2522]">
                         {formatPrice(item.priceUsd * item.quantity, item.priceKes * item.quantity, item.priceEur * item.quantity, currency)}
                       </span>
                     </div>
@@ -244,14 +438,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
               {/* Recipient Form Fields */}
               <div className="space-y-4">
-                <h3 className="font-serif-display text-sm font-bold text-[#2A2522] uppercase tracking-wider border-b border-[#E5E1DA] pb-2">
-                  Recipient & Contact Information
+                <h3 className="border-b border-[#E9E1D8] pb-2 font-serif-display text-base font-semibold uppercase tracking-[0.14em] text-[#2A2522]">
+                  Recipient & contact
                 </h3>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1">
-                      Full Name *
+                    <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
+                      Full name *
                     </label>
                     <input
                       type="text"
@@ -259,13 +453,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       value={shippingDetails.fullName}
                       onChange={(e) => setShippingDetails({ ...shippingDetails, fullName: e.target.value })}
                       placeholder="e.g. David Miller"
-                      className="w-full bg-[#FAF7F2] border border-[#E5E1DA] rounded-xl px-3.5 py-2.5 text-xs text-[#2A2522] focus:outline-none focus:ring-2 focus:ring-[#D97706]"
+                      className="w-full rounded-[1rem] border border-[#E3D9CF] bg-[#FCFAF8] px-3.5 py-3 text-sm text-[#2A2522] placeholder:text-[#9C958F] focus:border-[#D97706] focus:outline-none focus:ring-2 focus:ring-[#D97706]/15"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1">
-                      Email Address *
+                    <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
+                      Email *
                     </label>
                     <input
                       type="email"
@@ -273,13 +467,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       value={shippingDetails.email}
                       onChange={(e) => setShippingDetails({ ...shippingDetails, email: e.target.value })}
                       placeholder="e.g. david@roastery.com"
-                      className="w-full bg-[#FAF7F2] border border-[#E5E1DA] rounded-xl px-3.5 py-2.5 text-xs text-[#2A2522] focus:outline-none focus:ring-2 focus:ring-[#D97706]"
+                      className="w-full rounded-[1rem] border border-[#E3D9CF] bg-[#FCFAF8] px-3.5 py-3 text-sm text-[#2A2522] placeholder:text-[#9C958F] focus:border-[#D97706] focus:outline-none focus:ring-2 focus:ring-[#D97706]/15"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1">
-                      Phone Number *
+                    <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
+                      Phone *
                     </label>
                     <input
                       type="tel"
@@ -287,20 +481,20 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       value={shippingDetails.phone}
                       onChange={(e) => setShippingDetails({ ...shippingDetails, phone: e.target.value })}
                       placeholder="+1 (555) 234-5678"
-                      className="w-full bg-[#FAF7F2] border border-[#E5E1DA] rounded-xl px-3.5 py-2.5 text-xs text-[#2A2522] focus:outline-none focus:ring-2 focus:ring-[#D97706]"
+                      className="w-full rounded-[1rem] border border-[#E3D9CF] bg-[#FCFAF8] px-3.5 py-3 text-sm text-[#2A2522] placeholder:text-[#9C958F] focus:border-[#D97706] focus:outline-none focus:ring-2 focus:ring-[#D97706]/15"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1">
-                      Company / Roastery (Optional)
+                    <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
+                      Company (optional)
                     </label>
                     <input
                       type="text"
                       value={shippingDetails.companyName}
                       onChange={(e) => setShippingDetails({ ...shippingDetails, companyName: e.target.value })}
                       placeholder="Highland Coffee Roasters LLC"
-                      className="w-full bg-[#FAF7F2] border border-[#E5E1DA] rounded-xl px-3.5 py-2.5 text-xs text-[#2A2522] focus:outline-none focus:ring-2 focus:ring-[#D97706]"
+                      className="w-full rounded-[1rem] border border-[#E3D9CF] bg-[#FCFAF8] px-3.5 py-3 text-sm text-[#2A2522] placeholder:text-[#9C958F] focus:border-[#D97706] focus:outline-none focus:ring-2 focus:ring-[#D97706]/15"
                     />
                   </div>
                 </div>
@@ -308,13 +502,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
               {/* Delivery Address */}
               <div className="space-y-4">
-                <h3 className="font-serif-display text-sm font-bold text-[#2A2522] uppercase tracking-wider border-b border-[#E5E1DA] pb-2">
-                  Delivery Address
+                <h3 className="border-b border-[#E9E1D8] pb-2 font-serif-display text-base font-semibold uppercase tracking-[0.14em] text-[#2A2522]">
+                  Delivery address
                 </h3>
 
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1">
-                    Street Address *
+                  <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
+                    Street address *
                   </label>
                   <input
                     type="text"
@@ -322,27 +516,27 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     value={shippingDetails.streetAddress}
                     onChange={(e) => setShippingDetails({ ...shippingDetails, streetAddress: e.target.value })}
                     placeholder="124 Harvest Way, Suite 4B"
-                    className="w-full bg-[#FAF7F2] border border-[#E5E1DA] rounded-xl px-3.5 py-2.5 text-xs text-[#2A2522] focus:outline-none focus:ring-2 focus:ring-[#D97706]"
+                    className="w-full rounded-[1rem] border border-[#E3D9CF] bg-[#FCFAF8] px-3.5 py-3 text-sm text-[#2A2522] placeholder:text-[#9C958F] focus:border-[#D97706] focus:outline-none focus:ring-2 focus:ring-[#D97706]/15"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1">
-                      City / Town *
+                    <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
+                      City *
                     </label>
                     <input
                       type="text"
                       required
                       value={shippingDetails.city}
                       onChange={(e) => setShippingDetails({ ...shippingDetails, city: e.target.value })}
-                      placeholder="Nairobi / London / Seattle"
-                      className="w-full bg-[#FAF7F2] border border-[#E5E1DA] rounded-xl px-3.5 py-2.5 text-xs text-[#2A2522] focus:outline-none focus:ring-2 focus:ring-[#D97706]"
+                      placeholder="Nairobi"
+                      className="w-full rounded-[1rem] border border-[#E3D9CF] bg-[#FCFAF8] px-3.5 py-3 text-sm text-[#2A2522] placeholder:text-[#9C958F] focus:border-[#D97706] focus:outline-none focus:ring-2 focus:ring-[#D97706]/15"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1">
+                    <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
                       Country *
                     </label>
                     <input
@@ -350,21 +544,21 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       required
                       value={shippingDetails.country}
                       onChange={(e) => setShippingDetails({ ...shippingDetails, country: e.target.value })}
-                      placeholder="Kenya / United States / Germany"
-                      className="w-full bg-[#FAF7F2] border border-[#E5E1DA] rounded-xl px-3.5 py-2.5 text-xs text-[#2A2522] focus:outline-none focus:ring-2 focus:ring-[#D97706]"
+                      placeholder="Kenya"
+                      className="w-full rounded-[1rem] border border-[#E3D9CF] bg-[#FCFAF8] px-3.5 py-3 text-sm text-[#2A2522] placeholder:text-[#9C958F] focus:border-[#D97706] focus:outline-none focus:ring-2 focus:ring-[#D97706]/15"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1">
-                      Postal Code
+                    <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
+                      Postal code
                     </label>
                     <input
                       type="text"
                       value={shippingDetails.postalCode}
                       onChange={(e) => setShippingDetails({ ...shippingDetails, postalCode: e.target.value })}
-                      placeholder="00100 / 98101"
-                      className="w-full bg-[#FAF7F2] border border-[#E5E1DA] rounded-xl px-3.5 py-2.5 text-xs text-[#2A2522] focus:outline-none focus:ring-2 focus:ring-[#D97706]"
+                      placeholder="00100"
+                      className="w-full rounded-[1rem] border border-[#E3D9CF] bg-[#FCFAF8] px-3.5 py-3 text-sm text-[#2A2522] placeholder:text-[#9C958F] focus:border-[#D97706] focus:outline-none focus:ring-2 focus:ring-[#D97706]/15"
                     />
                   </div>
                 </div>
@@ -373,232 +567,21 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
 
               {/* Action Buttons */}
-              <div className="pt-4 border-t border-[#E5E1DA] flex items-center justify-between">
+              <div className="flex items-center justify-between gap-3 border-t border-[#E9E1D8] pt-5">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-2.5 rounded-full border border-[#E5E1DA] text-xs font-bold text-[#7A746E] hover:bg-gray-100 transition-colors"
+                  className="rounded-full border border-[#E3D9CF] bg-white px-5 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#6F665F] transition hover:bg-[#F3EEE8]"
                 >
                   Cancel
                 </button>
                 
                 <button
                   type="submit"
-                  className="px-6 py-3 rounded-full bg-[#D97706] hover:bg-[#b86505] text-white text-xs font-bold uppercase tracking-wider shadow flex items-center gap-2 transition-colors"
+                  className="flex items-center gap-2 rounded-full bg-[#201B1A] px-5 py-3.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition hover:bg-[#120F0E] shadow-[0_18px_30px_rgba(32,27,26,0.14)]"
                 >
-                  <span>Continue to Payment</span>
+                  <span>Send to Email & WhatsApp</span>
                   <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-
-            </form>
-          )}
-
-          {/* STEP 2: PAYMENT METHOD */}
-          {step === 'payment' && (
-            <form onSubmit={handleCompleteOrder} className="space-y-6">
-              
-              {/* Order Breakdown Banner */}
-              <div className="bg-[#2D241E] text-white rounded-2xl p-4 flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] text-[#D4C3A3] uppercase font-bold tracking-wider block">
-                    Total Amount Due
-                  </span>
-                  <span className="font-serif-display text-2xl font-bold text-[#D97706]">
-                    {formatPrice(totalUsd, totalKes, totalEur, currency)}
-                  </span>
-                </div>
-                <div className="text-right text-xs text-[#D4C3A3]">
-                  <span>Items: {formatPrice(subtotalUsd, subtotalKes, subtotalEur, currency)}</span>
-                  <span className="block text-[11px] text-gray-400">
-                    Shipping: {formatPrice(shippingFees.usd, shippingFees.kes, shippingFees.eur, currency)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Payment Type Tabs */}
-              <div className="space-y-3">
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E]">
-                  Select Payment Method
-                </label>
-                
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setShippingDetails({ ...shippingDetails, paymentMethod: 'card' })}
-                    className={`p-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
-                      shippingDetails.paymentMethod === 'card'
-                        ? 'border-[#D97706] bg-[#D97706]/10 text-[#2A2522]'
-                        : 'border-[#E5E1DA] bg-[#FAF7F2] text-[#7A746E]'
-                    }`}
-                  >
-                    <CreditCard className="w-4 h-4 text-[#D97706]" />
-                    <span>Credit Card</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setShippingDetails({ ...shippingDetails, paymentMethod: 'mpesa' })}
-                    className={`p-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
-                      shippingDetails.paymentMethod === 'mpesa'
-                        ? 'border-[#5D6D3C] bg-[#5D6D3C]/10 text-[#2A2522]'
-                        : 'border-[#E5E1DA] bg-[#FAF7F2] text-[#7A746E]'
-                    }`}
-                  >
-                    <Phone className="w-4 h-4 text-[#5D6D3C]" />
-                    <span>M-PESA Express</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setShippingDetails({ ...shippingDetails, paymentMethod: 'wire' })}
-                    className={`p-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
-                      shippingDetails.paymentMethod === 'wire'
-                        ? 'border-[#2D241E] bg-[#2D241E]/10 text-[#2A2522]'
-                        : 'border-[#E5E1DA] bg-[#FAF7F2] text-[#7A746E]'
-                    }`}
-                  >
-                    <Building2 className="w-4 h-4 text-[#2D241E]" />
-                    <span>Bank Wire / Invoice</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setShippingDetails({ ...shippingDetails, paymentMethod: 'cod' })}
-                    className={`p-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
-                      shippingDetails.paymentMethod === 'cod'
-                        ? 'border-[#D97706] bg-[#D97706]/10 text-[#2A2522]'
-                        : 'border-[#E5E1DA] bg-[#FAF7F2] text-[#7A746E]'
-                    }`}
-                  >
-                    <DollarSign className="w-4 h-4 text-[#D97706]" />
-                    <span>Pay on Delivery</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Payment Details Sub-forms */}
-              {shippingDetails.paymentMethod === 'card' && (
-                <div className="bg-[#FAF7F2] border border-[#E5E1DA] rounded-2xl p-4 space-y-4">
-                  <div className="flex items-center justify-between border-b border-[#E5E1DA] pb-2">
-                    <span className="text-xs font-bold text-[#2A2522]">Credit or Debit Card</span>
-                    <span className="text-[10px] text-[#7A746E]">256-Bit SSL Encrypted</span>
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1">
-                      Card Number *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={cardInfo.cardNumber}
-                      onChange={(e) => setCardInfo({ ...cardInfo, cardNumber: e.target.value })}
-                      placeholder="4532 •••• •••• 8912"
-                      className="w-full bg-white border border-[#E5E1DA] rounded-xl px-3.5 py-2.5 text-xs text-[#2A2522] focus:outline-none focus:ring-2 focus:ring-[#D97706]"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="col-span-2">
-                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1">
-                        Expiration Date *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={cardInfo.expiry}
-                        onChange={(e) => setCardInfo({ ...cardInfo, expiry: e.target.value })}
-                        placeholder="MM / YY"
-                        className="w-full bg-white border border-[#E5E1DA] rounded-xl px-3.5 py-2.5 text-xs text-[#2A2522] focus:outline-none focus:ring-2 focus:ring-[#D97706]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1">
-                        CVC / CVV *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={cardInfo.cvv}
-                        onChange={(e) => setCardInfo({ ...cardInfo, cvv: e.target.value })}
-                        placeholder="312"
-                        className="w-full bg-white border border-[#E5E1DA] rounded-xl px-3.5 py-2.5 text-xs text-[#2A2522] focus:outline-none focus:ring-2 focus:ring-[#D97706]"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {shippingDetails.paymentMethod === 'mpesa' && (
-                <div className="bg-[#FAF7F2] border border-[#5D6D3C]/30 rounded-2xl p-4 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-[#5D6D3C] text-white flex items-center justify-center font-bold text-xs">
-                      M
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-bold text-[#2A2522]">Safaricom M-PESA Global Express</h4>
-                      <p className="text-[10px] text-[#7A746E]">An STK push prompt will be sent to your phone number.</p>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1">
-                      M-PESA Phone Number *
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      value={shippingDetails.mpesaPhone || shippingDetails.phone}
-                      onChange={(e) => setShippingDetails({ ...shippingDetails, mpesaPhone: e.target.value })}
-                      placeholder="e.g. 0712345678 or +254..."
-                      className="w-full bg-white border border-[#E5E1DA] rounded-xl px-3.5 py-2.5 text-xs text-[#2A2522] focus:outline-none focus:ring-2 focus:ring-[#5D6D3C]"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {shippingDetails.paymentMethod === 'wire' && (
-                <div className="bg-[#FAF7F2] border border-[#2D241E]/20 rounded-2xl p-4 space-y-2 text-xs">
-                  <h4 className="font-bold text-[#2A2522] flex items-center gap-1.5">
-                    <Building2 className="w-4 h-4 text-[#2D241E]" />
-                    <span>Direct Bank Wire Transfer</span>
-                  </h4>
-                  <p className="text-[11px] text-[#7A746E]">
-                    A pro-forma SWIFT invoice will be issued instantly with our Equity Bank Kenya SWIFT details for order dispatch.
-                  </p>
-                </div>
-              )}
-
-              {shippingDetails.paymentMethod === 'cod' && (
-                <div className="bg-[#FAF7F2] border border-[#D97706]/30 rounded-2xl p-4 space-y-2 text-xs">
-                  <h4 className="font-bold text-[#2A2522] flex items-center gap-1.5">
-                    <DollarSign className="w-4 h-4 text-[#D97706]" />
-                    <span>Pay on Delivery / Inspection</span>
-                  </h4>
-                  <p className="text-[11px] text-[#7A746E]">
-                    Pay upon physical receipt and phytosanitary certificate verification by cash or card reader.
-                  </p>
-                </div>
-              )}
-
-              {/* Action Navigation */}
-              <div className="pt-4 border-t border-[#E5E1DA] flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={() => setStep('details')}
-                  className="px-4 py-2.5 rounded-full border border-[#E5E1DA] text-xs font-bold text-[#7A746E] hover:bg-gray-100 flex items-center gap-1.5 transition-colors"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  <span>Back to Details</span>
-                </button>
-
-                <button
-                  type="submit"
-                  className="px-7 py-3.5 rounded-full bg-[#5D6D3C] hover:bg-[#4a582e] text-white text-xs font-bold uppercase tracking-wider shadow-lg flex items-center gap-2 transition-all"
-                >
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>Confirm & Place Order</span>
                 </button>
               </div>
 
@@ -823,7 +806,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               {/* Receipt Actions */}
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
-                  onClick={() => window.print()}
+                  onClick={() => handlePrintReceipt(placedOrder)}
                   className="flex-1 py-3 rounded-full border border-[#E5E1DA] bg-white hover:bg-gray-50 text-xs font-bold text-[#2A2522] flex items-center justify-center gap-2 transition-colors shadow-sm"
                 >
                   <FileText className="w-4 h-4 text-[#D97706]" />

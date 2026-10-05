@@ -15,31 +15,13 @@ interface HubLocation {
 
 const HUBS: HubLocation[] = [
   {
-    id: 'nairobi',
-    name: 'Nairobi Export HQ',
-    region: 'Nairobi Metropolitan',
-    address: 'JKIA Air Cargo Logistics Zone, Nairobi, Kenya',
-    elevation: '1,795m',
-    purpose: 'Air Express dispatch, global sales & export compliance',
-    mapQuery: 'JKIA+Cargo+Nairobi+Kenya',
-  },
-  {
-    id: 'nyeri',
-    name: 'Nyeri Dry Mill & Lab',
-    region: 'Mount Kenya Slope',
-    address: 'Karatina-Nyeri Highway, Nyeri County, Kenya',
-    elevation: '1,920m',
-    purpose: 'Optical color grading, Q-Grader cupping & density sorting',
-    mapQuery: 'Nyeri+County+Kenya',
-  },
-  {
-    id: 'kericho',
-    name: 'Kericho Tea Processing',
-    region: 'Rift Valley Highlands',
-    address: 'Kericho Tea Valley Estates, Kericho, Kenya',
-    elevation: '2,180m',
-    purpose: 'Purple tea oxidation, CTC manufacturing & artisanal leaf packing',
-    mapQuery: 'Kericho+Tea+Estates+Kenya',
+    id: 'office',
+    name: 'First Cup Coffee & Tea Office',
+    region: 'Ruiru, Kiambu County',
+    address: 'First Cup Coffee and Tea, Ruiru, Kenya',
+    elevation: '1,520m',
+    purpose: 'Retail pickup, customer service, and order collection',
+    mapQuery: 'First+Cup+Coffee+and+Tea+Ruiru+Kenya',
   },
 ];
 
@@ -66,41 +48,68 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   const subtotalKes = cartItems.reduce((sum, item) => sum + item.priceKes * item.quantity, 0);
   const subtotalEur = cartItems.reduce((sum, item) => sum + item.priceEur * item.quantity, 0);
 
-  // Prefill order details message if cart has items
+  // Keep the order form empty by default and never prefill cart details.
   useEffect(() => {
-    if (cartItems.length > 0) {
-      const formattedTotal = formatPrice(subtotalUsd, subtotalKes, subtotalEur, currency);
-      const itemList = cartItems
-        .map(
-          (item) =>
-            `• ${item.quantity}x ${item.name} (${item.format}) - ${formatPrice(
-              item.priceUsd * item.quantity,
-              item.priceKes * item.quantity,
-              item.priceEur * item.quantity,
-              currency
-            )}`
-        )
-        .join('\n');
-
-      const messageText = `ORDER INQUIRY DETAILS:\n${itemList}\n\nEstimated Total: ${formattedTotal}\n\nAdditional Notes / Delivery Instructions:\n`;
-
-      setFormData((prev) => ({
-        ...prev,
-        subject: 'Direct Order Request',
-        message: messageText,
-      }));
-    }
-  }, [cartItems, currency]);
+    setFormData((prev) => ({
+      ...prev,
+      name: '',
+      email: '',
+      subject: 'Direct Order Request',
+      message: '',
+    }));
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
   };
 
+  const buildDefaultRequirements = () => {
+    if (cartItems.length === 0) return '';
+
+    const lines = cartItems.map((item) => {
+      const lineTotal = formatPrice(
+        item.priceUsd * item.quantity,
+        item.priceKes * item.quantity,
+        item.priceEur * item.quantity,
+        currency
+      );
+
+      return `• ${item.quantity}x ${item.name} (${item.format}) — ${lineTotal}`;
+    });
+
+    const total = formatPrice(subtotalUsd, subtotalKes, subtotalEur, currency);
+    return `Order requirements:\nPlease confirm availability and delivery timing.\n\nItems requested:\n${lines.join('\n')}\n\nEstimated Total: ${total}\nPlease send final invoice, preparation notes, and delivery timeline.`;
+  };
+
+  const buildCartSummary = () => {
+    if (cartItems.length === 0) return '';
+
+    const lines = cartItems.map((item) => {
+      const lineTotal = formatPrice(
+        item.priceUsd * item.quantity,
+        item.priceKes * item.quantity,
+        item.priceEur * item.quantity,
+        currency
+      );
+
+      return `• ${item.quantity}x ${item.name} (${item.format}) — ${lineTotal}`;
+    });
+
+    const total = formatPrice(subtotalUsd, subtotalKes, subtotalEur, currency);
+    return `ORDER SUMMARY\n${lines.join('\n')}\n\nEstimated Total: ${total}\n`;
+  };
+
   const handleSendWhatsApp = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
-    const phone = '254700000000'; // Export desk WhatsApp
-    const messageText = `*Order Inquiry - Kenyan Highland Coffee*\n\n*Name:* ${formData.name || 'Valued Customer'}\n*Email:* ${formData.email || 'N/A'}\n*Inquiry:* ${formData.subject}\n\n*Message / Order Details:*\n${formData.message}`;
+    const phone = '254725741543';
+    const orderSummary = buildCartSummary();
+    const defaultRequirements = buildDefaultRequirements();
+    const clientRequirements = formData.message?.trim();
+    const details = clientRequirements || defaultRequirements
+      ? `\n\n*Message / Requirements:*\n${clientRequirements || defaultRequirements}`
+      : '';
+    const messageText = `*Order Inquiry - First Cup Coffee & Tea*\n\n*Name:* ${formData.name || 'Valued Customer'}\n*Email:* ${formData.email || 'N/A'}\n*Inquiry:* ${formData.subject}${orderSummary ? `\n\n${orderSummary}` : ''}${details}`;
     const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(messageText)}`;
     window.open(whatsappUrl, '_blank');
     setSubmitted(true);
@@ -108,9 +117,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
   const handleSendEmail = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
-    const emailTo = 'export@kenyanhighlandcoffee.co.ke';
+    const emailTo = 'firstcupcoffeeltd@gmail.com';
+    const orderSummary = buildCartSummary();
+    const defaultRequirements = buildDefaultRequirements();
+    const clientRequirements = formData.message?.trim();
     const mailSubject = `[Order Inquiry] ${formData.subject} - ${formData.name || 'Customer'}`;
-    const mailBody = `Name: ${formData.name}\nEmail: ${formData.email}\nInquiry Type: ${formData.subject}\n\nMessage / Order Details:\n${formData.message}`;
+    const mailBody = `Name: ${formData.name}\nEmail: ${formData.email}\nInquiry Type: ${formData.subject}${orderSummary ? `\n\n${orderSummary}` : ''}${clientRequirements || defaultRequirements ? `\nMessage / Requirements:\n${clientRequirements || defaultRequirements}` : ''}`;
     const mailtoUrl = `mailto:${emailTo}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
     window.location.href = mailtoUrl;
     setSubmitted(true);
@@ -135,126 +147,124 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
         </div>
 
         {/* Quick Contact Info Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
           <a
-            href="mailto:export@kenyanhighlandcoffee.co.ke"
-            className="group bg-white border border-[#E5E1DA] rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-[#D97706] transition-all flex flex-col items-center text-center space-y-3"
+            href="mailto:firstcupcoffeeltd@gmail.com"
+            className="group flex min-h-[13.5rem] flex-col items-center justify-center rounded-[1.7rem] border border-[#E2DDD2] bg-[#F7F2EC] px-6 py-7 text-center shadow-[0_1px_0_rgba(42,37,34,0.02)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(42,37,34,0.05)]"
           >
-            <div className="w-12 h-12 rounded-full bg-[#D97706]/10 text-[#D97706] flex items-center justify-center group-hover:bg-[#D97706] group-hover:text-white transition-colors">
-              <Mail className="w-6 h-6" />
+            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#F0D9B8] text-[#D97706] shadow-inner">
+              <Mail className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="font-serif-display font-bold text-base text-[#2A2522]">Email Us</h3>
-              <p className="text-xs text-[#7A746E] mt-1">export@kenyanhighlandcoffee.co.ke</p>
+              <h3 className="font-serif-display text-[1.02rem] font-bold uppercase tracking-[0.08em] text-[#2A2522]">
+                Email Us
+              </h3>
+              <p className="mt-2 text-[0.72rem] leading-relaxed text-[#6F665F]">
+                firstcupcoffeeltd@gmail.com
+              </p>
             </div>
           </a>
 
           <a
-            href="https://wa.me/254700000000"
+            href="https://wa.me/254725741543"
             target="_blank"
             rel="noopener noreferrer"
-            className="group bg-white border border-[#E5E1DA] rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-[#5D6D3C] transition-all flex flex-col items-center text-center space-y-3"
+            className="group flex min-h-[13.5rem] flex-col items-center justify-center rounded-[1.7rem] border border-[#E2DDD2] bg-[#F7F2EC] px-6 py-7 text-center shadow-[0_1px_0_rgba(42,37,34,0.02)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(42,37,34,0.05)]"
           >
-            <div className="w-12 h-12 rounded-full bg-[#5D6D3C]/10 text-[#5D6D3C] flex items-center justify-center group-hover:bg-[#5D6D3C] group-hover:text-white transition-colors">
-              <Phone className="w-6 h-6" />
+            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#DDE7D8] text-[#5D6D3C] shadow-inner">
+              <Phone className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="font-serif-display font-bold text-base text-[#2A2522]">WhatsApp Direct</h3>
-              <p className="text-xs text-[#7A746E] mt-1">+254 (0) 700 000 000</p>
+              <h3 className="font-serif-display text-[1.02rem] font-bold uppercase tracking-[0.08em] text-[#2A2522]">
+                WhatsApp Direct
+              </h3>
+              <p className="mt-2 text-[0.72rem] leading-relaxed text-[#6F665F]">
+                +254 725 741 543
+              </p>
             </div>
           </a>
 
-          <div className="bg-white border border-[#E5E1DA] rounded-2xl p-6 shadow-sm flex flex-col items-center text-center space-y-3">
-            <div className="w-12 h-12 rounded-full bg-[#2D241E]/10 text-[#2D241E] flex items-center justify-center">
-              <Clock className="w-6 h-6 text-[#2D241E]" />
+          <div className="flex min-h-[13.5rem] flex-col items-center justify-center rounded-[1.7rem] border border-[#E2DDD2] bg-[#F7F2EC] px-6 py-7 text-center shadow-[0_1px_0_rgba(42,37,34,0.02)]">
+            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#E7E2DD] text-[#2A2522] shadow-inner">
+              <Clock className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="font-serif-display font-bold text-base text-[#2A2522]">Working Hours</h3>
-              <p className="text-xs text-[#7A746E] mt-1">Mon - Fri: 8:00 AM - 5:00 PM (EAT)</p>
+              <h3 className="font-serif-display text-[1.02rem] font-bold uppercase tracking-[0.08em] text-[#2A2522]">
+                Working Hours
+              </h3>
+              <p className="mt-2 text-[0.72rem] leading-relaxed text-[#6F665F]">
+                Mon - Fri: 8:00 AM - 5:00 PM
+                <br />
+                Weekends: 8:00 AM - 1:00 PM
+              </p>
             </div>
           </div>
         </div>
 
         {/* Main Form & Interactive Map Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-7">
           
           {/* Contact Form */}
-          <div className="lg:col-span-6 bg-white border border-[#E5E1DA] rounded-3xl p-6 sm:p-8 shadow-sm">
+          <div className="lg:col-span-4 mx-auto w-full rounded-[1.7rem] border border-[#DCD3C8] bg-[#F7F2EC] p-5 shadow-[0_1px_0_rgba(42,37,34,0.03)] sm:p-7">
             {submitted ? (
-              <div className="text-center py-10 space-y-5">
-                <div className="w-14 h-14 bg-[#5D6D3C]/10 text-[#5D6D3C] rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="w-8 h-8" />
+              <div className="space-y-5 py-8 text-center">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#5D6D3C]/10 text-[#5D6D3C]">
+                  <CheckCircle2 className="h-8 w-8" />
                 </div>
                 <div>
                   <h3 className="font-serif-display text-2xl font-bold text-[#2A2522]">
                     Order Inquiry Received!
                   </h3>
-                  <p className="text-xs text-[#7A746E] max-w-sm mx-auto leading-relaxed mt-1">
-                    Thank you, <strong>{formData.name || 'Customer'}</strong>. Your order inquiry regarding <strong>{formData.subject}</strong> has been prepared.
+                  <p className="mx-auto mt-2 max-w-md text-xs leading-relaxed text-[#7A746E]">
+                    Thank you, <strong>{formData.name || 'Customer'}</strong>. Your inquiry regarding <strong>{formData.subject}</strong> has been prepared.
                   </p>
                 </div>
 
-                {/* Instant Send Links */}
-                <div className="bg-[#FAF7F2] border border-[#E5E1DA] rounded-2xl p-4 space-y-3 max-w-sm mx-auto">
-                  <span className="text-[11px] font-bold text-[#2A2522] uppercase tracking-wider block">
-                    Transmit Directly To Our Desk:
+                <div className="mx-auto max-w-md space-y-3 rounded-[1.2rem] border border-[#E5E1DA] bg-[#FAF7F2] p-4">
+                  <span className="block text-[11px] font-bold uppercase tracking-[0.18em] text-[#2A2522]">
+                    Send Directly
                   </span>
-                  
+
                   <button
                     onClick={handleSendWhatsApp}
-                    className="w-full py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold shadow flex items-center justify-center gap-2 transition-all"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-xs font-bold uppercase tracking-[0.1em] text-white shadow transition hover:bg-[#20bd5a]"
                   >
-                    <MessageSquare className="w-4 h-4" />
-                    <span>Send via WhatsApp Message</span>
+                    <MessageSquare className="h-4 w-4" />
+                    <span>Send via WhatsApp</span>
                   </button>
 
                   <button
                     onClick={handleSendEmail}
-                    className="w-full py-2.5 rounded-xl bg-[#D97706] hover:bg-[#b86505] text-white text-xs font-bold shadow flex items-center justify-center gap-2 transition-all"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#D97706] px-4 py-3 text-xs font-bold uppercase tracking-[0.1em] text-white shadow transition hover:bg-[#b86505]"
                   >
-                    <Mail className="w-4 h-4" />
-                    <span>Send via Email Client</span>
+                    <Mail className="h-4 w-4" />
+                    <span>Send via Email</span>
                   </button>
                 </div>
 
                 <button
                   onClick={() => setSubmitted(false)}
-                  className="px-6 py-2 rounded-full border border-[#E5E1DA] text-[#7A746E] text-xs font-bold hover:bg-gray-100 transition-colors"
+                  className="rounded-full border border-[#DCD3C8] px-5 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E] transition hover:bg-[#EAE2D8]"
                 >
                   Edit Inquiry
                 </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="border-b border-[#E5E1DA] pb-3 flex items-center justify-between">
-                  <h3 className="font-serif-display text-xl font-bold text-[#2A2522] flex items-center gap-2">
-                    <MessageSquare className="w-5 h-5 text-[#D97706]" />
-                    Order & Inquiry Form
-                  </h3>
-
-                  {cartItems.length > 0 && (
-                    <span className="px-2.5 py-1 rounded-full bg-[#5D6D3C]/15 text-[#5D6D3C] font-extrabold text-[10px] flex items-center gap-1">
-                      <ShoppingBag className="w-3 h-3" />
-                      <span>{cartItems.reduce((acc, i) => acc + i.quantity, 0)} Items Added</span>
+                <div className="flex items-center justify-between border-b border-[#DCD3C8] pb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-[0.35rem] border border-[#2A2522] bg-transparent text-[#2A2522]">
+                      <MessageSquare className="h-3 w-3" />
                     </span>
-                  )}
+                    <h3 className="font-serif-display text-[1.05rem] font-bold uppercase tracking-[0.08em] text-[#2A2522]">
+                      Order & Inquiry Form
+                    </h3>
+                  </div>
                 </div>
 
-                {/* Notification Banner when cart prefilled */}
-                {cartItems.length > 0 && (
-                  <div className="bg-[#5D6D3C]/10 border border-[#5D6D3C]/30 rounded-xl p-3 text-xs text-[#2D241E] flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <ShoppingBag className="w-4 h-4 text-[#5D6D3C] shrink-0" />
-                      <span>
-                        Form auto-filled with <strong>{cartItems.length} product(s)</strong> ({formatPrice(subtotalUsd, subtotalKes, subtotalEur, currency)}).
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1">
+                    <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
                       Your Name *
                     </label>
                     <input
@@ -263,12 +273,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="e.g. Sarah Jenkins"
-                      className="w-full bg-[#FAF7F2] border border-[#E5E1DA] rounded-xl px-3.5 py-2.5 text-xs text-[#2A2522] focus:outline-none focus:ring-2 focus:ring-[#D97706]"
+                      className="h-11 w-full rounded-[0.8rem] border border-[#D8D0C5] bg-[#FAF7F2] px-3 text-sm text-[#2A2522] placeholder:text-[#9B938C] focus:border-[#D97706] focus:outline-none focus:ring-2 focus:ring-[#D97706]/20"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1">
+                    <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
                       Email Address *
                     </label>
                     <input
@@ -277,59 +287,62 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="e.g. sarah@example.com"
-                      className="w-full bg-[#FAF7F2] border border-[#E5E1DA] rounded-xl px-3.5 py-2.5 text-xs text-[#2A2522] focus:outline-none focus:ring-2 focus:ring-[#D97706]"
+                      className="h-11 w-full rounded-[0.8rem] border border-[#D8D0C5] bg-[#FAF7F2] px-3 text-sm text-[#2A2522] placeholder:text-[#9B938C] focus:border-[#D97706] focus:outline-none focus:ring-2 focus:ring-[#D97706]/20"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1">
+                  <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
                     Inquiry Type
                   </label>
-                  <select
-                    value={formData.subject}
-                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="w-full bg-[#FAF7F2] border border-[#E5E1DA] rounded-xl px-3.5 py-2.5 text-xs text-[#2A2522] focus:outline-none focus:ring-2 focus:ring-[#D97706]"
-                  >
-                    <option value="Direct Order Request">Direct Order & Quote Request</option>
-                    <option value="Wholesale Coffee">Wholesale Coffee Micro-Lots</option>
-                    <option value="Purple Tea Orders">Purple Tea & Specialty Teas</option>
-                    <option value="Visit Facilities">Visit Milling & Farm Facilities</option>
-                    <option value="General Inquiry">General Question</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={formData.subject}
+                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      className="h-11 w-full appearance-none rounded-[0.8rem] border border-[#D8D0C5] bg-[#FAF7F2] px-3 pr-10 text-sm text-[#2A2522] focus:border-[#D97706] focus:outline-none focus:ring-2 focus:ring-[#D97706]/20"
+                    >
+                      <option value="Direct Order Request">Direct Order & Quote Request</option>
+                      <option value="Wholesale Coffee">Wholesale Coffee Micro-Lots</option>
+                      <option value="Purple Tea Orders">Purple Tea & Specialty Teas</option>
+                      <option value="Visit Facilities">Visit Milling & Farm Facilities</option>
+                      <option value="General Inquiry">General Question</option>
+                    </select>
+                    <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[#2A2522]">
+                      <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4"><path d="M5.25 7.5 10 12.25 14.75 7.5H5.25Z"/></svg>
+                    </span>
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1">
+                  <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
                     Your Order Message / Requirements *
                   </label>
                   <textarea
-                    rows={6}
-                    required
+                    rows={5}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Tell us about your roasting, café, or import requirements..."
-                    className="w-full bg-[#FAF7F2] border border-[#E5E1DA] rounded-xl p-3.5 text-xs text-[#2A2522] focus:outline-none focus:ring-2 focus:ring-[#D97706] font-mono"
+                    className="w-full rounded-[0.8rem] border border-[#D8D0C5] bg-[#FAF7F2] p-3 text-sm text-[#2A2522] placeholder:text-[#9B938C] focus:border-[#D97706] focus:outline-none focus:ring-2 focus:ring-[#D97706]/20"
                   />
                 </div>
 
-                {/* Direct Send Action Buttons */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div className="flex gap-3 pt-2">
                   <button
                     type="button"
                     onClick={handleSendWhatsApp}
-                    className="w-full py-3 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs uppercase tracking-wider shadow flex items-center justify-center gap-2 transition-colors"
+                    className="flex w-[48%] items-center justify-center gap-2 rounded-full bg-[#5D6D3C] px-3 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white shadow-[0_8px_18px_rgba(93,109,60,0.2)] transition hover:bg-[#495d2c]"
                   >
-                    <MessageSquare className="w-4 h-4" />
+                    <MessageSquare className="h-4 w-4" />
                     <span>Send via WhatsApp</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={handleSendEmail}
-                    className="w-full py-3 rounded-full bg-[#D97706] hover:bg-[#b86505] text-white font-bold text-xs uppercase tracking-wider shadow flex items-center justify-center gap-2 transition-colors"
+                    className="flex w-[48%] items-center justify-center gap-2 rounded-full bg-[#D97706] px-3 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white shadow-[0_8px_18px_rgba(217,119,6,0.2)] transition hover:bg-[#b86505]"
                   >
-                    <Mail className="w-4 h-4" />
+                    <Mail className="h-4 w-4" />
                     <span>Send via Email</span>
                   </button>
                 </div>
@@ -338,40 +351,24 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
           </div>
 
           {/* Interactive Hub Map */}
-          <div className="lg:col-span-6 bg-[#2D241E] text-[#FAF7F2] rounded-3xl p-6 sm:p-8 shadow-md flex flex-col justify-between space-y-6">
-            
-            {/* Map Header & Facility Tabs */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between border-b border-[#D4C3A3]/20 pb-3">
+          <div className="lg:col-span-3 bg-[#2D241E] text-[#FAF7F2] rounded-[1.8rem] p-5 shadow-[0_18px_35px_rgba(33,24,18,0.2)] flex flex-col justify-between space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between border-b border-[#D4C3A3]/20 pb-2.5">
                 <div className="flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-[#D97706]" />
-                  <h3 className="font-serif-display text-lg font-bold text-white">
-                    Facility Location Map
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full border border-[#D97706]/80 bg-[#D97706]/10 text-[#D97706]">
+                    <MapPin className="h-3 w-3" />
+                  </span>
+                  <h3 className="font-serif-display text-base font-bold tracking-[0.06em] text-white uppercase">
+                    Office Location
                   </h3>
                 </div>
-                <span className="text-[11px] text-[#D4C3A3] font-bold">Kenya, East Africa</span>
-              </div>
-
-              {/* Hub Selector Pills */}
-              <div className="flex flex-wrap gap-2">
-                {HUBS.map((hub) => (
-                  <button
-                    key={hub.id}
-                    onClick={() => setSelectedHub(hub)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                      selectedHub.id === hub.id
-                        ? 'bg-[#D97706] text-white shadow'
-                        : 'bg-[#1C120E] text-[#D4C3A3] hover:bg-[#3D3129]'
-                    }`}
-                  >
-                    {hub.name}
-                  </button>
-                ))}
+                <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#D4C3A3]">
+                  Kenya
+                </span>
               </div>
             </div>
 
-            {/* Embedded Google Map */}
-            <div className="relative w-full h-64 sm:h-72 rounded-2xl overflow-hidden border border-[#D4C3A3]/20 bg-[#1C120E] shadow-inner">
+            <div className="relative h-[18rem] w-full overflow-hidden rounded-[1.25rem] border border-[#D4C3A3]/15 bg-[#E9E5DF] shadow-inner sm:h-[20rem]">
               <iframe
                 title={`Map of ${selectedHub.name}`}
                 width="100%"
@@ -380,39 +377,42 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 loading="lazy"
                 allowFullScreen
                 src={`https://maps.google.com/maps?q=${encodeURIComponent(selectedHub.mapQuery)}&t=m&z=10&ie=UTF8&iwloc=&output=embed`}
-                className="opacity-90 hover:opacity-100 transition-opacity"
+                className="h-full w-full opacity-90"
               ></iframe>
 
-              {/* Map Badge Overlay */}
-              <div className="absolute top-3 left-3 bg-[#2D241E]/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-[#D4C3A3]/30 text-white text-[11px] flex items-center gap-2 shadow">
-                <Navigation className="w-3.5 h-3.5 text-[#D97706]" />
-                <span className="font-bold">{selectedHub.name}</span>
-                <span className="text-[#D4C3A3] text-[10px]">({selectedHub.elevation})</span>
+              <div className="absolute left-3 top-3 flex items-center gap-2 rounded-lg border border-[#D4C3A3]/30 bg-[#2D241E]/80 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-sm">
+                <Navigation className="h-3.5 w-3.5 text-[#D97706]" />
+                <span>{selectedHub.name}</span>
+                <span className="text-[#D4C3A3]">({selectedHub.elevation})</span>
+              </div>
+
+              <div className="absolute inset-x-0 bottom-0 flex items-center justify-center bg-gradient-to-t from-[#2D241E]/80 via-[#2D241E]/20 to-transparent px-5 pb-5 pt-8">
+                <div className="rounded-full border border-white/10 bg-[#2D241E]/80 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#F8EBD7] backdrop-blur-sm">
+                  {selectedHub.name}
+                </div>
               </div>
             </div>
 
-            {/* Selected Location Information Box */}
-            <div className="bg-[#1C120E] border border-[#D4C3A3]/15 rounded-2xl p-4 space-y-2 text-xs">
-              <div className="flex items-start justify-between gap-2">
+            <div className="rounded-[1.15rem] border border-[#D4C3A3]/15 bg-[#1C120E] p-4 text-xs text-[#F3E7D6]">
+              <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h4 className="font-bold text-white text-sm">{selectedHub.name}</h4>
-                  <p className="text-[#D4C3A3]/80 text-xs mt-0.5">{selectedHub.address}</p>
+                  <h4 className="font-bold text-base text-white">{selectedHub.name}</h4>
+                  <p className="mt-1 text-[11px] text-[#D4C3A3]">{selectedHub.address}</p>
                 </div>
                 <a
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedHub.mapQuery)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 rounded-lg bg-[#D97706]/20 hover:bg-[#D97706] text-[#D97706] hover:text-white transition-colors flex items-center gap-1 font-bold text-[11px] shrink-0"
+                  className="inline-flex items-center gap-1 rounded-lg bg-[#D97706] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-white transition hover:bg-[#b86505]"
                 >
                   <span>Open Map</span>
-                  <ExternalLink className="w-3 h-3" />
+                  <ExternalLink className="h-3 w-3" />
                 </a>
               </div>
-              <p className="text-[#D4C3A3]/60 text-[11px] pt-1 border-t border-[#D4C3A3]/10">
-                <strong>Primary Operations:</strong> {selectedHub.purpose}
+              <p className="mt-3 border-t border-[#D4C3A3]/10 pt-2 text-[11px] leading-relaxed text-[#D4C3A3]/80">
+                <span className="font-bold text-[#F3E7D6]">Primary Operations:</span> {selectedHub.purpose}
               </p>
             </div>
-
           </div>
 
         </div>

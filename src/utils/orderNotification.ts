@@ -16,6 +16,9 @@ export function generateWhatsAppOrderMessage(order: Order): string {
   const { shippingDetails, items, currency } = order;
   const formattedTotal = formatPrice(order.totalUsd, order.totalKes, order.totalEur, currency);
   const formattedSubtotal = formatPrice(order.subtotalUsd, order.subtotalKes, order.subtotalEur, currency);
+  const paymentLabel = shippingDetails.paymentMethod === 'not_required'
+    ? 'No payment required at this stage – details sent via Email/WhatsApp'
+    : shippingDetails.paymentMethod.toUpperCase();
 
   const itemList = items
     .map(
@@ -63,7 +66,7 @@ ${itemList}
 • *Subtotal:* ${formattedSubtotal}
 • *Shipping Method:* ${shippingDetails.shippingMethod.toUpperCase().replace('_', ' ')} (Air Express)
 • *Total Payable:* ${formattedTotal}
-• *Payment Mode:* ${shippingDetails.paymentMethod.toUpperCase()}
+• *Payment Mode:* ${paymentLabel}
 • *Tracking Code:* ${order.trackingNumber}
 • *Estimated Delivery:* ${order.estimatedDelivery}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -107,6 +110,10 @@ export function generateEmailOrderBody(order: Order): string {
     )
     .join('\n\n');
 
+  const paymentLabel = shippingDetails.paymentMethod === 'not_required'
+    ? 'No payment required at this stage – details sent via Email/WhatsApp'
+    : shippingDetails.paymentMethod.toUpperCase();
+
   return `KENYAN HIGHLAND COFFEE & TEA - EXPORT ORDER INVOICE
 ============================================================
 Order Reference ID : ${order.id}
@@ -137,7 +144,7 @@ ${itemList}
 • Subtotal Amount  : ${formattedSubtotal}
 • Shipping Cost    : Free Express Door-to-Door Delivery
 • TOTAL ORDER VAL  : ${formattedTotal}
-• Payment Method   : ${shippingDetails.paymentMethod.toUpperCase()}
+• Payment Method   : ${paymentLabel}
 • Estimated Dispatch: ${order.estimatedDelivery}
 
 ============================================================

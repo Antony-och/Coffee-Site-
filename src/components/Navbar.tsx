@@ -63,10 +63,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <div>
               <span className="font-serif-display text-lg sm:text-xl font-bold tracking-wider text-[#FAF7F2] block leading-tight group-hover:text-[#D4C3A3] transition-colors">
-                KENYAN HIGHLAND
+                FIRST CUP
               </span>
               <span className="text-[10px] tracking-[0.25em] uppercase text-[#D4C3A3] block font-semibold">
-                Coffee & Tea Co.
+                COFFEE & TEA
               </span>
             </div>
           </button>
