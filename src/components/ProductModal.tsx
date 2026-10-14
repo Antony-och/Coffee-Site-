@@ -216,14 +216,14 @@ const ProductModalContent: React.FC<ProductModalContentProps> = ({
 
             <fieldset>
               <legend className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.15em] text-[#8A5A2B]">Choose pack size</legend>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
                 {product.packagingFormats.map((format) => (
                   <button
                     key={format}
                     type="button"
                     onClick={() => setSelectedFormat(format)}
                     aria-pressed={selectedFormat === format}
-                    className={`max-w-full rounded-xl border px-3.5 py-2 text-xs font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A46A32] ${
+                    className={`flex min-h-11 w-full items-center justify-center rounded-xl border px-2.5 py-2 text-center text-xs font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A46A32] ${
                       selectedFormat === format
                         ? 'border-[#34251B] bg-[#34251B] text-white shadow-sm'
                         : 'border-[#DFD5C9] bg-white text-[#4E443B] hover:border-[#A46A32] hover:bg-[#FBF7F1]'
