@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Coffee, Leaf, Mountain } from 'lucide-react';
+import { ArrowRight, Coffee, CupSoda, Droplets, Flame, Hand, Leaf, Mountain, RefreshCw, Sparkles, Sun, Wind } from 'lucide-react';
 import { PageView } from '../types';
 
 const coffeeCup = new URL('../assets/images/kenyan_coffee_beans_1786601780276.jpg', import.meta.url).href;
@@ -9,19 +9,19 @@ interface AboutSectionProps {
 }
 
 const coffeeSteps = [
-  { title: 'Harvest ripe cherries', copy: 'Carefully select ripe coffee cherries from Kenya’s highland farms.' },
-  { title: 'Process the coffee', copy: 'Prepare each lot using its chosen washed or honey-processing method.' },
-  { title: 'Dry and grade', copy: 'Dry the coffee on raised beds, then sort the green beans by quality and grade.' },
-  { title: 'Roast in small batches', copy: 'Roast to bring out the character of each coffee lot.' },
-  { title: 'Grind and brew', copy: 'Brew the roasted coffee with your preferred method, from filter to espresso.' },
+  { title: 'Harvest ripe cherries', copy: 'Carefully select ripe coffee cherries from Kenya’s highland farms.', icon: Hand },
+  { title: 'Process the coffee', copy: 'Prepare each lot using its chosen washed or honey-processing method.', icon: Droplets },
+  { title: 'Dry and grade', copy: 'Dry the coffee on raised beds, then sort the green beans by quality and grade.', icon: Sun },
+  { title: 'Roast in small batches', copy: 'Roast to bring out the character of each coffee lot.', icon: Flame },
+  { title: 'Grind and brew', copy: 'Brew the roasted coffee with your preferred method, from filter to espresso.', icon: Coffee },
 ];
 
 const teaSteps = [
-  { title: 'Pick fresh leaves', copy: 'Select tender tea leaves and buds from Kenya’s tea-growing regions.' },
-  { title: 'Wither the leaf', copy: 'Allow fresh leaves to soften as some moisture is gently reduced.' },
-  { title: 'Roll or cut', copy: 'Shape the leaf by rolling or CTC processing, depending on the tea style.' },
-  { title: 'Finish by style', copy: 'Oxidation and drying vary across black, green, and purple teas.' },
-  { title: 'Steep and enjoy', copy: 'Steep the prepared tea to draw out its aroma, colour, and flavour.' },
+  { title: 'Pick fresh leaves', copy: 'Select tender tea leaves and buds from Kenya’s tea-growing regions.', icon: Leaf },
+  { title: 'Wither the leaf', copy: 'Allow fresh leaves to soften as some moisture is gently reduced.', icon: Wind },
+  { title: 'Roll or cut', copy: 'Shape the leaf by rolling or CTC processing, depending on the tea style.', icon: RefreshCw },
+  { title: 'Finish by style', copy: 'Oxidation and drying vary across black, green, and purple teas.', icon: Sparkles },
+  { title: 'Steep and enjoy', copy: 'Steep the prepared tea to draw out its aroma, colour, and flavour.', icon: CupSoda },
 ];
 
 const journeys = [
@@ -155,16 +155,21 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) =>
                 <div className="relative mt-5">
 				  <div aria-hidden="true" className={`pointer-events-none absolute left-[8%] right-[8%] top-7 hidden h-px xl:block ${isCoffee ? 'bg-white/15' : 'bg-[#8AAE77]/35'}`} />
 				  <ol className="relative grid gap-2.5 sm:grid-cols-2 xl:grid-cols-5 xl:gap-3">
-				    {steps.map((step, index) => (
-				      <li key={step.title} className={`rounded-xl border p-3.5 sm:min-h-[9rem] ${isCoffee ? 'border-white/[0.08] bg-[#2A1E18]' : 'border-[#53764A]/45 bg-[#2B4527]'}`}>
-                        <div className="flex items-center gap-2.5">
-                          <span aria-hidden="true" className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${numberStyle}`}>
-                            {String(index + 1).padStart(2, '0')}
+                    {steps.map(({ title, copy, icon: StepIcon }, index) => (
+                      <li key={title} className={`rounded-xl border p-3.5 sm:min-h-[9rem] ${isCoffee ? 'border-white/[0.08] bg-[#2A1E18]' : 'border-[#53764A]/45 bg-[#2B4527]'}`}>
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-2.5">
+                            <span aria-hidden="true" className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${numberStyle}`}>
+                              {String(index + 1).padStart(2, '0')}
+                            </span>
+                            <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-[#BBAA99]">Step {index + 1}</span>
+                          </div>
+                          <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${isCoffee ? 'bg-[#D9A05F]/15 text-[#E4B574]' : 'bg-[#90B77B]/20 text-[#B6D39A]'}`}>
+                            <StepIcon className="h-4 w-4" aria-hidden="true" />
                           </span>
-                          <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-[#BBAA99]">Step {index + 1}</span>
                         </div>
-                        <h5 className="mt-3 text-sm font-semibold leading-5 text-white">{step.title}</h5>
-                        <p className="mt-1.5 text-[11px] leading-[1.6] text-[#D2C5B9]">{step.copy}</p>
+                        <h5 className="mt-3 text-sm font-semibold leading-5 text-white">{title}</h5>
+                        <p className="mt-1.5 text-[11px] leading-[1.6] text-[#D2C5B9]">{copy}</p>
                       </li>
                     ))}
                   </ol>
