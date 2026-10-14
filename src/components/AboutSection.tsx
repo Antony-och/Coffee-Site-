@@ -24,19 +24,19 @@ interface AboutSectionProps {
 }
 
 const coffeeSteps = [
-  { title: 'Harvest ripe cherries', copy: 'Carefully select ripe coffee cherries from Kenya’s highland farms.', icon: Hand },
-  { title: 'Process the coffee', copy: 'Prepare each lot using its chosen washed or honey-processing method.', icon: Droplets },
-  { title: 'Dry and grade', copy: 'Dry the coffee on raised beds, then sort the green beans by quality and grade.', icon: Sun },
-  { title: 'Roast in small batches', copy: 'Roast to bring out the character of each coffee lot.', icon: Flame },
-  { title: 'Grind and brew', copy: 'Brew the roasted coffee with your preferred method, from filter to espresso.', icon: Coffee },
+  { title: 'Harvest ripe cherries', copy: 'Carefully select ripe coffee cherries from Kenya’s highland farms.', icon: Hand, hoverMotion: 'group-hover:-translate-y-0.5 group-hover:rotate-[-5deg]' },
+  { title: 'Process the coffee', copy: 'Prepare each lot using its chosen washed or honey-processing method.', icon: Droplets, hoverMotion: 'group-hover:translate-y-0.5 group-hover:scale-110' },
+  { title: 'Dry and grade', copy: 'Dry the coffee on raised beds, then sort the green beans by quality and grade.', icon: Sun, hoverMotion: 'group-hover:rotate-12' },
+  { title: 'Roast in small batches', copy: 'Roast to bring out the character of each coffee lot.', icon: Flame, hoverMotion: 'group-hover:-translate-y-0.5 group-hover:scale-y-110' },
+  { title: 'Grind and brew', copy: 'Brew the roasted coffee with your preferred method, from filter to espresso.', icon: Coffee, hoverMotion: 'group-hover:translate-y-0.5 group-hover:rotate-[-5deg]' },
 ];
 
 const teaSteps = [
-  { title: 'Pick fresh leaves', copy: 'Select tender tea leaves and buds from Kenya’s tea-growing regions.', icon: Leaf },
-  { title: 'Wither the leaf', copy: 'Allow fresh leaves to soften as some moisture is gently reduced.', icon: Wind },
-  { title: 'Roll or cut', copy: 'Shape the leaf by rolling or CTC processing, depending on the tea style.', icon: RefreshCw },
-  { title: 'Finish by style', copy: 'Oxidation and drying vary across black, green, and purple teas.', icon: Sparkles },
-  { title: 'Steep and enjoy', copy: 'Steep the prepared tea to draw out its aroma, colour, and flavour.', icon: CupSoda },
+  { title: 'Pick fresh leaves', copy: 'Select tender tea leaves and buds from Kenya’s tea-growing regions.', icon: Leaf, hoverMotion: 'group-hover:-translate-y-0.5 group-hover:rotate-6' },
+  { title: 'Wither the leaf', copy: 'Allow fresh leaves to soften as some moisture is gently reduced.', icon: Wind, hoverMotion: 'group-hover:translate-x-0.5' },
+  { title: 'Roll or cut', copy: 'Shape the leaf by rolling or CTC processing, depending on the tea style.', icon: RefreshCw, hoverMotion: 'group-hover:rotate-12' },
+  { title: 'Finish by style', copy: 'Oxidation and drying vary across black, green, and purple teas.', icon: Sparkles, hoverMotion: 'group-hover:scale-110 group-hover:rotate-6' },
+  { title: 'Steep and enjoy', copy: 'Steep the prepared tea to draw out its aroma, colour, and flavour.', icon: CupSoda, hoverMotion: 'group-hover:-translate-y-0.5 group-hover:rotate-[-4deg]' },
 ];
 
 const journeys = [
@@ -173,7 +173,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) =>
 
                 <div className="relative mt-5">
                   <ol className="grid grid-cols-1 gap-y-3 sm:grid-cols-2 sm:gap-x-3 xl:grid-cols-5 xl:gap-3">
-                    {steps.map(({ title, copy, icon: StepIcon }, index) => (
+                    {steps.map(({ title, copy, icon: StepIcon, hoverMotion }, index) => (
                       <motion.li
                         key={title}
                         initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
@@ -196,8 +196,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) =>
                               </span>
                               <span className="font-sans text-[9px] font-semibold uppercase leading-[1.2] tracking-[0.14em] text-[var(--process-muted)]">Step {index + 1}</span>
                             </div>
-                            <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105 ${isCoffee ? 'bg-[var(--process-coffee-soft)] text-[var(--process-coffee-ink)]' : 'bg-[var(--process-tea-soft)] text-[var(--process-tea)]'}`}>
-                              <StepIcon className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+                            <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-transform duration-300 ease-out ${shouldReduceMotion ? '' : 'group-hover:scale-105'} ${isCoffee ? 'bg-[var(--process-coffee-soft)] text-[var(--process-coffee-ink)]' : 'bg-[var(--process-tea-soft)] text-[var(--process-tea)]'}`}>
+                              <StepIcon className={`h-4 w-4 transform-gpu transition-transform duration-300 ease-out ${shouldReduceMotion ? '' : hoverMotion}`} strokeWidth={1.5} aria-hidden="true" />
                             </span>
                           </div>
                           <h5 className="mt-3 font-sans text-[13px] font-semibold leading-[1.35] tracking-[-0.01em] text-[var(--process-ink)]">{title}</h5>
