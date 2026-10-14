@@ -38,9 +38,9 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentPage }) => {
             <div>
               <div className="flex items-center gap-4">
                 <img
-                  src="/brand/first-cup-wordmark-white.svg"
+                  src="/brand/first-cup-logo-white-500.png"
                   alt="First Cup Coffee & Tea"
-                  className="h-12 w-auto max-w-[10rem]"
+                  className="h-20 w-auto max-w-[6rem] object-contain"
                   loading="lazy"
                 />
               </div>

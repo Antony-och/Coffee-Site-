@@ -58,9 +58,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             aria-label="First Cup Coffee & Tea — home"
           >
             <img
-              src="/brand/first-cup-wordmark-white.svg"
+              src="/brand/first-cup-logo-white-500.png"
               alt="First Cup Coffee & Tea"
-              className="h-10 w-auto max-w-[8.5rem] transition-transform duration-200 group-hover:scale-[1.02] sm:h-11"
+              className="h-14 w-auto max-w-[4.25rem] object-contain transition-transform duration-200 group-hover:scale-[1.02] sm:h-16 sm:max-w-[4.75rem]"
             />
           </button>
 
