@@ -55,20 +55,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             onClick={() => handleNavClick('home')}
             className="flex items-center gap-3 text-left group focus:outline-none focus:ring-2 focus:ring-[#D97706] rounded-lg p-1"
+            aria-label="First Cup Coffee & Tea — home"
           >
-            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#D97706] to-[#5D6D3C] p-0.5 shadow-md group-hover:scale-105 transition-transform">
-              <div className="w-full h-full bg-[#2D241E] rounded-full flex items-center justify-center border border-[#D4C3A3]/30">
-                <Coffee className="w-5 h-5 text-[#D97706]" />
-              </div>
-            </div>
-            <div>
-              <span className="font-serif-display text-lg sm:text-xl font-bold tracking-wider text-[#FAF7F2] block leading-tight group-hover:text-[#D4C3A3] transition-colors">
-                FIRST CUP
-              </span>
-              <span className="text-[10px] tracking-[0.25em] uppercase text-[#D4C3A3] block font-semibold">
-                COFFEE & TEA
-              </span>
-            </div>
+            <img
+              src="/brand/first-cup-wordmark-white.svg"
+              alt="First Cup Coffee & Tea"
+              className="h-10 w-auto max-w-[8.5rem] transition-transform duration-200 group-hover:scale-[1.02] sm:h-11"
+            />
           </button>
 
           {/* Desktop Navigation Links */}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PageView } from '../types';
-import { Coffee, ShieldCheck, Award, MapPin, Phone, Mail, ArrowUpRight, Send, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Award, MapPin, Phone, Mail, ArrowUpRight, Send, CheckCircle2 } from 'lucide-react';
 
 interface FooterProps {
   setCurrentPage: (page: PageView) => void;
@@ -37,18 +37,12 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentPage }) => {
           <div className="grid gap-8 lg:grid-cols-[1.3fr_0.8fr_0.9fr_1.3fr] lg:gap-8">
             <div>
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#D9A05F] text-[#1A120E] shadow-[0_12px_26px_rgba(217,160,95,0.35)]">
-                  <Coffee className="h-5 w-5" />
-                </div>
-
-                <div>
-                  <div className="font-serif-display text-[1.08rem] font-bold uppercase tracking-[0.14em] text-[#F7F1E8]">
-                    First Cup
-                  </div>
-                  <div className="text-[0.58rem] font-bold uppercase tracking-[0.22em] text-[#D9A05F]">
-                    Coffee & Tea
-                  </div>
-                </div>
+                <img
+                  src="/brand/first-cup-wordmark-white.svg"
+                  alt="First Cup Coffee & Tea"
+                  className="h-12 w-auto max-w-[10rem]"
+                  loading="lazy"
+                />
               </div>
 
               <p className="mt-5 max-w-md text-sm leading-7 text-[#DCCEB8]/80">
