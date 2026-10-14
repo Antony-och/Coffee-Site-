@@ -41,9 +41,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navItems: { id: PageView; label: string; icon: React.ReactNode }[] = [
     { id: 'home', label: 'Home', icon: <Compass className="w-4 h-4" /> },
+    { id: 'about', label: 'About', icon: <Info className="w-4 h-4" /> },
     { id: 'coffee', label: 'Coffee', icon: <Coffee className="w-4 h-4" /> },
     { id: 'tea', label: 'Tea', icon: <Leaf className="w-4 h-4" /> },
-    { id: 'about', label: 'About', icon: <Info className="w-4 h-4" /> },
     { id: 'contact', label: 'Contact', icon: <Mail className="w-4 h-4" /> },
   ];
 
