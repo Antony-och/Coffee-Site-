@@ -127,11 +127,11 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) =>
             const isCoffee = id === 'coffee-process';
 
             return (
-              <article
-                key={id}
-                aria-labelledby={`${id}-title`}
-                className={`rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-4 sm:p-5 ${isCoffee ? 'border-l-2 border-l-[#D9A05F]' : 'border-l-2 border-l-[#92A875]'}`}
-              >
+				<article
+				  key={id}
+				  aria-labelledby={`${id}-title`}
+				  className={`rounded-[1.5rem] border p-4 sm:p-5 ${isCoffee ? 'border-white/10 border-l-2 border-l-[#D9A05F] bg-white/[0.035]' : 'border-[#527046]/55 border-l-2 border-l-[#90B77B] bg-[#20351E]'}`}
+				>
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-5">
                   <div className="flex items-center gap-3">
                     <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${iconStyle}`}>
@@ -146,10 +146,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) =>
                 </div>
 
                 <div className="relative mt-5">
-                  <div aria-hidden="true" className="pointer-events-none absolute left-[8%] right-[8%] top-7 hidden h-px bg-white/15 xl:block" />
-                  <ol className="relative grid gap-2.5 sm:grid-cols-2 xl:grid-cols-5 xl:gap-3">
-                    {steps.map((step, index) => (
-                      <li key={step.title} className="rounded-xl border border-white/[0.08] bg-[#2A1E18] p-3.5 sm:min-h-[9rem]">
+				  <div aria-hidden="true" className={`pointer-events-none absolute left-[8%] right-[8%] top-7 hidden h-px xl:block ${isCoffee ? 'bg-white/15' : 'bg-[#8AAE77]/35'}`} />
+				  <ol className="relative grid gap-2.5 sm:grid-cols-2 xl:grid-cols-5 xl:gap-3">
+				    {steps.map((step, index) => (
+				      <li key={step.title} className={`rounded-xl border p-3.5 sm:min-h-[9rem] ${isCoffee ? 'border-white/[0.08] bg-[#2A1E18]' : 'border-[#53764A]/45 bg-[#2B4527]'}`}>
                         <div className="flex items-center gap-2.5">
                           <span aria-hidden="true" className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${numberStyle}`}>
                             {String(index + 1).padStart(2, '0')}
