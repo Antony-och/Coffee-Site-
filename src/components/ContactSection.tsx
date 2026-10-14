@@ -13,8 +13,7 @@ import {
   Send,
   ShieldCheck,
 } from 'lucide-react';
-import { CartItem, Currency } from '../types';
-import { formatPrice } from '../utils/currency';
+import { CartItem } from '../types';
 
 interface HubLocation {
   id: string;
@@ -40,13 +39,9 @@ const HUBS: HubLocation[] = [
 
 interface ContactSectionProps {
   cartItems?: CartItem[];
-  currency?: Currency;
 }
 
-export const ContactSection: React.FC<ContactSectionProps> = ({
-  cartItems = [],
-  currency = 'USD' as Currency,
-}) => {
+export const ContactSection: React.FC<ContactSectionProps> = ({ cartItems = [] }) => {
   const [submitted, setSubmitted] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
   const selectedHub = HUBS[0];
@@ -56,10 +51,6 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     subject: 'Direct Order Request',
     message: '',
   });
-
-  const subtotalUsd = cartItems.reduce((sum, item) => sum + item.priceUsd * item.quantity, 0);
-  const subtotalKes = cartItems.reduce((sum, item) => sum + item.priceKes * item.quantity, 0);
-  const subtotalEur = cartItems.reduce((sum, item) => sum + item.priceEur * item.quantity, 0);
 
   useEffect(() => {
     setFormData((prev) => ({
@@ -79,35 +70,15 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   const buildDefaultRequirements = () => {
     if (cartItems.length === 0) return '';
 
-    const lines = cartItems.map((item) => {
-      const lineTotal = formatPrice(
-        item.priceUsd * item.quantity,
-        item.priceKes * item.quantity,
-        item.priceEur * item.quantity,
-        currency
-      );
-      return `• ${item.quantity}x ${item.name} (${item.format}) — ${lineTotal}`;
-    });
-
-    const total = formatPrice(subtotalUsd, subtotalKes, subtotalEur, currency);
-    return `Order requirements:\nPlease confirm availability and delivery timing.\n\nItems requested:\n${lines.join('\n')}\n\nEstimated Total: ${total}\nPlease send final invoice, preparation notes, and delivery timeline.`;
+    const lines = cartItems.map((item) => `• ${item.quantity} × ${item.format} pack — ${item.name}`);
+    return `Order requirements:\nPrice on request. Our team will confirm prices, availability and delivery before your order is accepted.\n\nItems requested:\n${lines.join('\n')}`;
   };
 
   const buildCartSummary = () => {
     if (cartItems.length === 0) return '';
 
-    const lines = cartItems.map((item) => {
-      const lineTotal = formatPrice(
-        item.priceUsd * item.quantity,
-        item.priceKes * item.quantity,
-        item.priceEur * item.quantity,
-        currency
-      );
-      return `• ${item.quantity}x ${item.name} (${item.format}) — ${lineTotal}`;
-    });
-
-    const total = formatPrice(subtotalUsd, subtotalKes, subtotalEur, currency);
-    return `ORDER SUMMARY\n${lines.join('\n')}\n\nEstimated Total: ${total}\n`;
+    const lines = cartItems.map((item) => `• ${item.quantity} × ${item.format} pack — ${item.name}`);
+    return `ORDER REQUEST SUMMARY\n${lines.join('\n')}\n\nPrice on request. Our team will confirm prices, availability and delivery before your order is accepted.\n`;
   };
 
   const handleSendWhatsApp = (e?: React.MouseEvent) => {

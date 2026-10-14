@@ -98,20 +98,10 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentPage }) => {
               <h2 id="footer-visit-title" className="text-[0.68rem] font-bold uppercase tracking-[0.2em] text-[#DCCEB8]">
                 Find Us
               </h2>
-              <div className="mt-5 space-y-5 text-sm text-[#E5D8C9]/80">
+              <div className="mt-5 text-sm text-[#E5D8C9]/80">
                 <div className="flex gap-3">
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#D9A05F]" aria-hidden="true" />
-                  <div>
-                    <p className="font-semibold text-[#F7F1E8]">Ruiru, Kenya</p>
-                    <p className="mt-1 text-xs text-[#DCCEB8]/65">Retail & export office</p>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#D9A05F]" aria-hidden="true" />
-                  <div>
-                    <p className="font-semibold text-[#F7F1E8]">Nyeri County</p>
-                    <p className="mt-1 text-xs text-[#DCCEB8]/65">Dry mill & roastery</p>
-                  </div>
+                  <p className="text-xs leading-6 text-[#DCCEB8]/80">First Cup Coffee and Tea, Ruiru, Kenya (Head Office) • Mombasa, Kenya • Dar es Salaam, Tanzania • Kampala, Uganda</p>
                 </div>
               </div>
             </section>

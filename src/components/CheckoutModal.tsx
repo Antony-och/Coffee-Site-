@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { CartItem, Currency, Order, OrderShippingDetails } from '../types';
-import { formatPrice } from '../utils/currency';
+import { CartItem, OrderRequest, OrderShippingDetails } from '../types';
 import {
   generateWhatsAppOrderMessage,
   generateWhatsAppOrderUrl,
@@ -30,23 +29,31 @@ interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
   cartItems: CartItem[];
-  currency: Currency;
-  onPlaceOrder: (order: Order) => void;
+  onRequestComplete: () => void;
 }
+
+const HTML_ESCAPE_MAP: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+};
+
+const escapeHtml = (value: string) => value.replace(/[&<>"']/g, (character) => HTML_ESCAPE_MAP[character]);
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   isOpen,
   onClose,
   cartItems,
-  currency,
-  onPlaceOrder,
+  onRequestComplete,
 }) => {
   const [step, setStep] = useState<'details' | 'confirmation'>('details');
   const [copiedId, setCopiedId] = useState(false);
   const [copiedPayload, setCopiedPayload] = useState(false);
   const [whatsappOpened, setWhatsappOpened] = useState(false);
   const [showTextPreview, setShowTextPreview] = useState(false);
-  const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
+  const [placedOrder, setPlacedOrder] = useState<OrderRequest | null>(null);
 
   // Form State
   const [shippingDetails, setShippingDetails] = useState<OrderShippingDetails>({
@@ -58,28 +65,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     city: '',
     country: 'Kenya',
     postalCode: '',
-    shippingMethod: 'direct_air_express',
-    paymentMethod: 'not_required',
-    mpesaPhone: '',
-    cardLastFour: '',
   });
 
   if (!isOpen) return null;
-
-  // Pricing calculations
-  const subtotalUsd = cartItems.reduce((sum, item) => sum + item.priceUsd * item.quantity, 0);
-  const subtotalKes = cartItems.reduce((sum, item) => sum + item.priceKes * item.quantity, 0);
-  const subtotalEur = cartItems.reduce((sum, item) => sum + item.priceEur * item.quantity, 0);
-
-  const getShippingFees = () => {
-    return { usd: 0, kes: 0, eur: 0 };
-  };
-
-  const shippingFees = getShippingFees();
-
-  const totalUsd = subtotalUsd + shippingFees.usd;
-  const totalKes = subtotalKes + shippingFees.kes;
-  const totalEur = subtotalEur + shippingFees.eur;
 
   const handleCompleteOrder = (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,34 +77,17 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     }
 
     const randomNum = Math.floor(10000 + Math.random() * 90000);
-    const orderId = `ORD-KHC-${randomNum}`;
+    const orderId = `REQ-FC-${randomNum}`;
 
-    const newOrder: Order = {
+    const newOrder: OrderRequest = {
       id: orderId,
       date: new Date().toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
       }),
-      status: 'Processing',
       items: [...cartItems],
-      subtotalUsd,
-      subtotalKes,
-      subtotalEur,
-      shippingFeeUsd: shippingFees.usd,
-      shippingFeeKes: shippingFees.kes,
-      shippingFeeEur: shippingFees.eur,
-      totalUsd,
-      totalKes,
-      totalEur,
-      currency,
-      shippingDetails: {
-        ...shippingDetails,
-        paymentMethod: 'not_required',
-        cardLastFour: 'N/A',
-      },
-      trackingNumber: 'Pending WhatsApp confirmation',
-      estimatedDelivery: 'To be confirmed by the export desk',
+      shippingDetails: { ...shippingDetails },
     };
 
     setPlacedOrder(newOrder);
@@ -138,26 +109,26 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     setTimeout(() => setCopiedId(false), 2000);
   };
 
-  const handleSendWhatsApp = (order: Order) => {
+  const handleSendWhatsApp = (order: OrderRequest) => {
     const url = generateWhatsAppOrderUrl(order, EXPORT_WHATSAPP_PHONE);
     const whatsappWindow = window.open(url, '_blank');
     if (whatsappWindow) whatsappWindow.opener = null;
     setWhatsappOpened(true);
   };
 
-  const handleFinishOrder = (order: Order) => {
-    onPlaceOrder(order);
+  const handleFinishRequest = () => {
+    onRequestComplete();
     onClose();
   };
 
-  const handleCopyOrderPayload = (order: Order) => {
+  const handleCopyOrderPayload = (order: OrderRequest) => {
     const message = generateWhatsAppOrderMessage(order);
     navigator.clipboard.writeText(message);
     setCopiedPayload(true);
     setTimeout(() => setCopiedPayload(false), 2500);
   };
 
-  const handlePrintReceipt = (order: Order) => {
+  const handlePrintReceipt = (order: OrderRequest) => {
     const printWindow = window.open('', '_blank', 'width=900,height=700');
     if (!printWindow) {
       window.print();
@@ -168,10 +139,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       .map(
         (item) => `
           <tr>
-            <td>${item.name}</td>
+            <td>${escapeHtml(item.name)}</td>
             <td>${item.quantity}</td>
-            <td>${item.format}</td>
-            <td>${formatPrice(item.priceUsd * item.quantity, item.priceKes * item.quantity, item.priceEur * item.quantity, currency)}</td>
+            <td>${escapeHtml(item.format)}</td>
           </tr>
         `
       )
@@ -181,7 +151,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       <!DOCTYPE html>
       <html>
         <head>
-          <title>First Cup Coffee & Tea Order Summary</title>
+          <title>First Cup Coffee & Tea Request Summary</title>
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
             body {
@@ -282,28 +252,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               font-size: 10px;
             }
             tbody tr:last-child td { border-bottom: none; }
-            .totals {
+            .quote-note {
               margin-top: 18px;
-              margin-left: auto;
-              width: 300px;
-            }
-            .totals-row {
-              display:flex;
-              justify-content:space-between;
-              padding: 8px 0;
-              font-size: 13px;
-              color: #4A413D;
-            }
-            .grand {
-              font-size: 18px;
-              font-weight: 700;
-              color: #2A2522;
-              border-top: 1px solid #E5E1DA;
-              padding-top: 12px;
-              margin-top: 6px;
-            }
-            .grand span:last-child {
-              color: #D97706;
+              padding: 14px 16px;
+              border: 1px solid #D9E0CD;
+              border-radius: 12px;
+              background: #F0F2E9;
+              color: #384A2A;
+              font-size: 12px;
+              line-height: 1.7;
             }
             @media print {
               body { margin: 0; background: #fff; }
@@ -318,27 +275,26 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <img class="brand-logo" src="${window.location.origin}/brand/first-cup-logo-black.svg" alt="First Cup Coffee & Tea" />
               </div>
               <div class="meta">
-                <div><strong>Request reference</strong> ${order.id}</div>
-                <div>${order.date}</div>
+                <div><strong>Request reference</strong> ${escapeHtml(order.id)}</div>
+                <div>${escapeHtml(order.date)}</div>
                 <div>WhatsApp order request</div>
               </div>
             </div>
 
-            <h1>Order Request Summary</h1>
+            <h1>Quote Request Summary</h1>
             <div class="customer-box">
-              <div><strong>Customer:</strong> ${order.shippingDetails.fullName}</div>
-              <div><strong>Email:</strong> ${order.shippingDetails.email || 'Not provided'}</div>
-              <div><strong>Phone:</strong> ${order.shippingDetails.phone}</div>
-              <div><strong>Shipping:</strong> ${order.shippingDetails.streetAddress}, ${order.shippingDetails.city}, ${order.shippingDetails.country}</div>
+              <div><strong>Customer:</strong> ${escapeHtml(order.shippingDetails.fullName)}</div>
+              <div><strong>Email:</strong> ${escapeHtml(order.shippingDetails.email || 'Not provided')}</div>
+              <div><strong>Phone:</strong> ${escapeHtml(order.shippingDetails.phone)}</div>
+              <div><strong>Shipping:</strong> ${escapeHtml(`${order.shippingDetails.streetAddress}, ${order.shippingDetails.city}, ${order.shippingDetails.country}`)}</div>
             </div>
 
             <table>
               <thead>
                 <tr>
                   <th>Product</th>
-                  <th>Qty</th>
-                  <th>Format</th>
-                  <th>Total</th>
+                  <th>Pack quantity</th>
+                  <th>Pack size</th>
                 </tr>
               </thead>
               <tbody>
@@ -346,11 +302,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </tbody>
             </table>
 
-            <div class="totals">
-              <div class="totals-row"><span>Merchandise subtotal</span><span>${formatPrice(order.subtotalUsd, order.subtotalKes, order.subtotalEur, currency)}</span></div>
-              <div class="totals-row"><span>Delivery</span><span>To be confirmed</span></div>
-              <div class="totals-row grand"><span>Final total</span><span>To be confirmed</span></div>
-            </div>
+            <div class="quote-note"><strong>Price on request.</strong> Our team will confirm prices, availability and delivery before your order is accepted. This is a request only, not an accepted order.</div>
           </div>
         </body>
       </html>
@@ -384,7 +336,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <div className="pt-0.5">
                 <p className="text-[9px] uppercase tracking-[0.22em] text-[#7A746E]">First Cup Coffee & Tea</p>
                 <h2 className="font-serif-display text-[2rem] sm:text-[2.4rem] font-semibold tracking-[-0.05em] text-[#201B1A] leading-[0.92] mt-1.5">
-                  {step === 'confirmation' ? 'Order Ready' : 'Checkout'}
+                  {step === 'confirmation' ? 'Request Ready' : 'Review your request'}
                 </h2>
               </div>
             </div>
@@ -400,7 +352,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           </div>
 
           <div className="mt-4 flex items-center justify-between rounded-[1rem] border border-[#E9E1D8] bg-white/80 px-3.5 py-2.5 text-[10px] uppercase tracking-[0.18em] text-[#7A746E] shadow-[0_8px_18px_rgba(42,37,34,0.04)]">
-            <span>{step === 'details' ? 'Contact & delivery' : 'WhatsApp handoff'}</span>
+            <span>{step === 'details' ? 'Request details' : 'WhatsApp handoff'}</span>
             <span className="font-bold text-[#A85A12]">{step === 'confirmation' ? placedOrder?.id || '—' : 'Details'}</span>
           </div>
         </div>
@@ -416,11 +368,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <div className="rounded-[1.5rem] border border-[#E9E1D8] bg-[#FBF7F3] p-4 sm:p-5 shadow-[0_12px_25px_rgba(42,37,34,0.03)]">
                 <div className="mb-3 flex items-center justify-between gap-3 border-b border-[#EAE0D7] pb-3">
                   <span className="text-[10px] uppercase tracking-[0.18em] text-[#7A746E]">
-                    Items ({cartItems.reduce((acc, i) => acc + i.quantity, 0)})
+                    Packs ({cartItems.reduce((acc, i) => acc + i.quantity, 0)})
                   </span>
-                  <span className="text-base font-semibold text-[#B45E10]">
-                    {formatPrice(subtotalUsd, subtotalKes, subtotalEur, currency)}
-                  </span>
+                  <span className="text-xs font-bold uppercase tracking-wide text-[#A85A12]">Price on request</span>
                 </div>
                 <div className="max-h-40 space-y-2.5 overflow-y-auto pr-1">
                   {cartItems.map((item) => (
@@ -429,12 +379,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                         <img src={item.image} alt={item.name} className="h-10 w-10 rounded-xl object-cover ring-1 ring-[#E5E1DA]" />
                         <div className="min-w-0">
                           <span className="block truncate text-sm font-semibold text-[#2A2522]">{item.name}</span>
-                          <span className="block text-[10px] text-[#7A746E]">Qty: {item.quantity} • {item.format}</span>
+                          <span className="block text-[10px] text-[#7A746E]">Quantity: {item.quantity} {item.quantity === 1 ? 'pack' : 'packs'} • {item.format}</span>
                         </div>
                       </div>
-                      <span className="shrink-0 text-sm font-semibold text-[#2A2522]">
-                        {formatPrice(item.priceUsd * item.quantity, item.priceKes * item.quantity, item.priceEur * item.quantity, currency)}
-                      </span>
                     </div>
                   ))}
                 </div>
@@ -594,17 +541,17 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           {/* STEP 3: ORDER READY */}
           {step === 'confirmation' && placedOrder && (
             <div className="space-y-5">
-              <section aria-label="Order ready" className="relative isolate overflow-hidden rounded-[1.75rem] bg-[#241713] p-5 text-white sm:p-7">
+              <section aria-label="Request ready" className="relative isolate overflow-hidden rounded-[1.75rem] bg-[#241713] p-5 text-white sm:p-7">
                 <div aria-hidden="true" className="absolute -right-10 -top-16 h-48 w-48 rounded-full bg-[#D97706]/20 blur-2xl" />
                 <div className="relative">
                   <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#F0C47F]">
-                    <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> Your order is prepared
+                    <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> Your request is ready
                   </p>
                   <h3 className="mt-3 max-w-xl font-serif-display text-3xl font-semibold leading-tight tracking-[-0.03em] sm:text-4xl">
                     One last step in WhatsApp.
                   </h3>
                   <p className="mt-2 max-w-xl text-sm leading-6 text-[#E7D8C7]">
-                    Review your prefilled order message and tap <strong>Send</strong>. It is addressed to First Cup; nothing is sent until you send it in WhatsApp.
+                    Review your prefilled request and tap <strong>Send</strong> in WhatsApp. Nothing is sent until you send it. Our team will confirm prices, availability and delivery before your order is accepted.
                   </p>
                   <div className="mt-5 flex flex-wrap gap-2">
                     <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white">
@@ -639,7 +586,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 >
                   <span className="flex items-center gap-2.5 font-bold text-sm">
                     <MessageSquare className="h-5 w-5" aria-hidden="true" />
-                    {whatsappOpened ? 'Reopen WhatsApp' : 'Open WhatsApp'}
+                    {whatsappOpened ? 'Reopen WhatsApp request' : 'Open WhatsApp request'}
                   </span>
                   <ExternalLink className="h-4 w-4 shrink-0" aria-hidden="true" />
                 </button>
@@ -664,18 +611,18 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
 
                 {showTextPreview && (
-                  <div role="region" aria-label="WhatsApp order message preview" className="mt-3 max-h-48 overflow-y-auto rounded-xl bg-[#2D241E] p-4 font-mono text-[11px] leading-5 text-[#F3E9DD] whitespace-pre-wrap select-all">
+                  <div role="region" aria-label="WhatsApp quote request preview" className="mt-3 max-h-48 overflow-y-auto rounded-xl bg-[#2D241E] p-4 font-mono text-[11px] leading-5 text-[#F3E9DD] whitespace-pre-wrap select-all">
                     {generateWhatsAppOrderMessage(placedOrder)}
                   </div>
                 )}
               </section>
 
               <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-                <section aria-label="Order summary" className="rounded-[1.5rem] border border-[#E5E1DA] bg-[#FBF8F4] p-4 sm:p-5">
+                <section aria-label="Request summary" className="rounded-[1.5rem] border border-[#E5E1DA] bg-[#FBF8F4] p-4 sm:p-5">
                   <div className="flex items-center justify-between gap-3 border-b border-[#E9E1D8] pb-3">
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">Order summary</p>
-                      <p className="mt-1 text-sm font-semibold text-[#2A2522]">{placedOrder.items.reduce((acc, item) => acc + item.quantity, 0)} items</p>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">Request summary</p>
+                      <p className="mt-1 text-sm font-semibold text-[#2A2522]">{placedOrder.items.reduce((acc, item) => acc + item.quantity, 0)} packs</p>
                     </div>
                     <span className="rounded-full bg-white px-3 py-1.5 text-[10px] font-bold text-[#A85A12] ring-1 ring-[#E9E1D8]">{placedOrder.id}</span>
                   </div>
@@ -683,22 +630,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     {placedOrder.items.map((item) => (
                       <div key={item.id} className="flex items-start justify-between gap-3 text-sm">
                         <div className="min-w-0">
-                          <p className="font-semibold text-[#2A2522]">{item.quantity} × {item.name}</p>
+                          <p className="font-semibold text-[#2A2522]">{item.quantity} {item.quantity === 1 ? 'pack' : 'packs'} × {item.name}</p>
                           <p className="mt-0.5 truncate text-xs text-[#7A746E]">{item.format}</p>
                         </div>
-                        <span className="shrink-0 font-semibold text-[#2A2522]">
-                          {formatPrice(item.priceUsd * item.quantity, item.priceKes * item.quantity, item.priceEur * item.quantity, currency)}
-                        </span>
                       </div>
                     ))}
                   </div>
-                  <div className="flex items-center justify-between border-t border-[#E9E1D8] pt-3">
-                    <span className="text-xs font-semibold text-[#514842]">Merchandise subtotal</span>
-                    <span className="font-serif-display text-xl font-bold text-[#A85A12]">
-                      {formatPrice(placedOrder.subtotalUsd, placedOrder.subtotalKes, placedOrder.subtotalEur, currency)}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-[11px] leading-5 text-[#7A746E]">Delivery charges and final total will be confirmed by the team in WhatsApp.</p>
+                  <p className="border-t border-[#E9E1D8] pt-3 text-[11px] leading-5 text-[#7A746E]">Price on request. Our team will confirm prices, availability and delivery before your order is accepted.</p>
                 </section>
 
                 <details className="group rounded-[1.5rem] border border-[#E5E1DA] bg-white p-4 sm:p-5">
@@ -728,21 +666,22 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#2F6B3C] ring-1 ring-[#D5E8D8]"><CheckCircle2 className="h-4 w-4" aria-hidden="true" /></span>
                   <div>
                     <p className="text-sm font-semibold text-[#315B3A]">Sent the message?</p>
-                    <p className="mt-0.5 text-xs leading-5 text-[#52715A]">Confirm here to save the order and clear your cart.</p>
+                    <p className="mt-0.5 text-xs leading-5 text-[#52715A]">After you send your request in WhatsApp, confirm here to clear your cart.</p>
                   </div>
                 </div>
                 <button
                   type="button"
-                  onClick={() => handleFinishOrder(placedOrder)}
-                  className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#2F6B3C] px-4 py-3 text-xs font-bold text-white transition hover:bg-[#245631] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#245631]"
+                  onClick={handleFinishRequest}
+                  disabled={!whatsappOpened}
+                  className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#2F6B3C] px-4 py-3 text-xs font-bold text-white transition hover:bg-[#245631] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#245631]"
                 >
-                  <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> I sent it — finish checkout
+                  <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> I sent the request
                 </button>
               </section>
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <button type="button" onClick={() => handlePrintReceipt(placedOrder)} className="flex items-center justify-center gap-2 rounded-full border border-[#E5E1DA] bg-white px-4 py-3 text-xs font-bold text-[#2A2522] transition hover:bg-[#F8F3EE]">
-                  <FileText className="h-4 w-4 text-[#A85A12]" aria-hidden="true" /> Print order summary
+                  <FileText className="h-4 w-4 text-[#A85A12]" aria-hidden="true" /> Print request summary
                 </button>
                 <button type="button" onClick={onClose} className="flex items-center justify-center gap-2 rounded-full bg-[#D97706] px-4 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-sm transition hover:bg-[#b86505]">
                   Return to catalog <Sparkles className="h-4 w-4" aria-hidden="true" />

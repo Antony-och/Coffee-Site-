@@ -10,8 +10,7 @@ import {
   Trash2,
   X,
 } from 'lucide-react';
-import { CartItem, Currency, PageView } from '../types';
-import { formatPrice } from '../utils/currency';
+import { CartItem, PageView } from '../types';
 
 interface SampleCartDrawerProps {
   isOpen: boolean;
@@ -19,7 +18,6 @@ interface SampleCartDrawerProps {
   cartItems: CartItem[];
   onUpdateQuantity: (id: string, delta: number) => void;
   onRemoveItem: (id: string) => void;
-  currency: Currency;
   setCurrentPage: (page: PageView) => void;
   onOpenCheckout: () => void;
 }
@@ -30,7 +28,6 @@ export const SampleCartDrawer: React.FC<SampleCartDrawerProps> = ({
   cartItems,
   onUpdateQuantity,
   onRemoveItem,
-  currency,
   setCurrentPage,
   onOpenCheckout,
 }) => {
@@ -54,9 +51,6 @@ export const SampleCartDrawer: React.FC<SampleCartDrawerProps> = ({
   if (!isOpen) return null;
 
   const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotalUsd = cartItems.reduce((sum, item) => sum + item.priceUsd * item.quantity, 0);
-  const subtotalKes = cartItems.reduce((sum, item) => sum + item.priceKes * item.quantity, 0);
-  const subtotalEur = cartItems.reduce((sum, item) => sum + item.priceEur * item.quantity, 0);
 
   const handleProceedToInquiry = () => {
     onClose();
@@ -92,12 +86,12 @@ export const SampleCartDrawer: React.FC<SampleCartDrawerProps> = ({
                 Order summary
               </div>
               <div className="flex items-center gap-3">
-                <h2 id="cart-heading" className="font-serif-display text-2xl font-bold sm:text-3xl">Your Cart</h2>
+                <h2 id="cart-heading" className="font-serif-display text-2xl font-bold sm:text-3xl">Your Request</h2>
                 <span className="rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[0.65rem] font-semibold text-[#F6EDE2]">
-                  {itemCount} {itemCount === 1 ? 'item' : 'items'}
+                  {itemCount} {itemCount === 1 ? 'pack' : 'packs'}
                 </span>
               </div>
-              <p className="mt-2 text-xs text-[#E6D9CC]/75">Review your selections before checkout.</p>
+              <p className="mt-2 text-xs text-[#E6D9CC]/75">Review your selections before requesting a quote.</p>
             </div>
             <button
               type="button"
@@ -140,8 +134,8 @@ export const SampleCartDrawer: React.FC<SampleCartDrawerProps> = ({
           <>
             <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 sm:py-6">
               <div className="mb-4 flex items-center justify-between gap-3">
-                <h3 className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-[#86796D]">Selected items</h3>
-                <span className="text-xs text-[#86796D]">{itemCount} total</span>
+                <h3 className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-[#86796D]">Selected pack sizes</h3>
+                <span className="text-xs text-[#86796D]">{itemCount} {itemCount === 1 ? 'pack' : 'packs'} total</span>
               </div>
               <div className="space-y-3">
                 {cartItems.map((item) => (
@@ -174,7 +168,7 @@ export const SampleCartDrawer: React.FC<SampleCartDrawerProps> = ({
                         </div>
 
                         <div className="mt-3 flex items-end justify-between gap-3">
-                          <div className="inline-flex items-center overflow-hidden rounded-lg border border-[#E5DDD3] bg-[#FAF7F2]" role="group" aria-label={`Quantity for ${item.name}`}>
+                          <div className="inline-flex items-center overflow-hidden rounded-lg border border-[#E5DDD3] bg-[#FAF7F2]" role="group" aria-label={`Pack quantity for ${item.name}`}>
                             <button
                               type="button"
                               onClick={() => onUpdateQuantity(item.id, -1)}
@@ -193,9 +187,7 @@ export const SampleCartDrawer: React.FC<SampleCartDrawerProps> = ({
                               <Plus className="h-3 w-3" aria-hidden="true" />
                             </button>
                           </div>
-                          <span className="text-right text-sm font-bold tabular-nums text-[#2A211B]">
-                            {formatPrice(item.priceUsd * item.quantity, item.priceKes * item.quantity, item.priceEur * item.quantity, currency)}
-                          </span>
+                          <span className="text-right text-[0.65rem] font-semibold text-[#766D64]">Price on request</span>
                         </div>
                       </div>
                     </div>
@@ -206,17 +198,9 @@ export const SampleCartDrawer: React.FC<SampleCartDrawerProps> = ({
 
             <footer className="shrink-0 border-t border-[#E8E0D6] bg-white px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 sm:px-6 sm:pt-5">
               <div className="rounded-2xl bg-[#241713] px-4 py-4 text-white sm:px-5">
-                <div className="flex items-end justify-between gap-3">
-                  <div>
-                    <p className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-[#E6D9CC]/70">Subtotal</p>
-                    <p className="mt-1 text-[0.65rem] text-[#E6D9CC]/60">{itemCount} {itemCount === 1 ? 'item' : 'items'}</p>
-                  </div>
-                  <span className="font-serif-display text-2xl font-bold tabular-nums text-[#F0B566]">
-                    {formatPrice(subtotalUsd, subtotalKes, subtotalEur, currency)}
-                  </span>
-                </div>
-                <p className="mt-3 border-t border-white/10 pt-3 text-[0.68rem] leading-5 text-[#E6D9CC]/75">
-                  Delivery costs and payment details are confirmed with the team in WhatsApp.
+                <p className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-[#F0B566]">Price on request</p>
+                <p className="mt-2 text-[0.72rem] leading-5 text-[#E6D9CC]/85">
+                  Our team will confirm prices, availability and delivery before your order is accepted.
                 </p>
               </div>
 
@@ -226,11 +210,11 @@ export const SampleCartDrawer: React.FC<SampleCartDrawerProps> = ({
                 className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-xs font-bold uppercase tracking-[0.11em] text-[#132318] shadow-[0_8px_20px_rgba(37,211,102,0.2)] transition hover:bg-[#20BD5A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#168B48]"
               >
                 <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                <span>Continue to WhatsApp checkout</span>
+                <span>Review your request</span>
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </button>
               <p className="mt-2 text-center text-[0.65rem] leading-5 text-[#81776D]">
-                Add delivery details next, then review and send your order in WhatsApp.
+                Add contact and delivery details, then send your request to the team on WhatsApp.
               </p>
               <button
                 type="button"

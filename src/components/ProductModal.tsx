@@ -12,27 +12,23 @@ import {
   Thermometer,
   X,
 } from 'lucide-react';
-import { CartItem, CoffeeProduct, Currency, TeaProduct } from '../types';
-import { formatPrice } from '../utils/currency';
+import { CartItem, CoffeeProduct, TeaProduct } from '../types';
 
 interface ProductModalProps {
   product: CoffeeProduct | TeaProduct | null;
   onClose: () => void;
-  currency: Currency;
   onAddToCart: (item: CartItem) => void;
 }
 
 interface ProductModalContentProps {
   product: CoffeeProduct | TeaProduct;
   onClose: () => void;
-  currency: Currency;
   onAddToCart: (item: CartItem) => void;
 }
 
 const ProductModalContent: React.FC<ProductModalContentProps> = ({
   product,
   onClose,
-  currency,
   onAddToCart,
 }) => {
   const isCoffee = 'roastLevel' in product;
@@ -79,9 +75,6 @@ const ProductModalContent: React.FC<ProductModalContentProps> = ({
       productId: product.id,
       name: product.name,
       format: selectedFormat,
-      priceUsd: product.priceUsd,
-      priceKes: product.priceKes,
-      priceEur: product.priceEur,
       quantity,
       image: product.image,
     });
@@ -222,7 +215,7 @@ const ProductModalContent: React.FC<ProductModalContentProps> = ({
             </div>
 
             <fieldset>
-              <legend className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.15em] text-[#8A5A2B]">Choose a format</legend>
+              <legend className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.15em] text-[#8A5A2B]">Choose pack size</legend>
               <div className="flex flex-wrap gap-2">
                 {product.packagingFormats.map((format) => (
                   <button
@@ -246,13 +239,13 @@ const ProductModalContent: React.FC<ProductModalContentProps> = ({
           <div className="shrink-0 border-t border-[#E9E1D7] bg-white/95 p-4 backdrop-blur-sm sm:px-7 sm:py-5 lg:px-8">
             <div className="flex items-center justify-between gap-3 sm:gap-5">
               <div className="min-w-0">
-                <span className="block text-[0.6rem] font-bold uppercase tracking-[0.15em] text-[#81776D]">Order total</span>
-                <span className="mt-0.5 block truncate font-serif-display text-xl font-bold text-[#A85F1A] sm:text-2xl">
-                  {formatPrice(product.priceUsd * quantity, product.priceKes * quantity, product.priceEur * quantity, currency)}
-                </span>
+                <span className="block text-[0.6rem] font-bold uppercase tracking-[0.15em] text-[#81776D]">Price on request</span>
+                <span className="mt-0.5 block truncate text-[11px] font-medium text-[#756B62]">Team confirms before acceptance</span>
               </div>
 
-              <div role="group" aria-label="Quantity selector" className="flex shrink-0 items-center overflow-hidden rounded-xl border border-[#DED4C8] bg-[#FAF7F2]">
+              <div className="flex shrink-0 flex-col items-center gap-1">
+                <span className="text-[0.55rem] font-bold uppercase tracking-[0.12em] text-[#81776D]">Packs</span>
+                <div role="group" aria-label="Number of packs" className="flex items-center overflow-hidden rounded-xl border border-[#DED4C8] bg-[#FAF7F2]">
                 <button
                   type="button"
                   onClick={() => setQuantity((current) => Math.max(1, current - 1))}
@@ -270,6 +263,7 @@ const ProductModalContent: React.FC<ProductModalContentProps> = ({
                 >
                   <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
+                </div>
               </div>
             </div>
 
@@ -282,7 +276,7 @@ const ProductModalContent: React.FC<ProductModalContentProps> = ({
               }`}
             >
               {isAdded ? <Check className="h-4 w-4" aria-hidden="true" /> : <Plus className="h-4 w-4" aria-hidden="true" />}
-              {isAdded ? 'Added to order' : 'Add to order'}
+              {isAdded ? 'Added to request' : 'Add to request'}
             </button>
           </div>
         </div>
@@ -291,7 +285,7 @@ const ProductModalContent: React.FC<ProductModalContentProps> = ({
   );
 };
 
-export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, currency, onAddToCart }) => {
+export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCart }) => {
   if (!product) return null;
 
   return (
@@ -299,7 +293,6 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, cu
       key={product.id}
       product={product}
       onClose={onClose}
-      currency={currency}
       onAddToCart={onAddToCart}
     />
   );

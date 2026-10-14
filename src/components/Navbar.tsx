@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Currency, PageView } from '../types';
-import { Coffee, Leaf, Compass, Info, Mail, Calculator, ShoppingBag, Menu, X, Search, Globe, ChevronDown } from 'lucide-react';
+import { PageView } from '../types';
+import { Coffee, Leaf, Compass, Info, Mail, Calculator, ShoppingBag, Menu, X, Search } from 'lucide-react';
 
 interface NavbarProps {
   currentPage: PageView;
   setCurrentPage: (page: PageView) => void;
-  currency: Currency;
-  setCurrency: (currency: Currency) => void;
   cartCount: number;
   setIsCartOpen: (open: boolean) => void;
   searchQuery: string;
@@ -16,8 +14,6 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   currentPage,
   setCurrentPage,
-  currency,
-  setCurrency,
   cartCount,
   setIsCartOpen,
   searchQuery,
@@ -25,14 +21,12 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setIsMobileMenuOpen(false);
         setIsSearchOpen(false);
-        setIsCurrencyDropdownOpen(false);
       }
     };
     document.addEventListener('keydown', handleEscape);
@@ -50,7 +44,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   const handleNavClick = (page: PageView) => {
     setCurrentPage(page);
     setIsMobileMenuOpen(false);
-    setIsCurrencyDropdownOpen(false);
     const element = document.getElementById(page);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -107,7 +100,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => {
                 setIsSearchOpen(!isSearchOpen);
                 setIsMobileMenuOpen(false);
-                setIsCurrencyDropdownOpen(false);
               }}
               aria-label={isSearchOpen ? 'Close product search' : 'Open product search'}
               aria-expanded={isSearchOpen}
@@ -116,43 +108,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Search className="w-5 h-5" />
             </button>
-
-            {/* Currency Dropdown Selector */}
-            <div className="relative hidden sm:block">
-              <button
-                onClick={() => setIsCurrencyDropdownOpen(!isCurrencyDropdownOpen)}
-                aria-label={`Currency: ${currency}`}
-                aria-expanded={isCurrencyDropdownOpen}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-[#E5E1DA]/30 bg-[#2D241E] text-xs text-[#FAF7F2] hover:border-[#D4C3A3] transition-colors"
-              >
-                <Globe className="w-3.5 h-3.5 text-[#D97706]" />
-                <span className="font-bold">{currency}</span>
-                <ChevronDown className="w-3 h-3 text-[#D4C3A3]" />
-              </button>
-
-              {isCurrencyDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-28 bg-[#2D241E] border border-[#E5E1DA]/30 rounded-lg shadow-xl py-1 z-50 text-xs">
-                  <button
-                    onClick={() => { setCurrency('USD'); setIsCurrencyDropdownOpen(false); }}
-                    className={`w-full text-left px-3 py-1.5 hover:bg-[#5D6D3C] hover:text-white transition-colors ${currency === 'USD' ? 'text-[#D97706] font-bold' : 'text-[#D4C3A3]'}`}
-                  >
-                    USD ($)
-                  </button>
-                  <button
-                    onClick={() => { setCurrency('KES'); setIsCurrencyDropdownOpen(false); }}
-                    className={`w-full text-left px-3 py-1.5 hover:bg-[#5D6D3C] hover:text-white transition-colors ${currency === 'KES' ? 'text-[#D97706] font-bold' : 'text-[#D4C3A3]'}`}
-                  >
-                    KES (KSh)
-                  </button>
-                  <button
-                    onClick={() => { setCurrency('EUR'); setIsCurrencyDropdownOpen(false); }}
-                    className={`w-full text-left px-3 py-1.5 hover:bg-[#5D6D3C] hover:text-white transition-colors ${currency === 'EUR' ? 'text-[#D97706] font-bold' : 'text-[#D4C3A3]'}`}
-                  >
-                    EUR (€)
-                  </button>
-                </div>
-              )}
-            </div>
 
             {/* Order Cart Drawer Button */}
             <button
@@ -174,7 +129,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={() => {
                 setIsMobileMenuOpen((open) => !open);
-                setIsCurrencyDropdownOpen(false);
               }}
               className="rounded-lg p-1.5 text-[#D4C3A3] hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D97706] lg:hidden sm:p-2"
               aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
@@ -235,29 +189,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               {item.label}
             </button>
           ))}
-          <div className="pt-3 border-t border-[#E5E1DA]/20 flex justify-between items-center text-xs text-[#D4C3A3]">
-            <span>Currency:</span>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setCurrency('USD')}
-                className={`px-2 py-1 rounded ${currency === 'USD' ? 'bg-[#D97706] text-white font-bold' : 'bg-white/10'}`}
-              >
-                USD ($)
-              </button>
-              <button
-                onClick={() => setCurrency('KES')}
-                className={`px-2 py-1 rounded ${currency === 'KES' ? 'bg-[#D97706] text-white font-bold' : 'bg-white/10'}`}
-              >
-                KES (KSh)
-              </button>
-              <button
-                onClick={() => setCurrency('EUR')}
-                className={`px-2 py-1 rounded ${currency === 'EUR' ? 'bg-[#D97706] text-white font-bold' : 'bg-white/10'}`}
-              >
-                EUR (€)
-              </button>
-            </div>
-          </div>
         </nav>
       )}
     </header>
