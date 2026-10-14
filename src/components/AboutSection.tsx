@@ -1,8 +1,23 @@
 import React from 'react';
 import { ArrowRight, Coffee, CupSoda, Droplets, Flame, Hand, Leaf, Mountain, RefreshCw, Sparkles, Sun, Wind } from 'lucide-react';
+import { motion, useReducedMotion } from 'motion/react';
 import { PageView } from '../types';
 
 const coffeeCup = new URL('../assets/images/kenyan_coffee_beans_1786601780276.jpg', import.meta.url).href;
+const processTokens = {
+  '--process-canvas': '#F7F4EE',
+  '--process-surface': '#FFFEFC',
+  '--process-ink': '#262A25',
+  '--process-muted': '#6B746C',
+  '--process-border': '#E3DED4',
+  '--process-coffee': '#B9825B',
+  '--process-coffee-ink': '#835A3B',
+  '--process-coffee-soft': '#F2E8DE',
+  '--process-coffee-line': '#D9C8B7',
+  '--process-tea': '#45634F',
+  '--process-tea-soft': '#E8EFE8',
+  '--process-tea-line': '#C7D4C8',
+} as React.CSSProperties;
 
 interface AboutSectionProps {
   setCurrentPage: (page: PageView) => void;
@@ -32,8 +47,8 @@ const journeys = [
     icon: Coffee,
     intro: 'From ripe cherry to a carefully roasted cup.',
     steps: coffeeSteps,
-    iconStyle: 'bg-[#F5EBDD] text-[#92551F]',
-    numberStyle: 'bg-[#F5EBDD] text-[#92551F]',
+    iconStyle: 'bg-[var(--process-coffee-soft)] text-[var(--process-coffee-ink)]',
+    numberStyle: 'border border-[var(--process-coffee-line)] bg-[var(--process-surface)] text-[var(--process-coffee-ink)]',
   },
   {
     id: 'tea-process',
@@ -42,12 +57,15 @@ const journeys = [
     icon: Leaf,
     intro: 'From fresh leaf to a cup shaped by its tea style.',
     steps: teaSteps,
-    iconStyle: 'bg-[#E9EFE2] text-[#536C3B]',
-    numberStyle: 'bg-[#E9EFE2] text-[#536C3B]',
+    iconStyle: 'bg-[var(--process-tea-soft)] text-[var(--process-tea)]',
+    numberStyle: 'border border-[var(--process-tea-line)] bg-[var(--process-surface)] text-[var(--process-tea)]',
   },
 ];
 
-export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) => (
+export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) => {
+  const shouldReduceMotion = useReducedMotion();
+
+  return (
   <section aria-labelledby="about-title" className="overflow-hidden bg-[#F6F1EA] py-16 text-[#2A2522] sm:py-20 lg:py-24">
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div className="grid items-center gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
@@ -106,25 +124,26 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) =>
         </div>
       </div>
 
-      <section aria-labelledby="journey-title" className="relative mt-14 overflow-hidden rounded-[2rem] border border-[#3A2B22] bg-[#241713] px-5 py-8 text-[#F7F1E8] shadow-[0_24px_60px_rgba(42,37,34,0.14)] sm:mt-16 sm:px-8 sm:py-10 lg:px-10">
-        <div aria-hidden="true" className="pointer-events-none absolute -right-20 -top-28 h-64 w-64 rounded-full bg-[#D99A54]/10 blur-3xl" />
-        <div aria-hidden="true" className="pointer-events-none absolute -bottom-28 -left-20 h-64 w-64 rounded-full bg-[#70834E]/10 blur-3xl" />
-
-        <div className="relative flex flex-col gap-3 border-b border-white/10 pb-6 sm:pb-7 md:flex-row md:items-end md:justify-between">
+      <section
+        aria-labelledby="journey-title"
+        style={processTokens}
+        className="relative mt-14 overflow-hidden rounded-[1.75rem] border border-[var(--process-border)] bg-[var(--process-canvas)] px-4 py-7 text-[var(--process-ink)] shadow-[0_18px_45px_rgba(38,42,37,0.05)] sm:mt-16 sm:px-8 sm:py-9 lg:px-10 lg:py-10"
+      >
+        <div className="relative flex flex-col gap-4 border-b border-[var(--process-border)] pb-6 sm:pb-7 md:flex-row md:items-end md:justify-between">
           <div>
-            <div className="mb-2 inline-flex items-center gap-2 rounded-xl border border-[#D6A36A]/20 bg-[#33251D]/80 px-2.5 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-[#D6A36A]/15 text-[#E4B574]">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-xl border border-[var(--process-border)] bg-[var(--process-surface)] px-2.5 py-1.5 shadow-[0_2px_8px_rgba(38,42,37,0.04)]">
+              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-[var(--process-coffee-soft)] text-[var(--process-coffee-ink)]">
                 <ArrowRight className="h-3 w-3" aria-hidden="true" />
               </span>
-              <span className="text-[9px] font-bold uppercase tracking-[0.17em] text-[#E4B574]">The process</span>
-              <span aria-hidden="true" className="h-1 w-1 rounded-full bg-[#D99A54]" />
-              <span className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#E1D2C5]">Step by step</span>
+              <span className="font-sans text-[9px] font-bold uppercase leading-[1.2] tracking-[0.17em] text-[var(--process-coffee-ink)]">The process</span>
+              <span aria-hidden="true" className="h-1 w-1 rounded-full bg-[var(--process-coffee)]" />
+              <span className="font-sans text-[9px] font-medium uppercase leading-[1.2] tracking-[0.1em] text-[var(--process-muted)]">Step by step</span>
             </div>
-            <h3 id="journey-title" className="font-serif-display text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
-              From harvest to cup
+            <h3 id="journey-title" className="font-serif-display text-[2rem] font-medium uppercase leading-[1.02] tracking-[-0.045em] text-[var(--process-ink)] sm:text-[2.5rem] lg:text-[3rem]">
+              FROM HARVEST TO CUP
             </h3>
           </div>
-          <p className="max-w-xl text-sm leading-6 text-[#D8CBBF]">
+          <p className="max-w-xl font-sans text-[13px] leading-[1.6] text-[var(--process-muted)] sm:text-sm sm:leading-6">
             Two ingredients, two journeys. Follow the key steps that shape coffee and tea from the highlands to your cup.
           </p>
         </div>
@@ -134,43 +153,57 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) =>
             const isCoffee = id === 'coffee-process';
 
             return (
-				<article
-				  key={id}
-				  aria-labelledby={`${id}-title`}
-				  className={`rounded-[1.5rem] border p-4 sm:p-5 ${isCoffee ? 'border-white/10 border-l-2 border-l-[#D9A05F] bg-white/[0.035]' : 'border-[#527046]/55 border-l-2 border-l-[#90B77B] bg-[#20351E]'}`}
-				>
+              <article
+                key={id}
+                aria-labelledby={`${id}-title`}
+                className={`rounded-[1.25rem] border border-[var(--process-border)] border-l-2 bg-[var(--process-surface)] p-4 shadow-[0_8px_28px_rgba(38,42,37,0.035)] sm:p-5 lg:p-6 ${isCoffee ? 'border-l-[var(--process-coffee)]' : 'border-l-[var(--process-tea)]'}`}
+              >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-5">
                   <div className="flex items-center gap-3">
                     <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${iconStyle}`}>
-                      <Icon className="h-5 w-5" aria-hidden="true" />
+                      <Icon className="h-5 w-5" strokeWidth={1.6} aria-hidden="true" />
                     </span>
                     <div>
-                      <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#C7B8A9]">{path}</p>
-                      <h4 id={`${id}-title`} className="font-serif-display text-xl font-bold text-white">{name}</h4>
+                      <p className={`font-sans text-[9px] font-bold uppercase leading-[1.2] tracking-[0.18em] ${isCoffee ? 'text-[var(--process-coffee-ink)]' : 'text-[var(--process-tea)]'}`}>{path}</p>
+                      <h4 id={`${id}-title`} className="mt-0.5 font-serif-display text-[1.45rem] font-medium leading-[1.1] tracking-[-0.02em] text-[var(--process-ink)] sm:text-2xl">{name}</h4>
                     </div>
                   </div>
-                  <p className="text-xs leading-5 text-[#CFC1B4] sm:max-w-xs sm:text-right">{intro}</p>
+                  <p className="font-sans text-xs font-normal leading-5 text-[var(--process-muted)] sm:max-w-xs sm:text-right">{intro}</p>
                 </div>
 
                 <div className="relative mt-5">
-				  <div aria-hidden="true" className={`pointer-events-none absolute left-[8%] right-[8%] top-7 hidden h-px xl:block ${isCoffee ? 'bg-white/15' : 'bg-[#8AAE77]/35'}`} />
-				  <ol className="relative grid gap-2.5 sm:grid-cols-2 xl:grid-cols-5 xl:gap-3">
+                  <ol className="grid grid-cols-1 gap-y-3 sm:grid-cols-2 sm:gap-x-3 xl:grid-cols-5 xl:gap-3">
                     {steps.map(({ title, copy, icon: StepIcon }, index) => (
-                      <li key={title} className={`rounded-xl border p-3.5 sm:min-h-[9rem] ${isCoffee ? 'border-white/[0.08] bg-[#2A1E18]' : 'border-[#53764A]/45 bg-[#2B4527]'}`}>
-                        <div className="flex items-center justify-between gap-3">
-                          <div className="flex items-center gap-2.5">
-                            <span aria-hidden="true" className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${numberStyle}`}>
-                              {String(index + 1).padStart(2, '0')}
+                      <motion.li
+                        key={title}
+                        initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+                        whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.15 }}
+                        transition={{ duration: 0.32, delay: Math.min(index * 0.04, 0.16), ease: 'easeOut' }}
+                        className="group relative"
+                      >
+                        {index < steps.length - 1 && (
+                          <>
+                            <span aria-hidden="true" className={`pointer-events-none absolute -left-2 top-5 bottom-[-0.75rem] z-0 w-px xl:hidden ${isCoffee ? 'bg-[#D9C8B7]' : 'bg-[#C7D4C8]'}`} />
+                            <span aria-hidden="true" className={`pointer-events-none absolute left-full top-7 z-0 hidden h-px w-3 xl:block ${isCoffee ? 'bg-[#D9C8B7]' : 'bg-[#C7D4C8]'}`} />
+                          </>
+                        )}
+                        <div className={`relative z-10 h-full min-h-[9.5rem] rounded-[1rem] border bg-[var(--process-surface)] p-3.5 shadow-[0_2px_10px_rgba(38,42,37,0.025)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(38,42,37,0.08)] sm:p-4 ${isCoffee ? 'border-[var(--process-border)] hover:border-[#B9825B]/60' : 'border-[var(--process-border)] hover:border-[#45634F]/60'}`}>
+                          <div className="flex items-center justify-between gap-2.5">
+                            <div className="flex items-center gap-2">
+                              <span aria-hidden="true" className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[9px] font-semibold ${numberStyle}`}>
+                                {String(index + 1).padStart(2, '0')}
+                              </span>
+                              <span className="font-sans text-[9px] font-semibold uppercase leading-[1.2] tracking-[0.14em] text-[var(--process-muted)]">Step {index + 1}</span>
+                            </div>
+                            <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105 ${isCoffee ? 'bg-[var(--process-coffee-soft)] text-[var(--process-coffee-ink)]' : 'bg-[var(--process-tea-soft)] text-[var(--process-tea)]'}`}>
+                              <StepIcon className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
                             </span>
-                            <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-[#BBAA99]">Step {index + 1}</span>
                           </div>
-                          <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${isCoffee ? 'bg-[#D9A05F]/15 text-[#E4B574]' : 'bg-[#90B77B]/20 text-[#B6D39A]'}`}>
-                            <StepIcon className="h-4 w-4" aria-hidden="true" />
-                          </span>
+                          <h5 className="mt-3 font-sans text-[13px] font-semibold leading-[1.35] tracking-[-0.01em] text-[var(--process-ink)]">{title}</h5>
+                          <p className="mt-1.5 font-sans text-xs font-normal leading-[1.6] text-[var(--process-muted)]">{copy}</p>
                         </div>
-                        <h5 className="mt-3 text-sm font-semibold leading-5 text-white">{title}</h5>
-                        <p className="mt-1.5 text-[11px] leading-[1.6] text-[#D2C5B9]">{copy}</p>
-                      </li>
+                      </motion.li>
                     ))}
                   </ol>
                 </div>
@@ -181,4 +214,5 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) =>
       </section>
     </div>
   </section>
-);
+  );
+};
