@@ -1,25 +1,19 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { COFFEE_PRODUCTS } from '../data/coffeeData';
-import { CoffeeProduct, Currency, CartItem } from '../types';
-import { formatPrice } from '../utils/currency';
-import { Coffee, Plus, Check } from 'lucide-react';
+import { CoffeeProduct } from '../types';
+import { Coffee, ArrowRight } from 'lucide-react';
 
 interface CoffeeCatalogProps {
-  currency: Currency;
   onSelectProduct: (product: CoffeeProduct) => void;
-  onAddToCart: (item: CartItem) => void;
   externalSearch?: string;
 }
 
 export const CoffeeCatalog: React.FC<CoffeeCatalogProps> = ({
-  currency,
   onSelectProduct,
-  onAddToCart,
   externalSearch = '',
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>(externalSearch);
-  const [addedItems, setAddedItems] = useState<Record<string, boolean>>({});
 
   useEffect(() => setSearchQuery(externalSearch), [externalSearch]);
 
@@ -36,27 +30,6 @@ export const CoffeeCatalog: React.FC<CoffeeCatalogProps> = ({
       return matchSearch;
     });
   }, [searchQuery]);
-
-  const handleQuickAdd = (product: CoffeeProduct, e: React.MouseEvent) => {
-    e.stopPropagation();
-    onAddToCart({
-      id: `coffee-${product.id}-250g`,
-      type: 'coffee',
-      productId: product.id,
-      name: product.name,
-      format: product.packagingFormats[0] || '250g Valve Bag',
-      priceUsd: product.priceUsd,
-      priceKes: product.priceKes,
-      priceEur: product.priceEur,
-      quantity: 1,
-      image: product.image,
-    });
-
-    setAddedItems((prev) => ({ ...prev, [product.id]: true }));
-    setTimeout(() => {
-      setAddedItems((prev) => ({ ...prev, [product.id]: false }));
-    }, 2000);
-  };
 
   return (
     <section className="py-16 bg-[#241713] text-[#F5EBE6]">
@@ -141,36 +114,23 @@ export const CoffeeCatalog: React.FC<CoffeeCatalogProps> = ({
                     ))}
                   </div>
 
-                  {/* Price & Action */}
+                  {/* Quote request & pack-size action */}
                   <div className="pt-3 border-t border-[#442E25]/60 flex items-center justify-between">
                     <div>
                       <span className="text-[10px] uppercase tracking-wider text-[#D4C3B7]/60 block font-semibold">
-                        From
+                        Price on request
                       </span>
-                      <span className="font-serif-display text-base font-bold text-[#F5B041]">
-                        {formatPrice(product.priceUsd, product.priceKes, product.priceEur, currency)}
+                      <span className="mt-1 block text-[10px] text-[#D4C3B7]/70">
+                        Team confirms before acceptance
                       </span>
                     </div>
 
                     <button
-                      onClick={(e) => handleQuickAdd(product, e)}
-                      className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
-                        addedItems[product.id]
-                          ? 'bg-[#5D6D3C] text-white'
-                          : 'bg-[#E58E26] hover:bg-[#c9781b] text-white'
-                      }`}
+                      onClick={(event) => { event.stopPropagation(); onSelectProduct(product); }}
+                      className="px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors bg-[#E58E26] hover:bg-[#c9781b] text-white"
                     >
-                      {addedItems[product.id] ? (
-                        <>
-                          <Check className="w-3.5 h-3.5" />
-                          Added
-                        </>
-                      ) : (
-                        <>
-                          <Plus className="w-3.5 h-3.5" />
-                          Add
-                        </>
-                      )}
+                      Choose size
+                      <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                     </button>
                   </div>
                 </div>

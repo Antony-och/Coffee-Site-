@@ -1,28 +1,21 @@
 import React, { useState } from 'react';
-import { CartItem, Currency, Order, OrderShippingDetails } from '../types';
-import { formatPrice } from '../utils/currency';
+import { CartItem, OrderRequest, OrderShippingDetails } from '../types';
 import {
   generateWhatsAppOrderMessage,
   generateWhatsAppOrderUrl,
-  generateEmailOrderUrl,
   EXPORT_WHATSAPP_PHONE,
-  EXPORT_EMAIL_ADDRESS,
+  EXPORT_WHATSAPP_DISPLAY_PHONE,
 } from '../utils/orderNotification';
 import {
   X,
-  CreditCard,
   CheckCircle2,
   Phone,
-  Building2,
   ShieldCheck,
   ArrowRight,
-  ArrowLeft,
   Copy,
   Check,
   FileText,
-  Clock,
   Sparkles,
-  DollarSign,
   MessageSquare,
   Mail,
   Send,
@@ -36,24 +29,31 @@ interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
   cartItems: CartItem[];
-  currency: Currency;
-  onPlaceOrder: (order: Order) => void;
+  onRequestComplete: () => void;
 }
+
+const HTML_ESCAPE_MAP: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+};
+
+const escapeHtml = (value: string) => value.replace(/[&<>"']/g, (character) => HTML_ESCAPE_MAP[character]);
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   isOpen,
   onClose,
   cartItems,
-  currency,
-  onPlaceOrder,
+  onRequestComplete,
 }) => {
   const [step, setStep] = useState<'details' | 'confirmation'>('details');
   const [copiedId, setCopiedId] = useState(false);
   const [copiedPayload, setCopiedPayload] = useState(false);
-  const [whatsappSent, setWhatsappSent] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
+  const [whatsappOpened, setWhatsappOpened] = useState(false);
   const [showTextPreview, setShowTextPreview] = useState(false);
-  const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
+  const [placedOrder, setPlacedOrder] = useState<OrderRequest | null>(null);
 
   // Form State
   const [shippingDetails, setShippingDetails] = useState<OrderShippingDetails>({
@@ -65,80 +65,41 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     city: '',
     country: 'Kenya',
     postalCode: '',
-    shippingMethod: 'direct_air_express',
-    paymentMethod: 'not_required',
-    mpesaPhone: '',
-    cardLastFour: '',
   });
 
   if (!isOpen) return null;
 
-  // Pricing calculations
-  const subtotalUsd = cartItems.reduce((sum, item) => sum + item.priceUsd * item.quantity, 0);
-  const subtotalKes = cartItems.reduce((sum, item) => sum + item.priceKes * item.quantity, 0);
-  const subtotalEur = cartItems.reduce((sum, item) => sum + item.priceEur * item.quantity, 0);
-
-  const getShippingFees = () => {
-    return { usd: 0, kes: 0, eur: 0 };
-  };
-
-  const shippingFees = getShippingFees();
-
-  const totalUsd = subtotalUsd + shippingFees.usd;
-  const totalKes = subtotalKes + shippingFees.kes;
-  const totalEur = subtotalEur + shippingFees.eur;
-
   const handleCompleteOrder = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!shippingDetails.fullName || !shippingDetails.email || !shippingDetails.streetAddress || !shippingDetails.city) {
+    if (!shippingDetails.fullName || !shippingDetails.phone || !shippingDetails.streetAddress || !shippingDetails.city) {
       return;
     }
 
     const randomNum = Math.floor(10000 + Math.random() * 90000);
-    const orderId = `ORD-KHC-${randomNum}`;
-    const trackingNum = `KHC-EXP-${Math.floor(100000 + Math.random() * 900000)}`;
+    const orderId = `REQ-FC-${randomNum}`;
 
-    const newOrder: Order = {
+    const newOrder: OrderRequest = {
       id: orderId,
       date: new Date().toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
       }),
-      status: 'Processing',
       items: [...cartItems],
-      subtotalUsd,
-      subtotalKes,
-      subtotalEur,
-      shippingFeeUsd: shippingFees.usd,
-      shippingFeeKes: shippingFees.kes,
-      shippingFeeEur: shippingFees.eur,
-      totalUsd,
-      totalKes,
-      totalEur,
-      currency,
-      shippingDetails: {
-        ...shippingDetails,
-        paymentMethod: 'not_required',
-        cardLastFour: 'N/A',
-      },
-      trackingNumber: trackingNum,
-      estimatedDelivery: '3 - 5 Business Days via Direct In-House Air Express',
+      shippingDetails: { ...shippingDetails },
     };
 
     setPlacedOrder(newOrder);
-    onPlaceOrder(newOrder);
     setStep('confirmation');
 
     try {
       const waUrl = generateWhatsAppOrderUrl(newOrder, EXPORT_WHATSAPP_PHONE);
-      window.open(waUrl, '_blank');
-      setWhatsappSent(true);
-      window.location.href = generateEmailOrderUrl(newOrder, EXPORT_EMAIL_ADDRESS);
-      setEmailSent(true);
+      const whatsappWindow = window.open(waUrl, '_blank');
+      if (whatsappWindow) whatsappWindow.opener = null;
+      setWhatsappOpened(true);
     } catch {
-      // User can still click the prominent transmission buttons in the confirmation area.
+      // The confirmation screen keeps a manual WhatsApp link available if the popup is blocked.
     }
   };
 
@@ -148,26 +109,26 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     setTimeout(() => setCopiedId(false), 2000);
   };
 
-  const handleSendWhatsApp = (order: Order) => {
+  const handleSendWhatsApp = (order: OrderRequest) => {
     const url = generateWhatsAppOrderUrl(order, EXPORT_WHATSAPP_PHONE);
-    window.open(url, '_blank');
-    setWhatsappSent(true);
+    const whatsappWindow = window.open(url, '_blank');
+    if (whatsappWindow) whatsappWindow.opener = null;
+    setWhatsappOpened(true);
   };
 
-  const handleSendEmail = (order: Order) => {
-    const url = generateEmailOrderUrl(order, EXPORT_EMAIL_ADDRESS);
-    window.location.href = url;
-    setEmailSent(true);
+  const handleFinishRequest = () => {
+    onRequestComplete();
+    onClose();
   };
 
-  const handleCopyOrderPayload = (order: Order) => {
+  const handleCopyOrderPayload = (order: OrderRequest) => {
     const message = generateWhatsAppOrderMessage(order);
     navigator.clipboard.writeText(message);
     setCopiedPayload(true);
     setTimeout(() => setCopiedPayload(false), 2500);
   };
 
-  const handlePrintReceipt = (order: Order) => {
+  const handlePrintReceipt = (order: OrderRequest) => {
     const printWindow = window.open('', '_blank', 'width=900,height=700');
     if (!printWindow) {
       window.print();
@@ -178,10 +139,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       .map(
         (item) => `
           <tr>
-            <td>${item.name}</td>
+            <td>${escapeHtml(item.name)}</td>
             <td>${item.quantity}</td>
-            <td>${item.format}</td>
-            <td>${formatPrice(item.priceUsd * item.quantity, item.priceKes * item.quantity, item.priceEur * item.quantity, currency)}</td>
+            <td>${escapeHtml(item.format)}</td>
           </tr>
         `
       )
@@ -191,7 +151,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       <!DOCTYPE html>
       <html>
         <head>
-          <title>First Cup Coffee & Tea Receipt</title>
+          <title>First Cup Coffee & Tea Request Summary</title>
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
             body {
@@ -213,15 +173,21 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             .header {
               display:flex;
               justify-content:space-between;
-              align-items:flex-start;
+              align-items:center;
               border-bottom: 2px solid #E5E1DA;
               padding-bottom: 18px;
               margin-bottom: 22px;
             }
             .brand-wrap {
               display: flex;
-              flex-direction: column;
-              gap: 6px;
+              align-items: center;
+            }
+            .brand-logo {
+              display: block;
+              width: 116px;
+              height: auto;
+              max-height: 102px;
+              object-fit: contain;
             }
             .brand {
               font-family: 'Cormorant Garamond', serif;
@@ -286,28 +252,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               font-size: 10px;
             }
             tbody tr:last-child td { border-bottom: none; }
-            .totals {
+            .quote-note {
               margin-top: 18px;
-              margin-left: auto;
-              width: 300px;
-            }
-            .totals-row {
-              display:flex;
-              justify-content:space-between;
-              padding: 8px 0;
-              font-size: 13px;
-              color: #4A413D;
-            }
-            .grand {
-              font-size: 18px;
-              font-weight: 700;
-              color: #2A2522;
-              border-top: 1px solid #E5E1DA;
-              padding-top: 12px;
-              margin-top: 6px;
-            }
-            .grand span:last-child {
-              color: #D97706;
+              padding: 14px 16px;
+              border: 1px solid #D9E0CD;
+              border-radius: 12px;
+              background: #F0F2E9;
+              color: #384A2A;
+              font-size: 12px;
+              line-height: 1.7;
             }
             @media print {
               body { margin: 0; background: #fff; }
@@ -319,31 +272,29 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           <div class="receipt">
             <div class="header">
               <div class="brand-wrap">
-                <div class="brand">FIRST CUP</div>
-                <div class="tagline">Coffee & Tea</div>
+                <img class="brand-logo" src="${window.location.origin}/brand/first-cup-logo-black.svg" alt="First Cup Coffee & Tea" />
               </div>
               <div class="meta">
-                <div><strong>Receipt #</strong> ${order.id}</div>
-                <div>${order.date}</div>
-                <div>${order.status}</div>
+                <div><strong>Request reference</strong> ${escapeHtml(order.id)}</div>
+                <div>${escapeHtml(order.date)}</div>
+                <div>WhatsApp order request</div>
               </div>
             </div>
 
-            <h1>Order Receipt</h1>
+            <h1>Quote Request Summary</h1>
             <div class="customer-box">
-              <div><strong>Customer:</strong> ${order.shippingDetails.fullName}</div>
-              <div><strong>Email:</strong> ${order.shippingDetails.email}</div>
-              <div><strong>Phone:</strong> ${order.shippingDetails.phone}</div>
-              <div><strong>Shipping:</strong> ${order.shippingDetails.streetAddress}, ${order.shippingDetails.city}, ${order.shippingDetails.country}</div>
+              <div><strong>Customer:</strong> ${escapeHtml(order.shippingDetails.fullName)}</div>
+              <div><strong>Email:</strong> ${escapeHtml(order.shippingDetails.email || 'Not provided')}</div>
+              <div><strong>Phone:</strong> ${escapeHtml(order.shippingDetails.phone)}</div>
+              <div><strong>Shipping:</strong> ${escapeHtml(`${order.shippingDetails.streetAddress}, ${order.shippingDetails.city}, ${order.shippingDetails.country}`)}</div>
             </div>
 
             <table>
               <thead>
                 <tr>
                   <th>Product</th>
-                  <th>Qty</th>
-                  <th>Format</th>
-                  <th>Total</th>
+                  <th>Pack quantity</th>
+                  <th>Pack size</th>
                 </tr>
               </thead>
               <tbody>
@@ -351,11 +302,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </tbody>
             </table>
 
-            <div class="totals">
-              <div class="totals-row"><span>Subtotal</span><span>${formatPrice(order.subtotalUsd, order.subtotalKes, order.subtotalEur, currency)}</span></div>
-              <div class="totals-row"><span>Shipping</span><span>${formatPrice(order.shippingFeeUsd, order.shippingFeeKes, order.shippingFeeEur, currency)}</span></div>
-              <div class="totals-row grand"><span>Total</span><span>${formatPrice(order.totalUsd, order.totalKes, order.totalEur, currency)}</span></div>
-            </div>
+            <div class="quote-note"><strong>Price on request.</strong> Our team will confirm prices, availability and delivery before your order is accepted. This is a request only, not an accepted order.</div>
           </div>
         </body>
       </html>
@@ -365,7 +312,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     printWindow.document.write(html);
     printWindow.document.close();
     printWindow.focus();
-    setTimeout(() => printWindow.print(), 300);
+    const logoImage = printWindow.document.querySelector<HTMLImageElement>('.brand-logo');
+    const openPrintDialog = () => setTimeout(() => printWindow.print(), 250);
+    if (logoImage && !logoImage.complete) {
+      logoImage.addEventListener('load', openPrintDialog, { once: true });
+      logoImage.addEventListener('error', openPrintDialog, { once: true });
+    } else {
+      openPrintDialog();
+    }
   };
 
   return (
@@ -382,13 +336,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <div className="pt-0.5">
                 <p className="text-[9px] uppercase tracking-[0.22em] text-[#7A746E]">First Cup Coffee & Tea</p>
                 <h2 className="font-serif-display text-[2rem] sm:text-[2.4rem] font-semibold tracking-[-0.05em] text-[#201B1A] leading-[0.92] mt-1.5">
-                  {step === 'confirmation' ? 'Order Confirmed' : 'Checkout'}
+                  {step === 'confirmation' ? 'Request Ready' : 'Review your request'}
                 </h2>
               </div>
             </div>
 
             <button
+              type="button"
               onClick={onClose}
+              aria-label="Close checkout"
               className="flex h-9 w-9 items-center justify-center rounded-full border border-[#E5E1DA] bg-white text-[#6F665F] transition hover:bg-[#F3EEE8]"
             >
               <X className="w-4 h-4" />
@@ -396,8 +352,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           </div>
 
           <div className="mt-4 flex items-center justify-between rounded-[1rem] border border-[#E9E1D8] bg-white/80 px-3.5 py-2.5 text-[10px] uppercase tracking-[0.18em] text-[#7A746E] shadow-[0_8px_18px_rgba(42,37,34,0.04)]">
-            <span>{step === 'details' ? 'Shipping & delivery' : 'Order confirmed'}</span>
-            <span className="font-bold text-[#A85A12]">{step === 'confirmation' ? placedOrder?.id || '—' : 'Step 1'}</span>
+            <span>{step === 'details' ? 'Request details' : 'WhatsApp handoff'}</span>
+            <span className="font-bold text-[#A85A12]">{step === 'confirmation' ? placedOrder?.id || '—' : 'Details'}</span>
           </div>
         </div>
 
@@ -412,11 +368,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <div className="rounded-[1.5rem] border border-[#E9E1D8] bg-[#FBF7F3] p-4 sm:p-5 shadow-[0_12px_25px_rgba(42,37,34,0.03)]">
                 <div className="mb-3 flex items-center justify-between gap-3 border-b border-[#EAE0D7] pb-3">
                   <span className="text-[10px] uppercase tracking-[0.18em] text-[#7A746E]">
-                    Items ({cartItems.reduce((acc, i) => acc + i.quantity, 0)})
+                    Packs ({cartItems.reduce((acc, i) => acc + i.quantity, 0)})
                   </span>
-                  <span className="text-base font-semibold text-[#B45E10]">
-                    {formatPrice(subtotalUsd, subtotalKes, subtotalEur, currency)}
-                  </span>
+                  <span className="text-xs font-bold uppercase tracking-wide text-[#A85A12]">Price on request</span>
                 </div>
                 <div className="max-h-40 space-y-2.5 overflow-y-auto pr-1">
                   {cartItems.map((item) => (
@@ -425,12 +379,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                         <img src={item.image} alt={item.name} className="h-10 w-10 rounded-xl object-cover ring-1 ring-[#E5E1DA]" />
                         <div className="min-w-0">
                           <span className="block truncate text-sm font-semibold text-[#2A2522]">{item.name}</span>
-                          <span className="block text-[10px] text-[#7A746E]">Qty: {item.quantity} • {item.format}</span>
+                          <span className="block text-[10px] text-[#7A746E]">Quantity: {item.quantity} {item.quantity === 1 ? 'pack' : 'packs'} • {item.format}</span>
                         </div>
                       </div>
-                      <span className="shrink-0 text-sm font-semibold text-[#2A2522]">
-                        {formatPrice(item.priceUsd * item.quantity, item.priceKes * item.quantity, item.priceEur * item.quantity, currency)}
-                      </span>
                     </div>
                   ))}
                 </div>
@@ -459,11 +410,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
                   <div>
                     <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
-                      Email *
+                      Email (optional)
                     </label>
                     <input
                       type="email"
-                      required
                       value={shippingDetails.email}
                       onChange={(e) => setShippingDetails({ ...shippingDetails, email: e.target.value })}
                       placeholder="e.g. david@roastery.com"
@@ -580,7 +530,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   type="submit"
                   className="flex items-center gap-2 rounded-full bg-[#201B1A] px-5 py-3.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition hover:bg-[#120F0E] shadow-[0_18px_30px_rgba(32,27,26,0.14)]"
                 >
-                  <span>Send to Email & WhatsApp</span>
+                  <span>Continue to WhatsApp</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -588,240 +538,155 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             </form>
           )}
 
-          {/* STEP 3: ORDER CONFIRMATION & DISPATCH CENTER */}
+          {/* STEP 3: ORDER READY */}
           {step === 'confirmation' && placedOrder && (
-            <div className="space-y-6">
-              
-              {/* Green Success Banner */}
-              <div className="bg-[#5D6D3C]/10 border border-[#5D6D3C]/30 rounded-3xl p-6 text-center space-y-3">
-                <div className="w-14 h-14 bg-[#5D6D3C] text-white rounded-full flex items-center justify-center mx-auto shadow-md">
-                  <CheckCircle2 className="w-8 h-8" />
-                </div>
-                <div>
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#5D6D3C]">
-                    Order Placed Successfully
-                  </span>
-                  <h3 className="font-serif-display text-2xl font-extrabold text-[#2A2522] mt-0.5">
-                    Order Reference #{placedOrder.id}
-                  </h3>
-                  <p className="text-xs text-[#7A746E] max-w-md mx-auto mt-1">
-                    Thank you, <strong>{placedOrder.shippingDetails.fullName}</strong>. Your export consignment has been registered. Complete the transmission below to dispatch instant copies to WhatsApp and Email.
+            <div className="space-y-5">
+              <section aria-label="Request ready" className="relative isolate overflow-hidden rounded-[1.75rem] bg-[#241713] p-5 text-white sm:p-7">
+                <div aria-hidden="true" className="absolute -right-10 -top-16 h-48 w-48 rounded-full bg-[#D97706]/20 blur-2xl" />
+                <div className="relative">
+                  <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#F0C47F]">
+                    <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> Your request is ready
                   </p>
-                </div>
-              </div>
-
-              {/* PRIMARY TRANSMISSION ACTION CARDS (WhatsApp & Email) */}
-              <div className="bg-[#2D241E] text-white rounded-3xl p-5 sm:p-6 space-y-4 shadow-lg border border-[#D4C3A3]/20">
-                <div className="flex items-center justify-between border-b border-[#D4C3A3]/20 pb-3">
-                  <div className="flex items-center gap-2">
-                    <Send className="w-4 h-4 text-[#D97706]" />
-                    <h4 className="font-serif-display text-sm font-bold text-white uppercase tracking-wider">
-                      Send Order to WhatsApp & Email
-                    </h4>
+                  <h3 className="mt-3 max-w-xl font-serif-display text-3xl font-semibold leading-tight tracking-[-0.03em] sm:text-4xl">
+                    One last step in WhatsApp.
+                  </h3>
+                  <p className="mt-2 max-w-xl text-sm leading-6 text-[#E7D8C7]">
+                    Review your prefilled request and tap <strong>Send</strong> in WhatsApp. Nothing is sent until you send it. Our team will confirm prices, availability and delivery before your order is accepted.
+                  </p>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white">
+                      Request {placedOrder.id}
+                    </span>
+                    <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white">
+                      To {EXPORT_WHATSAPP_DISPLAY_PHONE}
+                    </span>
                   </div>
-                  <span className="text-[10px] text-[#D4C3A3] font-mono bg-white/10 px-2 py-0.5 rounded">
-                    5-Point Verified Payload
+                </div>
+              </section>
+
+              <section aria-label="WhatsApp message" className="rounded-[1.5rem] border border-[#E5E1DA] bg-white p-4 shadow-[0_10px_28px_rgba(42,37,34,0.04)] sm:p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#E9F7EE] text-[#1B8E4B]">
+                      <MessageSquare className="h-5 w-5" aria-hidden="true" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#7A746E]">Send order request to</p>
+                      <p className="mt-0.5 truncate text-base font-semibold text-[#2A2522]">First Cup Coffee & Tea</p>
+                      <p className="text-xs text-[#7A746E]">{EXPORT_WHATSAPP_DISPLAY_PHONE}</p>
+                    </div>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-[#E9F7EE] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[#247546]">WhatsApp</span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleSendWhatsApp(placedOrder)}
+                  className="mt-4 flex w-full items-center justify-between gap-3 rounded-2xl bg-[#25D366] px-4 py-3.5 text-left text-white shadow-sm transition hover:bg-[#20bd5a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#168A45]"
+                >
+                  <span className="flex items-center gap-2.5 font-bold text-sm">
+                    <MessageSquare className="h-5 w-5" aria-hidden="true" />
+                    {whatsappOpened ? 'Reopen WhatsApp request' : 'Open WhatsApp request'}
                   </span>
-                </div>
+                  <ExternalLink className="h-4 w-4 shrink-0" aria-hidden="true" />
+                </button>
 
-                <p className="text-xs text-[#D4C3A3]/90 leading-relaxed">
-                  Transmit this complete order record directly to our export desk and keep a copy in your personal channels.
-                </p>
-
-                {/* Direct Action Buttons */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {/* WhatsApp Direct Send */}
+                <div className="mt-3 grid grid-cols-2 gap-2">
                   <button
-                    onClick={() => handleSendWhatsApp(placedOrder)}
-                    className={`p-4 rounded-2xl font-bold text-xs flex flex-col justify-between space-y-2 transition-all shadow-md ${
-                      whatsappSent
-                        ? 'bg-[#128C7E] text-white ring-2 ring-white/30'
-                        : 'bg-[#25D366] hover:bg-[#20bd5a] text-white hover:scale-[1.01]'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-2">
-                        <MessageSquare className="w-5 h-5 fill-current" />
-                        <span className="font-bold text-sm">Send to WhatsApp</span>
-                      </div>
-                      <ExternalLink className="w-4 h-4 opacity-80" />
-                    </div>
-                    <div className="text-[11px] text-left text-white/90">
-                      {whatsappSent ? '✓ Opened WhatsApp (+254 700 000 000)' : 'Chat with Export Desk (+254 700 000 000)'}
-                    </div>
-                  </button>
-
-                  {/* Email Direct Send */}
-                  <button
-                    onClick={() => handleSendEmail(placedOrder)}
-                    className={`p-4 rounded-2xl font-bold text-xs flex flex-col justify-between space-y-2 transition-all shadow-md ${
-                      emailSent
-                        ? 'bg-[#b86505] text-white ring-2 ring-white/30'
-                        : 'bg-[#D97706] hover:bg-[#b86505] text-white hover:scale-[1.01]'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-2">
-                        <Mail className="w-5 h-5" />
-                        <span className="font-bold text-sm">Send via Email</span>
-                      </div>
-                      <ExternalLink className="w-4 h-4 opacity-80" />
-                    </div>
-                    <div className="text-[11px] text-left text-white/90 truncate w-full">
-                      {emailSent ? `✓ Opened Mail Client (CC: ${placedOrder.shippingDetails.email})` : `Send to export@kenyanhighlandcoffee.co.ke`}
-                    </div>
-                  </button>
-                </div>
-
-                {/* Secondary Quick Actions: Copy Payload & Toggle Preview */}
-                <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#D4C3A3]/10 text-xs">
-                  <button
+                    type="button"
                     onClick={() => handleCopyOrderPayload(placedOrder)}
-                    className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-[#FAF7F2] font-semibold flex items-center gap-1.5 transition-colors"
+                    className="flex items-center justify-center gap-2 rounded-xl border border-[#E8E1DA] bg-[#FCFAF8] px-3 py-2.5 text-xs font-semibold text-[#514842] transition hover:bg-[#F5EFE9]"
                   >
-                    {copiedPayload ? <Check className="w-3.5 h-3.5 text-[#5D6D3C]" /> : <Copy className="w-3.5 h-3.5 text-[#D97706]" />}
-                    <span>{copiedPayload ? 'Full Order Details Copied!' : 'Copy Order Text Message'}</span>
+                    {copiedPayload ? <Check className="h-4 w-4 text-[#2F6B3C]" aria-hidden="true" /> : <Copy className="h-4 w-4 text-[#A85A12]" aria-hidden="true" />}
+                    {copiedPayload ? 'Message copied' : 'Copy message'}
                   </button>
-
                   <button
+                    type="button"
+                    aria-expanded={showTextPreview}
                     onClick={() => setShowTextPreview(!showTextPreview)}
-                    className="text-[#D4C3A3] hover:text-white underline text-[11px]"
+                    className="rounded-xl border border-[#E8E1DA] bg-[#FCFAF8] px-3 py-2.5 text-xs font-semibold text-[#514842] transition hover:bg-[#F5EFE9]"
                   >
-                    {showTextPreview ? 'Hide Message Preview' : 'View Formatted Message Preview'}
+                    {showTextPreview ? 'Hide preview' : 'Preview message'}
                   </button>
                 </div>
 
-                {/* Collapsible Formatted Message Preview */}
                 {showTextPreview && (
-                  <div className="bg-[#1C120E] border border-[#D4C3A3]/20 rounded-2xl p-3.5 text-[11px] font-mono text-[#D4C3A3] whitespace-pre-wrap max-h-48 overflow-y-auto select-all">
+                  <div role="region" aria-label="WhatsApp quote request preview" className="mt-3 max-h-48 overflow-y-auto rounded-xl bg-[#2D241E] p-4 font-mono text-[11px] leading-5 text-[#F3E9DD] whitespace-pre-wrap select-all">
                     {generateWhatsAppOrderMessage(placedOrder)}
                   </div>
                 )}
-              </div>
+              </section>
 
-              {/* 5-POINT MANDATORY DATA VERIFICATION CHECKLIST */}
-              <div className="bg-[#FAF7F2] border border-[#E5E1DA] rounded-2xl p-5 space-y-4">
-                <div className="flex items-center justify-between border-b border-[#E5E1DA] pb-3 text-xs">
-                  <span className="font-bold text-[#2A2522] uppercase tracking-wider flex items-center gap-1.5">
-                    <FileText className="w-4 h-4 text-[#D97706]" />
-                    Order & Buyer Record Summary
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <span className="font-serif-display font-extrabold text-[#2A2522]">{placedOrder.id}</span>
-                    <button
-                      onClick={() => handleCopyId(placedOrder.id)}
-                      className="text-[#D97706] hover:text-[#b86505] p-1 text-[11px] flex items-center gap-1 font-bold"
-                    >
-                      {copiedId ? <Check className="w-3.5 h-3.5 text-[#5D6D3C]" /> : <Copy className="w-3.5 h-3.5" />}
-                      <span>{copiedId ? 'Copied' : 'Copy ID'}</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* 5 Specific Required Items Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                  {/* 1. Buyer's Name */}
-                  <div className="bg-white border border-[#E5E1DA] rounded-xl p-3 space-y-1">
-                    <div className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-[#7A746E]">
-                      <User className="w-3.5 h-3.5 text-[#D97706]" />
-                      <span>1. Buyer's Name</span>
+              <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+                <section aria-label="Request summary" className="rounded-[1.5rem] border border-[#E5E1DA] bg-[#FBF8F4] p-4 sm:p-5">
+                  <div className="flex items-center justify-between gap-3 border-b border-[#E9E1D8] pb-3">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">Request summary</p>
+                      <p className="mt-1 text-sm font-semibold text-[#2A2522]">{placedOrder.items.reduce((acc, item) => acc + item.quantity, 0)} packs</p>
                     </div>
-                    <p className="font-bold text-[#2A2522] text-sm">{placedOrder.shippingDetails.fullName}</p>
-                    {placedOrder.shippingDetails.companyName && (
-                      <p className="text-[11px] text-[#7A746E]">{placedOrder.shippingDetails.companyName}</p>
-                    )}
+                    <span className="rounded-full bg-white px-3 py-1.5 text-[10px] font-bold text-[#A85A12] ring-1 ring-[#E9E1D8]">{placedOrder.id}</span>
                   </div>
-
-                  {/* 2. Buyer's Phone Number */}
-                  <div className="bg-white border border-[#E5E1DA] rounded-xl p-3 space-y-1">
-                    <div className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-[#7A746E]">
-                      <Phone className="w-3.5 h-3.5 text-[#5D6D3C]" />
-                      <span>2. Contact Phone Number</span>
-                    </div>
-                    <p className="font-bold text-[#2A2522] text-sm">{placedOrder.shippingDetails.phone}</p>
-                    {placedOrder.shippingDetails.mpesaPhone && placedOrder.shippingDetails.mpesaPhone !== placedOrder.shippingDetails.phone && (
-                      <p className="text-[11px] text-[#7A746E]">M-PESA Phone: {placedOrder.shippingDetails.mpesaPhone}</p>
-                    )}
-                  </div>
-
-                  {/* 3. Buyer's Email */}
-                  <div className="bg-white border border-[#E5E1DA] rounded-xl p-3 space-y-1">
-                    <div className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-[#7A746E]">
-                      <Mail className="w-3.5 h-3.5 text-[#D97706]" />
-                      <span>3. Email Address</span>
-                    </div>
-                    <p className="font-bold text-[#2A2522] text-sm break-all">{placedOrder.shippingDetails.email}</p>
-                    <p className="text-[10px] text-[#5D6D3C] font-semibold">✓ Invoice queued for delivery</p>
-                  </div>
-
-                  {/* 4. Delivery Location */}
-                  <div className="bg-white border border-[#E5E1DA] rounded-xl p-3 space-y-1">
-                    <div className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-[#7A746E]">
-                      <MapPin className="w-3.5 h-3.5 text-[#5D6D3C]" />
-                      <span>4. Delivery Location</span>
-                    </div>
-                    <p className="font-bold text-[#2A2522] text-xs">
-                      {placedOrder.shippingDetails.streetAddress}
-                    </p>
-                    <p className="text-[11px] text-[#7A746E]">
-                      {placedOrder.shippingDetails.city}, {placedOrder.shippingDetails.country}
-                      {placedOrder.shippingDetails.postalCode ? ` (${placedOrder.shippingDetails.postalCode})` : ''}
-                    </p>
-                  </div>
-                </div>
-
-                {/* 5. Order Contents & Financials */}
-                <div className="bg-white border border-[#E5E1DA] rounded-xl p-3.5 space-y-2.5">
-                  <div className="flex items-center justify-between text-xs border-b border-[#E5E1DA] pb-2">
-                    <span className="font-bold text-[#2A2522] uppercase tracking-wider flex items-center gap-1.5">
-                      <ShoppingBag className="w-3.5 h-3.5 text-[#D97706]" />
-                      5. Itemized Order Items ({placedOrder.items.reduce((acc, i) => acc + i.quantity, 0)})
-                    </span>
-                    <span className="text-[11px] text-[#7A746E]">Payment: <strong className="capitalize text-[#2A2522]">{placedOrder.shippingDetails.paymentMethod}</strong></span>
-                  </div>
-
-                  <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                  <div className="max-h-36 space-y-3 overflow-y-auto py-4 pr-1">
                     {placedOrder.items.map((item) => (
-                      <div key={item.id} className="flex justify-between items-center text-xs">
-                        <span className="text-[#2A2522] font-medium">
-                          {item.quantity}x {item.name} <span className="text-[10px] text-[#7A746E]">({item.format})</span>
-                        </span>
-                        <span className="font-bold text-[#D97706]">
-                          {formatPrice(item.priceUsd * item.quantity, item.priceKes * item.quantity, item.priceEur * item.quantity, currency)}
-                        </span>
+                      <div key={item.id} className="flex items-start justify-between gap-3 text-sm">
+                        <div className="min-w-0">
+                          <p className="font-semibold text-[#2A2522]">{item.quantity} {item.quantity === 1 ? 'pack' : 'packs'} × {item.name}</p>
+                          <p className="mt-0.5 truncate text-xs text-[#7A746E]">{item.format}</p>
+                        </div>
                       </div>
                     ))}
                   </div>
+                  <p className="border-t border-[#E9E1D8] pt-3 text-[11px] leading-5 text-[#7A746E]">Price on request. Our team will confirm prices, availability and delivery before your order is accepted.</p>
+                </section>
 
-                  <div className="pt-2 border-t border-[#E5E1DA] flex justify-between items-center text-sm font-bold text-[#2A2522]">
-                    <span>Total Order Value:</span>
-                    <span className="font-serif-display text-lg text-[#D97706]">
-                      {formatPrice(placedOrder.totalUsd, placedOrder.totalKes, placedOrder.totalEur, currency)}
+                <details className="group rounded-[1.5rem] border border-[#E5E1DA] bg-white p-4 sm:p-5">
+                  <summary className="flex cursor-pointer list-none items-start justify-between gap-3">
+                    <span>
+                      <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">Buyer & delivery</span>
+                      <span className="mt-1 block text-sm font-semibold text-[#2A2522]">{placedOrder.shippingDetails.fullName}</span>
+                      <span className="mt-0.5 block text-xs text-[#7A746E]">{placedOrder.shippingDetails.city}, {placedOrder.shippingDetails.country}</span>
                     </span>
+                    <span className="rounded-full bg-[#F6F0EA] px-2.5 py-1 text-[10px] font-bold text-[#7A746E] transition group-open:rotate-180">⌄</span>
+                  </summary>
+                  <div className="mt-4 space-y-3 border-t border-[#EEE7E0] pt-3 text-xs">
+                    <div className="flex items-start gap-2"><User className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#A85A12]" /><span className="text-[#514842]">{placedOrder.shippingDetails.companyName ? `${placedOrder.shippingDetails.companyName} · ` : ''}{placedOrder.shippingDetails.fullName}</span></div>
+                    <div className="flex items-start gap-2"><Phone className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#A85A12]" /><span className="text-[#514842]">{placedOrder.shippingDetails.phone}</span></div>
+                    <div className="flex items-start gap-2"><Mail className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#A85A12]" /><span className="break-all text-[#514842]">{placedOrder.shippingDetails.email || 'Email not provided'}</span></div>
+                    <div className="flex items-start gap-2"><MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#A85A12]" /><span className="text-[#514842]">{placedOrder.shippingDetails.streetAddress}, {placedOrder.shippingDetails.city}, {placedOrder.shippingDetails.country}{placedOrder.shippingDetails.postalCode ? ` ${placedOrder.shippingDetails.postalCode}` : ''}</span></div>
+                    <button type="button" onClick={() => handleCopyId(placedOrder.id)} className="flex items-center gap-1.5 pt-1 text-[11px] font-semibold text-[#A85A12] hover:text-[#7A3E0D]">
+                      {copiedId ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : <Copy className="h-3.5 w-3.5" aria-hidden="true" />}
+                      {copiedId ? 'Reference copied' : 'Copy request reference'}
+                    </button>
+                  </div>
+                </details>
+              </div>
+
+              <section className="flex flex-col gap-3 rounded-[1.5rem] border border-[#CFE4D2] bg-[#F1F8F2] p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+                <div className="flex items-start gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#2F6B3C] ring-1 ring-[#D5E8D8]"><CheckCircle2 className="h-4 w-4" aria-hidden="true" /></span>
+                  <div>
+                    <p className="text-sm font-semibold text-[#315B3A]">Sent the message?</p>
+                    <p className="mt-0.5 text-xs leading-5 text-[#52715A]">After you send your request in WhatsApp, confirm here to clear your cart.</p>
                   </div>
                 </div>
-
-              </div>
-
-              {/* Receipt Actions */}
-              <div className="flex flex-col sm:flex-row gap-3">
                 <button
-                  onClick={() => handlePrintReceipt(placedOrder)}
-                  className="flex-1 py-3 rounded-full border border-[#E5E1DA] bg-white hover:bg-gray-50 text-xs font-bold text-[#2A2522] flex items-center justify-center gap-2 transition-colors shadow-sm"
+                  type="button"
+                  onClick={handleFinishRequest}
+                  disabled={!whatsappOpened}
+                  className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#2F6B3C] px-4 py-3 text-xs font-bold text-white transition hover:bg-[#245631] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#245631]"
                 >
-                  <FileText className="w-4 h-4 text-[#D97706]" />
-                  <span>Print Digital Receipt</span>
+                  <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> I sent the request
                 </button>
+              </section>
 
-                <button
-                  onClick={onClose}
-                  className="flex-1 py-3 rounded-full bg-[#D97706] hover:bg-[#b86505] text-white text-xs font-bold uppercase tracking-wider shadow flex items-center justify-center gap-2 transition-colors"
-                >
-                  <span>Return to Catalog</span>
-                  <Sparkles className="w-4 h-4" />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <button type="button" onClick={() => handlePrintReceipt(placedOrder)} className="flex items-center justify-center gap-2 rounded-full border border-[#E5E1DA] bg-white px-4 py-3 text-xs font-bold text-[#2A2522] transition hover:bg-[#F8F3EE]">
+                  <FileText className="h-4 w-4 text-[#A85A12]" aria-hidden="true" /> Print request summary
+                </button>
+                <button type="button" onClick={onClose} className="flex items-center justify-center gap-2 rounded-full bg-[#D97706] px-4 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-sm transition hover:bg-[#b86505]">
+                  Return to catalog <Sparkles className="h-4 w-4" aria-hidden="true" />
                 </button>
               </div>
-
             </div>
           )}
 

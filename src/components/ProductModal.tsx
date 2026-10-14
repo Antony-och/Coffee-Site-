@@ -1,250 +1,299 @@
-import React, { useState } from 'react';
-import { CoffeeProduct, TeaProduct, Currency, CartItem } from '../types';
-import { formatPrice } from '../utils/currency';
-import { X, Award, Mountain, Check, Plus, Coffee, Leaf, Thermometer, Clock } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  Award,
+  Check,
+  Clock,
+  Coffee,
+  Leaf,
+  MapPin,
+  Minus,
+  Mountain,
+  Plus,
+  Thermometer,
+  X,
+} from 'lucide-react';
+import { CartItem, CoffeeProduct, TeaProduct } from '../types';
 
 interface ProductModalProps {
   product: CoffeeProduct | TeaProduct | null;
   onClose: () => void;
-  currency: Currency;
   onAddToCart: (item: CartItem) => void;
 }
 
-export const ProductModal: React.FC<ProductModalProps> = ({
+interface ProductModalContentProps {
+  product: CoffeeProduct | TeaProduct;
+  onClose: () => void;
+  onAddToCart: (item: CartItem) => void;
+}
+
+const ProductModalContent: React.FC<ProductModalContentProps> = ({
   product,
   onClose,
-  currency,
   onAddToCart,
 }) => {
-  if (!product) return null;
-
   const isCoffee = 'roastLevel' in product;
-  const coffee = isCoffee ? (product as CoffeeProduct) : null;
-  const tea = !isCoffee ? (product as TeaProduct) : null;
-
+  const coffee = isCoffee ? product : null;
+  const tea = isCoffee ? null : product;
   const [selectedFormat, setSelectedFormat] = useState<string>(
     product.packagingFormats[0] || 'Default Packaging'
   );
-  const [quantity, setQuantity] = useState<number>(1);
-  const [isAdded, setIsAdded] = useState<boolean>(false);
+  const [quantity, setQuantity] = useState(1);
+  const [isAdded, setIsAdded] = useState(false);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const onCloseRef = useRef(onClose);
+  const addedTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  useEffect(() => {
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onCloseRef.current();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      if (addedTimerRef.current !== null) window.clearTimeout(addedTimerRef.current);
+      previousFocus?.focus();
+    };
+  }, []);
 
   const handleAdd = () => {
+    if (isAdded) return;
+
     onAddToCart({
       id: `${product.id}-${selectedFormat.replace(/\s+/g, '-')}`,
       type: isCoffee ? 'coffee' : 'tea',
       productId: product.id,
       name: product.name,
       format: selectedFormat,
-      priceUsd: product.priceUsd,
-      priceKes: product.priceKes,
-      priceEur: product.priceEur,
       quantity,
       image: product.image,
     });
 
     setIsAdded(true);
-    setTimeout(() => {
+    addedTimerRef.current = window.setTimeout(() => {
       setIsAdded(false);
-      onClose();
-    }, 1200);
+      onCloseRef.current();
+    }, 1000);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn overflow-y-auto">
-      
-      <div className="bg-white border border-[#E5E1DA] rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl relative my-8 text-[#2A2522]">
-        
-        {/* Close Button */}
+    <div
+      className="fixed inset-0 z-[80] flex items-center justify-center bg-[#100D0A]/75 p-2 backdrop-blur-sm sm:p-4"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="product-modal-title"
+        aria-describedby="product-modal-description"
+        className="relative grid h-[92vh] max-h-[760px] w-full max-w-5xl grid-rows-[220px_minmax(0,1fr)] overflow-hidden rounded-[1.75rem] border border-white/70 bg-[#FCFAF6] text-[#2A2522] shadow-[0_30px_100px_rgba(0,0,0,0.45)] sm:grid-rows-[260px_minmax(0,1fr)] md:h-[82vh] md:min-h-[600px] md:grid-cols-[0.92fr_1.08fr] md:grid-rows-1"
+      >
         <button
+          ref={closeButtonRef}
+          type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/50 hover:bg-black/80 text-white transition-colors"
-          title="Close Modal"
+          aria-label="Close product details"
+          className="absolute right-3 top-3 z-20 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-[#201611]/75 text-white shadow-lg backdrop-blur-sm transition hover:bg-[#201611] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:right-4 sm:top-4"
         >
-          <X className="w-5 h-5" />
+          <X className="h-5 w-5" aria-hidden="true" />
         </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-12">
-          
-          {/* Image & Key Badges Column */}
-          <div className="md:col-span-5 relative h-64 md:h-full min-h-[280px] bg-[#2D241E]">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#2D241E] via-transparent to-transparent"></div>
-
-            <div className="absolute top-4 left-4 flex flex-col gap-2">
-              <span className="px-3 py-1 rounded-full bg-[#D97706] text-white text-xs font-bold uppercase tracking-wider shadow">
-                {isCoffee ? `Grade ${coffee?.grade}` : tea?.type}
+        <div className="relative min-h-0 overflow-hidden bg-[#211713]">
+          <img
+            src={product.image}
+            alt={product.name}
+            className="absolute inset-0 h-full w-full object-cover"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#17100D]/95 via-[#17100D]/15 to-[#17100D]/10" />
+          <div className="absolute left-4 top-4 right-16 flex flex-wrap gap-2 sm:left-6 sm:top-6">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-[#201611]/75 px-3 py-1.5 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-white backdrop-blur-sm">
+              {isCoffee ? <Coffee className="h-3.5 w-3.5 text-[#F0B566]" aria-hidden="true" /> : <Leaf className="h-3.5 w-3.5 text-[#A9C88B]" aria-hidden="true" />}
+              {isCoffee ? `Grade ${coffee?.grade}` : tea?.type}
+            </span>
+            {isCoffee && coffee?.isFeatured && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E9B66F]/30 bg-[#E9B66F]/90 px-3 py-1.5 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-[#24170E]">
+                <Award className="h-3.5 w-3.5" aria-hidden="true" />
+                Featured lot
               </span>
-            </div>
-
-            {/* Cupping / Polyphenol Badge */}
-            <div className="absolute bottom-4 left-4 right-4 bg-[#2D241E]/90 border border-[#D4C3A3]/20 p-3 rounded-2xl text-xs text-[#FAF7F2] backdrop-blur-md">
-              <span className="text-[#D4C3A3] font-bold block uppercase tracking-wider text-[10px]">
-                {isCoffee ? 'SCA Cupping Calibration' : 'Antioxidant Metric'}
+            )}
+          </div>
+          <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
+            <div className="max-w-sm rounded-2xl border border-white/15 bg-[#201611]/75 p-4 text-white shadow-xl backdrop-blur-md sm:p-5">
+              <span className="text-[0.62rem] font-bold uppercase tracking-[0.18em] text-[#E9B66F]">
+                {isCoffee ? 'Cupping score' : 'Tea profile'}
               </span>
-              <span className="text-sm font-bold">
-                {isCoffee ? `SCA Score: ${coffee?.cuppingScore} / 100` : tea?.polyphenols}
-              </span>
+              <div className="mt-1 flex items-end gap-2">
+                <span className="font-serif-display text-2xl font-bold sm:text-3xl">
+                  {isCoffee ? coffee?.cuppingScore : tea?.polyphenols}
+                </span>
+                {isCoffee && <span className="pb-1 text-xs text-[#F1E4D2]/65">/ 100 SCA</span>}
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* Details Column */}
-          <div className="md:col-span-7 p-6 sm:p-8 space-y-5 flex flex-col justify-between">
-            
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                {isCoffee ? (
-                  <Coffee className="w-4 h-4 text-[#D97706]" />
-                ) : (
-                  <Leaf className="w-4 h-4 text-[#5D6D3C]" />
-                )}
-                <span className="text-xs font-bold uppercase tracking-wider text-[#7A746E]">
-                  {isCoffee ? coffee?.region : tea?.origin}
-                </span>
+        <div className="flex min-h-0 flex-col overflow-hidden">
+          <div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-5 sm:space-y-6 sm:p-7 lg:p-8">
+            <div>
+              <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.13em] text-[#8A5A2B]">
+                <MapPin className="h-4 w-4" aria-hidden="true" />
+                <span>{isCoffee ? coffee?.region : tea?.origin}</span>
               </div>
-
-              <h2 className="font-serif-display text-2xl font-bold text-[#2A2522] leading-snug">
+              <h2 id="product-modal-title" className="font-serif-display text-2xl font-bold leading-tight text-[#241B16] sm:text-3xl">
                 {product.name}
               </h2>
-
-              <p className="text-xs text-[#7A746E] leading-relaxed">
+              <p className="mt-1 text-sm font-medium text-[#756B62]">{product.subTitle}</p>
+              <p id="product-modal-description" className="mt-4 text-sm leading-6 text-[#675F58]">
                 {product.description}
               </p>
             </div>
 
-            {/* Spec Breakdown */}
-            <div className="bg-[#FAF7F2] rounded-2xl p-4 text-xs space-y-2 border border-[#E5E1DA]">
+            <dl className="grid grid-cols-2 gap-2.5 sm:gap-3">
               {isCoffee ? (
                 <>
-                  <div className="flex justify-between">
-                    <span className="text-[#7A746E]">Cultivar:</span>
-                    <strong className="text-[#2A2522]">{coffee?.variety}</strong>
+                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
+                    <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Cultivar</dt>
+                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.variety}</dd>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-[#7A746E]">Highland Elevation:</span>
-                    <strong className="text-[#2A2522]">{coffee?.altitude}</strong>
+                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
+                    <dt className="flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]"><Mountain className="h-3 w-3" aria-hidden="true" />Altitude</dt>
+                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.altitude}</dd>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-[#7A746E]">Roast Intensity:</span>
-                    <strong className="text-[#2A2522]">{coffee?.roastLevel}</strong>
+                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
+                    <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Roast</dt>
+                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.roastLevel}</dd>
+                  </div>
+                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
+                    <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Process</dt>
+                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.process}</dd>
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="flex justify-between">
-                    <span className="text-[#7A746E]">Oxidation State:</span>
-                    <strong className="text-[#2A2522]">{tea?.oxidationLevel}</strong>
+                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
+                    <dt className="flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]"><Mountain className="h-3 w-3" aria-hidden="true" />Altitude</dt>
+                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{tea?.altitude}</dd>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-[#7A746E]">Steep Temp:</span>
-                    <strong className="text-[#2A2522] flex items-center gap-1">
-                      <Thermometer className="w-3.5 h-3.5 text-[#D97706]" />
-                      {tea?.steepTemp}
-                    </strong>
+                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
+                    <dt className="flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]"><Thermometer className="h-3 w-3" aria-hidden="true" />Steep temp</dt>
+                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{tea?.steepTemp}</dd>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-[#7A746E]">Steep Time:</span>
-                    <strong className="text-[#2A2522] flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-[#5D6D3C]" />
-                      {tea?.steepTime}
-                    </strong>
+                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
+                    <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Oxidation</dt>
+                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{tea?.oxidationLevel}</dd>
+                  </div>
+                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
+                    <dt className="flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]"><Clock className="h-3 w-3" aria-hidden="true" />Steep time</dt>
+                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{tea?.steepTime}</dd>
                   </div>
                 </>
               )}
-            </div>
+            </dl>
 
-            {/* Flavor Tags */}
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#7A746E] block mb-1">
-                Aroma & Tasting Spectrum:
-              </span>
-              <div className="flex flex-wrap gap-1.5">
-                {(isCoffee ? coffee?.flavorNotes : tea?.tastingNotes)?.map((note, i) => (
-                  <span key={i} className="px-2.5 py-0.5 rounded bg-[#FAF7F2] border border-[#E5E1DA] text-xs font-semibold text-[#2A2522]">
+              <h3 className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.15em] text-[#8A5A2B]">Tasting notes</h3>
+              <div className="flex flex-wrap gap-2">
+                {(isCoffee ? coffee?.flavorNotes : tea?.tastingNotes)?.map((note) => (
+                  <span key={note} className="rounded-full border border-[#E5D9C9] bg-[#F5EFE6] px-3 py-1.5 text-xs font-medium text-[#4C4138]">
                     {note}
                   </span>
                 ))}
               </div>
             </div>
 
-            {/* Packaging Format Selection */}
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-[#7A746E] mb-1.5">
-                Select Packaging Format / Size
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {product.packagingFormats.map((fmt) => (
+            <fieldset>
+              <legend className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.15em] text-[#8A5A2B]">Choose pack size</legend>
+              <div className="flex flex-wrap gap-2">
+                {product.packagingFormats.map((format) => (
                   <button
-                    key={fmt}
-                    onClick={() => setSelectedFormat(fmt)}
-                    className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all text-left truncate ${
-                      selectedFormat === fmt
-                        ? 'bg-[#2A2522] border-[#2A2522] text-white'
-                        : 'bg-white border-[#E5E1DA] text-[#2A2522] hover:bg-[#FAF7F2]'
+                    key={format}
+                    type="button"
+                    onClick={() => setSelectedFormat(format)}
+                    aria-pressed={selectedFormat === format}
+                    className={`max-w-full rounded-xl border px-3.5 py-2 text-xs font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A46A32] ${
+                      selectedFormat === format
+                        ? 'border-[#34251B] bg-[#34251B] text-white shadow-sm'
+                        : 'border-[#DFD5C9] bg-white text-[#4E443B] hover:border-[#A46A32] hover:bg-[#FBF7F1]'
                     }`}
                   >
-                    {fmt}
+                    {format}
                   </button>
                 ))}
               </div>
-            </div>
-
-            {/* Quantity & Price Action */}
-            <div className="pt-2 border-t border-[#E5E1DA] flex items-center justify-between gap-4">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#7A746E] block">
-                  Order Price
-                </span>
-                <span className="font-serif-display text-2xl font-bold text-[#D97706]">
-                  {formatPrice(product.priceUsd * quantity, product.priceKes * quantity, product.priceEur * quantity, currency)}
-                </span>
-              </div>
-
-              {/* Quantity Counter */}
-              <div className="flex items-center border border-[#E5E1DA] rounded-xl overflow-hidden bg-[#FAF7F2]">
-                <button
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="px-3 py-1.5 font-bold hover:bg-[#2A2522]/10"
-                >
-                  -
-                </button>
-                <span className="px-3 font-bold text-xs">{quantity}</span>
-                <button
-                  onClick={() => setQuantity((q) => q + 1)}
-                  className="px-3 py-1.5 font-bold hover:bg-[#2A2522]/10"
-                >
-                  +
-                </button>
-              </div>
-
-              {/* Add Button */}
-              <button
-                onClick={handleAdd}
-                className={`px-6 py-3 rounded-full font-bold text-xs flex items-center gap-2 transition-all shadow-md ${
-                  isAdded ? 'bg-[#5D6D3C] text-white' : 'bg-[#D97706] hover:bg-[#b86505] text-white'
-                }`}
-              >
-                {isAdded ? (
-                  <>
-                    <Check className="w-4 h-4" /> Added
-                  </>
-                ) : (
-                  <>
-                    <Plus className="w-4 h-4" /> Add to Order
-                  </>
-                )}
-              </button>
-            </div>
-
+            </fieldset>
           </div>
 
-        </div>
+          <div className="shrink-0 border-t border-[#E9E1D7] bg-white/95 p-4 backdrop-blur-sm sm:px-7 sm:py-5 lg:px-8">
+            <div className="flex items-center justify-between gap-3 sm:gap-5">
+              <div className="min-w-0">
+                <span className="block text-[0.6rem] font-bold uppercase tracking-[0.15em] text-[#81776D]">Price on request</span>
+                <span className="mt-0.5 block truncate text-[11px] font-medium text-[#756B62]">Team confirms before acceptance</span>
+              </div>
 
+              <div className="flex shrink-0 flex-col items-center gap-1">
+                <span className="text-[0.55rem] font-bold uppercase tracking-[0.12em] text-[#81776D]">Packs</span>
+                <div role="group" aria-label="Number of packs" className="flex items-center overflow-hidden rounded-xl border border-[#DED4C8] bg-[#FAF7F2]">
+                <button
+                  type="button"
+                  onClick={() => setQuantity((current) => Math.max(1, current - 1))}
+                  aria-label="Decrease quantity"
+                  className="inline-flex h-10 w-10 items-center justify-center text-[#4B4037] transition hover:bg-[#EFE7DC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#A46A32]"
+                >
+                  <Minus className="h-3.5 w-3.5" aria-hidden="true" />
+                </button>
+                <span className="min-w-8 text-center text-sm font-bold tabular-nums" aria-live="polite">{quantity}</span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity((current) => current + 1)}
+                  aria-label="Increase quantity"
+                  className="inline-flex h-10 w-10 items-center justify-center text-[#4B4037] transition hover:bg-[#EFE7DC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#A46A32]"
+                >
+                  <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+                </button>
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleAdd}
+              disabled={isAdded}
+              className={`mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white shadow-md transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A46A32] ${
+                isAdded ? 'bg-[#56713D]' : 'bg-[#D97706] hover:bg-[#B85F05]'
+              }`}
+            >
+              {isAdded ? <Check className="h-4 w-4" aria-hidden="true" /> : <Plus className="h-4 w-4" aria-hidden="true" />}
+              {isAdded ? 'Added to request' : 'Add to request'}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
+  );
+};
+
+export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCart }) => {
+  if (!product) return null;
+
+  return (
+    <ProductModalContent
+      key={product.id}
+      product={product}
+      onClose={onClose}
+      onAddToCart={onAddToCart}
+    />
   );
 };

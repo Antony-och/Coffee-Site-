@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { COFFEE_PRODUCTS } from '../data/coffeeData';
 import { TEA_PRODUCTS } from '../data/teaData';
-import { CoffeeProduct, TeaProduct, Currency } from '../types';
-import { formatPrice } from '../utils/currency';
+import { CoffeeProduct, TeaProduct } from '../types';
 import { Sparkles, ArrowRight } from 'lucide-react';
 
 interface FlavorWheelProps {
-  currency: Currency;
   onSelectCoffee: (product: CoffeeProduct) => void;
   onSelectTea: (product: TeaProduct) => void;
 }
@@ -25,7 +23,6 @@ const FLAVOR_TAGS = [
 ];
 
 export const FlavorWheel: React.FC<FlavorWheelProps> = ({
-  currency,
   onSelectCoffee,
   onSelectTea,
 }) => {
@@ -100,7 +97,7 @@ export const FlavorWheel: React.FC<FlavorWheelProps> = ({
                   {coffee.name}
                 </h4>
                 <p className="text-[11px] text-[#D4C3A3]/80">
-                  {formatPrice(coffee.priceUsd, coffee.priceKes, coffee.priceEur, currency)} • SCA {coffee.cuppingScore}
+                  Price on request • SCA {coffee.cuppingScore}
                 </p>
                 <span className="text-[10px] text-[#D97706] font-semibold flex items-center gap-1 pt-1">
                   <span>Explore Lot</span>
@@ -130,7 +127,7 @@ export const FlavorWheel: React.FC<FlavorWheelProps> = ({
                   {tea.name}
                 </h4>
                 <p className="text-[11px] text-[#D4C3A3]/80">
-                  {formatPrice(tea.priceUsd, tea.priceKes, tea.priceEur, currency)} • {tea.origin}
+                  Price on request • {tea.origin}
                 </p>
                 <span className="text-[10px] text-[#5D6D3C] font-semibold flex items-center gap-1 pt-1">
                   <span>View Tea Specs</span>

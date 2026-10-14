@@ -1,5 +1,3 @@
-export type Currency = 'USD' | 'KES' | 'EUR';
-
 export type PageView = 'home' | 'coffee' | 'tea' | 'process' | 'about' | 'contact' | 'calculator';
 
 export interface CoffeeProduct {
@@ -14,9 +12,6 @@ export interface CoffeeProduct {
   process: 'Washed (Eco-Pulped & Sun-Dried)' | 'Natural Honey Process' | 'Anaerobic Washed';
   cuppingScore: number; // e.g. 89.5
   flavorNotes: string[];
-  priceUsd: number;
-  priceKes: number;
-  priceEur: number;
   description: string;
   image: string;
   recommendedBrew: ('V60 Pour Over' | 'French Press' | 'Espresso Machine' | 'Aeropress' | 'Chemex')[];
@@ -35,9 +30,6 @@ export interface TeaProduct {
   oxidationLevel: string; // e.g., "0%" or "100%" or "Partial 40%"
   polyphenols: string; // e.g. "16.5% Anthocyanins"
   liquorColor: string; // hex color string for visual representation
-  priceUsd: number;
-  priceKes: number;
-  priceEur: number;
   description: string;
   image: string;
   steepTime: string; // e.g., "3 - 4 mins"
@@ -93,9 +85,6 @@ export interface CartItem {
   productId: string;
   name: string;
   format: string;
-  priceUsd: number;
-  priceKes: number;
-  priceEur: number;
   quantity: number;
   image: string;
 }
@@ -109,30 +98,13 @@ export interface OrderShippingDetails {
   city: string;
   country: string;
   postalCode: string;
-  shippingMethod: 'direct_air_express' | 'air_cargo' | 'ocean_freight';
-  paymentMethod: 'card' | 'mpesa' | 'wire' | 'cod' | 'not_required';
-  mpesaPhone?: string;
-  cardLastFour?: string;
 }
 
-export interface Order {
+export interface OrderRequest {
   id: string;
   date: string;
-  status: 'Processing' | 'Phytosanitary Inspection' | 'In Transit' | 'Delivered';
   items: CartItem[];
-  subtotalUsd: number;
-  subtotalKes: number;
-  subtotalEur: number;
-  shippingFeeUsd: number;
-  shippingFeeKes: number;
-  shippingFeeEur: number;
-  totalUsd: number;
-  totalKes: number;
-  totalEur: number;
-  currency: Currency;
   shippingDetails: OrderShippingDetails;
-  trackingNumber: string;
-  estimatedDelivery: string;
 }
 
 export interface SampleInquiryFormData {

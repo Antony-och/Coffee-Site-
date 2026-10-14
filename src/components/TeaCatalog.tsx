@@ -1,25 +1,19 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { TEA_PRODUCTS } from '../data/teaData';
-import { TeaProduct, Currency, CartItem } from '../types';
-import { formatPrice } from '../utils/currency';
-import { Leaf, Plus, Check } from 'lucide-react';
+import { TeaProduct } from '../types';
+import { Leaf, ArrowRight } from 'lucide-react';
 
 interface TeaCatalogProps {
-  currency: Currency;
   onSelectProduct: (product: TeaProduct) => void;
-  onAddToCart: (item: CartItem) => void;
   externalSearch?: string;
 }
 
 export const TeaCatalog: React.FC<TeaCatalogProps> = ({
-  currency,
   onSelectProduct,
-  onAddToCart,
   externalSearch = '',
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>(externalSearch);
-  const [addedItems, setAddedItems] = useState<Record<string, boolean>>({});
 
   useEffect(() => setSearchQuery(externalSearch), [externalSearch]);
 
@@ -36,27 +30,6 @@ export const TeaCatalog: React.FC<TeaCatalogProps> = ({
       return matchSearch;
     });
   }, [searchQuery]);
-
-  const handleQuickAdd = (product: TeaProduct, e: React.MouseEvent) => {
-    e.stopPropagation();
-    onAddToCart({
-      id: `tea-${product.id}-loose`,
-      type: 'tea',
-      productId: product.id,
-      name: product.name,
-      format: product.packagingFormats[0] || '100g Loose Leaf',
-      priceUsd: product.priceUsd,
-      priceKes: product.priceKes,
-      priceEur: product.priceEur,
-      quantity: 1,
-      image: product.image,
-    });
-
-    setAddedItems((prev) => ({ ...prev, [product.id]: true }));
-    setTimeout(() => {
-      setAddedItems((prev) => ({ ...prev, [product.id]: false }));
-    }, 2000);
-  };
 
   return (
     <section className="py-16 bg-[#162A1E] text-[#E8F3EB]">
@@ -144,36 +117,23 @@ export const TeaCatalog: React.FC<TeaCatalogProps> = ({
                     ))}
                   </div>
 
-                  {/* Price & Actions */}
+                  {/* Quote request & pack-size action */}
                   <div className="pt-3 border-t border-[#2B4B36]/60 flex items-center justify-between">
                     <div>
                       <span className="text-[10px] uppercase tracking-wider text-[#A3C4AC]/60 block font-semibold">
-                        From
+                        Price on request
                       </span>
-                      <span className="font-serif-display text-base font-bold text-[#52B788]">
-                        {formatPrice(product.priceUsd, product.priceKes, product.priceEur, currency)}
+                      <span className="mt-1 block text-[10px] text-[#A3C4AC]/70">
+                        Team confirms before acceptance
                       </span>
                     </div>
 
                     <button
-                      onClick={(e) => handleQuickAdd(product, e)}
-                      className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
-                        addedItems[product.id]
-                          ? 'bg-[#52B788] text-[#122319]'
-                          : 'bg-[#2D6A4F] hover:bg-[#1f4a37] text-white'
-                      }`}
+                      onClick={(event) => { event.stopPropagation(); onSelectProduct(product); }}
+                      className="px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors bg-[#2D6A4F] hover:bg-[#1f4a37] text-white"
                     >
-                      {addedItems[product.id] ? (
-                        <>
-                          <Check className="w-3.5 h-3.5" />
-                          Added
-                        </>
-                      ) : (
-                        <>
-                          <Plus className="w-3.5 h-3.5" />
-                          Add
-                        </>
-                      )}
+                      Choose size
+                      <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                     </button>
                   </div>
 
