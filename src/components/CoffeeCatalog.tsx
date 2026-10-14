@@ -66,41 +66,43 @@ export const CoffeeCatalog: React.FC<CoffeeCatalogProps> = ({
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ duration: 0.4, delay: (index % 3) * 0.08 }}
                 onClick={() => onSelectProduct(product)}
-                className="group bg-[#2A1B16] rounded-2xl border border-[#442E25] hover:border-[#E58E26]/70 transition-all duration-200 overflow-hidden flex flex-col cursor-pointer shadow-sm hover:shadow-xl"
+                className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-[1.75rem] border border-[#6B4931]/45 bg-gradient-to-b from-[#38271D] via-[#2B1C15] to-[#211510] shadow-[0_12px_38px_rgba(0,0,0,0.22)] transition-all duration-300 hover:-translate-y-1 hover:border-[#E9A54B]/70 hover:shadow-[0_24px_54px_rgba(0,0,0,0.34)]"
               >
                 {/* Image */}
-                <div className="relative h-48 bg-[#1C120E] overflow-hidden">
+                <div className="relative h-56 overflow-hidden bg-[#1C120E] sm:h-64">
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute top-3 left-3 flex gap-1.5">
-                    <span className="px-2.5 py-1 rounded-full bg-[#1C120E]/80 backdrop-blur-sm text-white text-[11px] font-semibold border border-white/10">
+                  <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#1A100B]/65 via-transparent to-black/10" />
+                  <div className="absolute left-4 top-4">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-[#19100C]/65 px-3.5 py-2 text-[10px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-md">
+                      <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#E9A54B]" />
                       Grade {product.grade}
                     </span>
                   </div>
                 </div>
 
                 {/* Card Body */}
-                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                  <div className="space-y-1.5">
-                    <h3 className="font-serif-display text-lg font-bold text-white group-hover:text-[#F5B041] transition-colors leading-snug">
+                <div className="flex flex-1 flex-col p-5 sm:p-6">
+                  <div className="space-y-2">
+                    <h3 className="font-serif-display text-xl font-bold leading-snug text-white transition-colors group-hover:text-[#F5B041] sm:text-2xl">
                       {product.name}
                     </h3>
-                    <p className="text-xs text-[#D4C3B7]/80 line-clamp-3 leading-relaxed">
+                    <p className="line-clamp-3 text-sm leading-6 text-[#D4C3B7]/85">
                       {product.description}
                     </p>
                   </div>
 
-                  <div className="pt-4 border-t border-[#442E25]/60">
+                  <div className="mt-auto pt-6">
                     <button
                       onClick={(event) => { event.stopPropagation(); onSelectProduct(product); }}
-                      className="w-full px-3.5 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors bg-[#E58E26] hover:bg-[#c9781b] text-white"
+                      className="group/cta flex w-full items-center justify-center gap-2 rounded-full bg-[#E58E26] px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white shadow-[0_8px_20px_rgba(229,142,38,0.18)] transition-all duration-200 hover:bg-[#C9781B] hover:shadow-[0_10px_24px_rgba(229,142,38,0.28)]"
                     >
                       Choose size
-                      <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                      <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover/cta:translate-x-1" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
