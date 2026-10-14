@@ -18,9 +18,6 @@ export const CoffeeCatalog: React.FC<CoffeeCatalogProps> = ({
   onAddToCart,
   externalSearch = '',
 }) => {
-  const [selectedGrade, setSelectedGrade] = useState<string>('all');
-  const [selectedRoast, setSelectedRoast] = useState<string>('all');
-  const [selectedVariety, setSelectedVariety] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>(externalSearch);
   const [addedItems, setAddedItems] = useState<Record<string, boolean>>({});
 
@@ -28,9 +25,6 @@ export const CoffeeCatalog: React.FC<CoffeeCatalogProps> = ({
 
   const filteredProducts = useMemo(() => {
     return COFFEE_PRODUCTS.filter((item) => {
-      const matchGrade = selectedGrade === 'all' || item.grade.includes(selectedGrade);
-      const matchRoast = selectedRoast === 'all' || item.roastLevel === selectedRoast;
-      const matchVariety = selectedVariety === 'all' || item.variety.includes(selectedVariety);
       const query = searchQuery.toLowerCase();
       const matchSearch =
         !query ||
@@ -39,9 +33,9 @@ export const CoffeeCatalog: React.FC<CoffeeCatalogProps> = ({
         item.flavorNotes.some((note) => note.toLowerCase().includes(query)) ||
         item.variety.toLowerCase().includes(query);
 
-      return matchGrade && matchRoast && matchVariety && matchSearch;
+      return matchSearch;
     });
-  }, [selectedGrade, selectedRoast, selectedVariety, searchQuery]);
+  }, [searchQuery]);
 
   const handleQuickAdd = (product: CoffeeProduct, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -82,31 +76,12 @@ export const CoffeeCatalog: React.FC<CoffeeCatalogProps> = ({
           </p>
         </div>
 
-        <div className="mb-8 flex flex-wrap items-center justify-center gap-3" aria-label="Filter coffee collection">
-          <label className="sr-only" htmlFor="coffee-grade">Coffee grade</label>
-          <select id="coffee-grade" value={selectedGrade} onChange={(e) => setSelectedGrade(e.target.value)} className="rounded-full border border-[#725144] bg-[#2A1B16] px-4 py-2.5 text-xs text-[#F5EBE6] focus:outline-none focus:ring-2 focus:ring-[#E58E26]">
-            <option value="all">All grades</option>
-            {[...new Set(COFFEE_PRODUCTS.map((product) => product.grade))].map((grade) => <option key={grade} value={grade}>{grade}</option>)}
-          </select>
-          <label className="sr-only" htmlFor="coffee-roast">Roast level</label>
-          <select id="coffee-roast" value={selectedRoast} onChange={(e) => setSelectedRoast(e.target.value)} className="rounded-full border border-[#725144] bg-[#2A1B16] px-4 py-2.5 text-xs text-[#F5EBE6] focus:outline-none focus:ring-2 focus:ring-[#E58E26]">
-            <option value="all">All roast levels</option>
-            {[...new Set(COFFEE_PRODUCTS.map((product) => product.roastLevel))].map((roast) => <option key={roast} value={roast}>{roast}</option>)}
-          </select>
-          <label className="sr-only" htmlFor="coffee-variety">Coffee variety</label>
-          <select id="coffee-variety" value={selectedVariety} onChange={(e) => setSelectedVariety(e.target.value)} className="rounded-full border border-[#725144] bg-[#2A1B16] px-4 py-2.5 text-xs text-[#F5EBE6] focus:outline-none focus:ring-2 focus:ring-[#E58E26]">
-            <option value="all">All varieties</option>
-            {[...new Set(COFFEE_PRODUCTS.map((product) => product.variety))].map((variety) => <option key={variety} value={variety}>{variety}</option>)}
-          </select>
-          <span className="text-xs text-[#D4C3B7]/70" aria-live="polite">{filteredProducts.length} {filteredProducts.length === 1 ? 'coffee' : 'coffees'}</span>
-        </div>
-
         {/* Product Cards Grid */}
         {filteredProducts.length === 0 ? (
           <div className="text-center py-16 bg-[#33221B] rounded-2xl border border-dashed border-[#483229]">
             <Coffee className="w-12 h-12 text-[#E58E26]/40 mx-auto mb-3" />
             <h3 className="font-serif-display text-lg font-bold text-white">No matching coffee lots found</h3>
-            <p className="text-xs text-[#D4C3B7] mt-1">Try searching for a different roast, grade, or region.</p>
+            <p className="text-xs text-[#D4C3B7] mt-1">Try a different search or clear it to see all coffee lots.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
