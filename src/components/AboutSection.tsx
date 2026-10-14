@@ -112,8 +112,15 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) =>
 
         <div className="relative flex flex-col gap-3 border-b border-white/10 pb-6 sm:pb-7 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#E4B574]">The process, step by step</p>
-            <h3 id="journey-title" className="mt-2 font-serif-display text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
+            <div className="mb-2 inline-flex items-center gap-2 rounded-xl border border-[#D6A36A]/20 bg-[#33251D]/80 px-2.5 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-[#D6A36A]/15 text-[#E4B574]">
+                <ArrowRight className="h-3 w-3" aria-hidden="true" />
+              </span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.17em] text-[#E4B574]">The process</span>
+              <span aria-hidden="true" className="h-1 w-1 rounded-full bg-[#D99A54]" />
+              <span className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#E1D2C5]">Step by step</span>
+            </div>
+            <h3 id="journey-title" className="font-serif-display text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
               From harvest to cup
             </h3>
           </div>
