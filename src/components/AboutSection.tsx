@@ -106,46 +106,65 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) =>
         </div>
       </div>
 
-      <section aria-labelledby="journey-title" className="mt-14 border-t border-[#DCD2C5] pt-9 sm:mt-16 sm:pt-11">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#A85C16]">From harvest to cup</p>
-          <h3 id="journey-title" className="mt-2 font-serif-display text-3xl font-semibold tracking-[-0.03em] text-[#2A2522] sm:text-4xl">
-            From bean and leaf to cup
-          </h3>
-          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[#777068]">
-            Coffee and tea each have their own journey. Here are the key steps that shape the flavour in your cup.
+      <section aria-labelledby="journey-title" className="relative mt-14 overflow-hidden rounded-[2rem] border border-[#3A2B22] bg-[#241713] px-5 py-8 text-[#F7F1E8] shadow-[0_24px_60px_rgba(42,37,34,0.14)] sm:mt-16 sm:px-8 sm:py-10 lg:px-10">
+        <div aria-hidden="true" className="pointer-events-none absolute -right-20 -top-28 h-64 w-64 rounded-full bg-[#D99A54]/10 blur-3xl" />
+        <div aria-hidden="true" className="pointer-events-none absolute -bottom-28 -left-20 h-64 w-64 rounded-full bg-[#70834E]/10 blur-3xl" />
+
+        <div className="relative flex flex-col gap-3 border-b border-white/10 pb-6 sm:pb-7 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#E4B574]">The process, step by step</p>
+            <h3 id="journey-title" className="mt-2 font-serif-display text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
+              From harvest to cup
+            </h3>
+          </div>
+          <p className="max-w-xl text-sm leading-6 text-[#D8CBBF]">
+            Two ingredients, two journeys. Follow the key steps that shape coffee and tea from the highlands to your cup.
           </p>
         </div>
 
-        <div className="mt-8 grid gap-5 lg:grid-cols-2 lg:gap-7">
-          {journeys.map(({ id, name, path, icon: Icon, intro, steps, iconStyle, numberStyle }) => (
-            <article key={id} aria-labelledby={`${id}-title`} className="rounded-[1.75rem] border border-[#E7DED2] bg-white/80 p-5 shadow-[0_12px_36px_rgba(42,37,34,0.045)] sm:p-7">
-              <div className="flex items-center gap-3">
-                <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${iconStyle}`}>
-                  <Icon className="h-5 w-5" aria-hidden="true" />
-                </span>
-                <div>
-                  <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#8A8178]">{path}</p>
-                  <h4 id={`${id}-title`} className="font-serif-display text-xl font-bold text-[#2A2522]">{name}</h4>
-                </div>
-              </div>
-              <p className="mt-4 text-xs leading-5 text-[#777068]">{intro}</p>
+        <div className="relative mt-6 space-y-4 sm:mt-7 sm:space-y-5">
+          {journeys.map(({ id, name, path, icon: Icon, intro, steps, iconStyle, numberStyle }) => {
+            const isCoffee = id === 'coffee-process';
 
-              <ol className="mt-5 space-y-3.5">
-                {steps.map((step, index) => (
-                  <li key={step.title} className="grid grid-cols-[2rem_1fr] items-start gap-3">
-                    <span aria-hidden="true" className={`flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-bold ${numberStyle}`}>
-                      {String(index + 1).padStart(2, '0')}
+            return (
+              <article
+                key={id}
+                aria-labelledby={`${id}-title`}
+                className={`rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-4 sm:p-5 ${isCoffee ? 'border-l-2 border-l-[#D9A05F]' : 'border-l-2 border-l-[#92A875]'}`}
+              >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-5">
+                  <div className="flex items-center gap-3">
+                    <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${iconStyle}`}>
+                      <Icon className="h-5 w-5" aria-hidden="true" />
                     </span>
-                    <div className="pt-0.5">
-                      <h5 className="text-sm font-semibold text-[#332A24]">{step.title}</h5>
-                      <p className="mt-0.5 text-xs leading-5 text-[#777068]">{step.copy}</p>
+                    <div>
+                      <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#C7B8A9]">{path}</p>
+                      <h4 id={`${id}-title`} className="font-serif-display text-xl font-bold text-white">{name}</h4>
                     </div>
-                  </li>
-                ))}
-              </ol>
-            </article>
-          ))}
+                  </div>
+                  <p className="text-xs leading-5 text-[#CFC1B4] sm:max-w-xs sm:text-right">{intro}</p>
+                </div>
+
+                <div className="relative mt-5">
+                  <div aria-hidden="true" className="pointer-events-none absolute left-[8%] right-[8%] top-7 hidden h-px bg-white/15 xl:block" />
+                  <ol className="relative grid gap-2.5 sm:grid-cols-2 xl:grid-cols-5 xl:gap-3">
+                    {steps.map((step, index) => (
+                      <li key={step.title} className="rounded-xl border border-white/[0.08] bg-[#2A1E18] p-3.5 sm:min-h-[9rem]">
+                        <div className="flex items-center gap-2.5">
+                          <span aria-hidden="true" className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${numberStyle}`}>
+                            {String(index + 1).padStart(2, '0')}
+                          </span>
+                          <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-[#BBAA99]">Step {index + 1}</span>
+                        </div>
+                        <h5 className="mt-3 text-sm font-semibold leading-5 text-white">{step.title}</h5>
+                        <p className="mt-1.5 text-[11px] leading-[1.6] text-[#D2C5B9]">{step.copy}</p>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </section>
     </div>
