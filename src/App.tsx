@@ -41,7 +41,7 @@ export default function App() {
 
   // Auto update active section in navbar as user scrolls
   useEffect(() => {
-    const sectionIds: PageView[] = ['home', 'coffee', 'about', 'contact'];
+    const sectionIds: PageView[] = ['home', 'about', 'coffee', 'tea', 'contact'];
     const handleScroll = () => {
       const scrollPosition = window.scrollY + 200;
       for (let i = sectionIds.length - 1; i >= 0; i--) {
@@ -120,13 +120,7 @@ export default function App() {
         cartCount={totalCartCount}
         setIsCartOpen={setIsCartOpen}
         searchQuery={searchQuery}
-        setSearchQuery={(q) => {
-          setSearchQuery(q);
-          if (q) {
-            const coffeeEl = document.getElementById('coffee');
-            if (coffeeEl) coffeeEl.scrollIntoView({ behavior: 'smooth' });
-          }
-        }}
+        setSearchQuery={setSearchQuery}
       />
 
       {/* Streamlined Main Scrollable Flow */}
