@@ -80,54 +80,24 @@ export const CoffeeCatalog: React.FC<CoffeeCatalogProps> = ({
                     <span className="px-2.5 py-1 rounded-full bg-[#1C120E]/80 backdrop-blur-sm text-white text-[11px] font-semibold border border-white/10">
                       Grade {product.grade}
                     </span>
-                    {product.cuppingScore && (
-                      <span className="px-2.5 py-1 rounded-full bg-[#5D6D3C]/90 backdrop-blur-sm text-white text-[11px] font-semibold border border-white/10">
-                        SCA {product.cuppingScore}
-                      </span>
-                    )}
                   </div>
                 </div>
 
                 {/* Card Body */}
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                   <div className="space-y-1.5">
-                    <div className="text-[11px] font-medium text-[#D4C3B7]/70">
-                      {product.region} • {product.altitude}
-                    </div>
                     <h3 className="font-serif-display text-lg font-bold text-white group-hover:text-[#F5B041] transition-colors leading-snug">
                       {product.name}
                     </h3>
-                    <p className="text-xs text-[#D4C3B7]/80 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-[#D4C3B7]/80 line-clamp-3 leading-relaxed">
                       {product.description}
                     </p>
                   </div>
 
-                  {/* Flavor Notes */}
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {product.flavorNotes.slice(0, 3).map((note, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2 py-0.5 rounded-md bg-[#1C120E]/60 text-[11px] text-[#D4C3B7]"
-                      >
-                        {note}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Quote request & pack-size action */}
-                  <div className="pt-3 border-t border-[#442E25]/60 flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wider text-[#D4C3B7]/60 block font-semibold">
-                        Price on request
-                      </span>
-                      <span className="mt-1 block text-[10px] text-[#D4C3B7]/70">
-                        Team confirms before acceptance
-                      </span>
-                    </div>
-
+                  <div className="pt-4 border-t border-[#442E25]/60">
                     <button
                       onClick={(event) => { event.stopPropagation(); onSelectProduct(product); }}
-                      className="px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors bg-[#E58E26] hover:bg-[#c9781b] text-white"
+                      className="w-full px-3.5 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors bg-[#E58E26] hover:bg-[#c9781b] text-white"
                     >
                       Choose size
                       <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
