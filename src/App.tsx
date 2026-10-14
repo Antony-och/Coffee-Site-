@@ -10,7 +10,6 @@ import { ContactSection } from './components/ContactSection';
 import { ProductModal } from './components/ProductModal';
 import { SampleCartDrawer } from './components/SampleCartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
-import { TERROIR_STATS } from './data/companyData';
 import { Star } from 'lucide-react';
 
 export default function App() {
@@ -136,24 +135,6 @@ export default function App() {
         {/* Section 1: Hero Slideshow */}
         <section id="home" className="scroll-mt-20">
           <HeroSlideshow setCurrentPage={handlePageChange} />
-
-          {/* Terroir & High Altitude Stats Strip */}
-          <div className="bg-[#2D241E] text-[#FAF7F2] py-8 border-b border-[#E5E1DA]/20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
-                {TERROIR_STATS.map((stat, idx) => (
-                  <div key={idx} className="space-y-0.5">
-                    <span className="font-serif-display text-2xl font-extrabold text-[#D97706] block">
-                      {stat.value}
-                    </span>
-                    <h4 className="font-serif-display text-xs font-bold text-[#FAF7F2]">
-                      {stat.label}
-                    </h4>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
         </section>
 
         {/* Section 2: About First Cup */}
