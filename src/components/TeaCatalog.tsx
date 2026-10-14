@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { TEA_PRODUCTS } from '../data/teaData';
 import { TeaProduct, Currency, CartItem } from '../types';
@@ -21,6 +21,8 @@ export const TeaCatalog: React.FC<TeaCatalogProps> = ({
   const [selectedType, setSelectedType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>(externalSearch);
   const [addedItems, setAddedItems] = useState<Record<string, boolean>>({});
+
+  useEffect(() => setSearchQuery(externalSearch), [externalSearch]);
 
   const filteredProducts = useMemo(() => {
     return TEA_PRODUCTS.filter((item) => {
@@ -59,7 +61,7 @@ export const TeaCatalog: React.FC<TeaCatalogProps> = ({
   };
 
   return (
-    <section id="tea" className="py-16 bg-[#162A1E] text-[#E8F3EB]">
+    <section className="py-16 bg-[#162A1E] text-[#E8F3EB]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
@@ -74,6 +76,15 @@ export const TeaCatalog: React.FC<TeaCatalogProps> = ({
           <p className="text-sm sm:text-base text-[#A3C4AC] leading-relaxed">
             Including world-exclusive TRFK 306/1 Purple Tea, Kericho Safari Gold CTC Black Tea, and hand-rolled Orthodox Green Tea cultivated in the cloud forests of Kericho & Limuru.
           </p>
+        </div>
+
+        <div className="mb-8 flex flex-wrap items-center justify-center gap-3" aria-label="Filter tea collection">
+          <label className="sr-only" htmlFor="tea-type">Tea type</label>
+          <select id="tea-type" value={selectedType} onChange={(e) => setSelectedType(e.target.value)} className="rounded-full border border-[#477052] bg-[#1A3123] px-4 py-2.5 text-xs text-[#E8F3EB] focus:outline-none focus:ring-2 focus:ring-[#52B788]">
+            <option value="all">All tea types</option>
+            {[...new Set(TEA_PRODUCTS.map((product) => product.type))].map((type) => <option key={type} value={type}>{type}</option>)}
+          </select>
+          <span className="text-xs text-[#A3C4AC]/80" aria-live="polite">{filteredProducts.length} {filteredProducts.length === 1 ? 'tea' : 'teas'}</span>
         </div>
 
         {/* Product Cards Grid */}

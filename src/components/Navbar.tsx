@@ -72,13 +72,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
+          <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-1 xl:gap-2">
             {navItems.map((item) => {
               const isActive = currentPage === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
+                  aria-current={isActive ? 'page' : undefined}
                   className={`px-3 py-2 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 flex items-center gap-1.5 ${
                     isActive
                       ? 'bg-[#2D241E] text-white shadow-md border border-[#D4C3A3]/30'
@@ -97,6 +98,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Search Trigger */}
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
+              aria-label={isSearchOpen ? 'Close product search' : 'Open product search'}
+              aria-expanded={isSearchOpen}
               className="p-2 rounded-lg text-[#D4C3A3] hover:text-white hover:bg-white/10 transition-colors"
               title="Search Products"
             >
@@ -107,6 +110,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="relative">
               <button
                 onClick={() => setIsCurrencyDropdownOpen(!isCurrencyDropdownOpen)}
+                aria-label={`Currency: ${currency}`}
+                aria-expanded={isCurrencyDropdownOpen}
                 className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-[#E5E1DA]/30 bg-[#2D241E] text-xs text-[#FAF7F2] hover:border-[#D4C3A3] transition-colors"
               >
                 <Globe className="w-3.5 h-3.5 text-[#D97706]" />
@@ -141,6 +146,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Order Cart Drawer Button */}
             <button
               onClick={() => setIsCartOpen(true)}
+              aria-label={`Open order cart${cartCount ? `, ${cartCount} items` : ''}`}
               className="relative p-2.5 rounded-full bg-[#D97706] text-white hover:bg-[#b45309] transition-all shadow-md flex items-center gap-2"
               title="View Orders / Cart"
             >
@@ -172,6 +178,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Search coffee and tea products"
               placeholder="Search AA Arabica, Purple Tea, Peaberry, Nyeri, Kericho, Roast level..."
               className="w-full bg-[#2D241E] border border-[#E5E1DA]/30 rounded-lg px-3 py-1.5 text-xs text-[#FAF7F2] placeholder-[#D4C3A3]/50 focus:outline-none focus:border-[#D4C3A3]"
               autoFocus
@@ -190,7 +197,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Drawer Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden bg-[#2D241E] border-b border-[#E5E1DA]/20 px-4 py-4 space-y-2 text-sm shadow-2xl">
+        <nav aria-label="Mobile navigation" className="lg:hidden bg-[#2D241E] border-b border-[#E5E1DA]/20 px-4 py-4 space-y-2 text-sm shadow-2xl">
           {navItems.map((item) => (
             <button
               key={item.id}
@@ -228,7 +235,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             </div>
           </div>
-        </div>
+        </nav>
       )}
     </header>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Mail, Phone, MapPin, Send, CheckCircle2, Clock, MessageSquare, ExternalLink, Navigation, ShoppingBag, ArrowRight } from 'lucide-react';
 import { CartItem, Currency } from '../types';
 import { formatPrice } from '../utils/currency';
@@ -35,6 +35,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   currency = 'USD' as Currency,
 }) => {
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const formRef = useRef<HTMLFormElement>(null);
   const [selectedHub, setSelectedHub] = useState<HubLocation>(HUBS[0]);
   const [formData, setFormData] = useState({
     name: '',
@@ -102,6 +103,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
   const handleSendWhatsApp = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
+    if (!submitted && !formRef.current?.reportValidity()) return;
     const phone = '254725741543';
     const orderSummary = buildCartSummary();
     const defaultRequirements = buildDefaultRequirements();
@@ -117,6 +119,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
   const handleSendEmail = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
+    if (!submitted && !formRef.current?.reportValidity()) return;
     const emailTo = 'firstcupcoffeeltd@gmail.com';
     const orderSummary = buildCartSummary();
     const defaultRequirements = buildDefaultRequirements();
@@ -129,7 +132,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   };
 
   return (
-    <section id="contact" className="py-20 bg-[#FAF7F2] text-[#2A2522]">
+    <section className="py-20 bg-[#FAF7F2] text-[#2A2522]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         {/* Header */}
@@ -213,10 +216,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 </div>
                 <div>
                   <h3 className="font-serif-display text-2xl font-bold text-[#2A2522]">
-                    Order Inquiry Received!
+                    Your inquiry is ready to send
                   </h3>
                   <p className="mx-auto mt-2 max-w-md text-xs leading-relaxed text-[#7A746E]">
-                    Thank you, <strong>{formData.name || 'Customer'}</strong>. Your inquiry regarding <strong>{formData.subject}</strong> has been prepared.
+                    Thanks, <strong>{formData.name || 'Customer'}</strong>. Review your details, then choose WhatsApp or email to send your <strong>{formData.subject}</strong> inquiry.
                   </p>
                 </div>
 
@@ -250,7 +253,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
                 <div className="flex items-center justify-between border-b border-[#DCD3C8] pb-3">
                   <div className="flex items-center gap-3">
                     <span className="flex h-5 w-5 items-center justify-center rounded-[0.35rem] border border-[#2A2522] bg-transparent text-[#2A2522]">
@@ -316,7 +319,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
                 <div>
                   <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
-                    Your Order Message / Requirements *
+                    Your Order Message / Requirements
                   </label>
                   <textarea
                     rows={5}

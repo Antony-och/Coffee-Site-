@@ -29,7 +29,7 @@ export interface TeaProduct {
   id: string;
   name: string;
   subTitle: string;
-  type: 'Rare Purple Tea' | 'Black CTC Safari' | 'Orthodox Green' | 'Artisanal White Needle' | 'Spiced Chai Infusion';
+  type: 'Premium Black Tea' | 'Spiced Herbal Tea' | 'Everyday Tea' | 'Blended Tea' | 'Spiced Chai Infusion';
   origin: 'Kericho Tea Valley' | 'Nandi Hills' | 'Limuru Estate' | 'Aberdare Slopes';
   altitude: string;
   oxidationLevel: string; // e.g., "0%" or "100%" or "Partial 40%"

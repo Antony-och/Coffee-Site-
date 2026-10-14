@@ -86,7 +86,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) =>
   ];
 
   return (
-    <section id="about" className="bg-[#F6F1EA] py-20 text-[#2A2522]">
+    <section className="bg-[#F6F1EA] py-20 text-[#2A2522]">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[2.2rem] border border-[#E2DDD2] bg-[#F9F4EE] p-6 shadow-[0_18px_40px_rgba(42,37,34,0.03)] sm:p-8 lg:p-12">
           <div className="absolute -right-16 top-10 h-56 w-56 rounded-full bg-[#D97706]/10 blur-3xl" />

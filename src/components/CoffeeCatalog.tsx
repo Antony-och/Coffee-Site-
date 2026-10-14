@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { COFFEE_PRODUCTS } from '../data/coffeeData';
 import { CoffeeProduct, Currency, CartItem } from '../types';
@@ -23,6 +23,8 @@ export const CoffeeCatalog: React.FC<CoffeeCatalogProps> = ({
   const [selectedVariety, setSelectedVariety] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>(externalSearch);
   const [addedItems, setAddedItems] = useState<Record<string, boolean>>({});
+
+  useEffect(() => setSearchQuery(externalSearch), [externalSearch]);
 
   const filteredProducts = useMemo(() => {
     return COFFEE_PRODUCTS.filter((item) => {
@@ -63,7 +65,7 @@ export const CoffeeCatalog: React.FC<CoffeeCatalogProps> = ({
   };
 
   return (
-    <section id="coffee" className="py-16 bg-[#241713] text-[#F5EBE6]">
+    <section className="py-16 bg-[#241713] text-[#F5EBE6]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
@@ -78,6 +80,25 @@ export const CoffeeCatalog: React.FC<CoffeeCatalogProps> = ({
           <p className="text-sm sm:text-base text-[#D4C3B7] leading-relaxed">
             Hand-harvested at 1,800m–2,200m altitude from Mount Kenya & Nyeri volcanic soils. Double fermented in mountain spring waters and sun-dried on African raised beds.
           </p>
+        </div>
+
+        <div className="mb-8 flex flex-wrap items-center justify-center gap-3" aria-label="Filter coffee collection">
+          <label className="sr-only" htmlFor="coffee-grade">Coffee grade</label>
+          <select id="coffee-grade" value={selectedGrade} onChange={(e) => setSelectedGrade(e.target.value)} className="rounded-full border border-[#725144] bg-[#2A1B16] px-4 py-2.5 text-xs text-[#F5EBE6] focus:outline-none focus:ring-2 focus:ring-[#E58E26]">
+            <option value="all">All grades</option>
+            {[...new Set(COFFEE_PRODUCTS.map((product) => product.grade))].map((grade) => <option key={grade} value={grade}>{grade}</option>)}
+          </select>
+          <label className="sr-only" htmlFor="coffee-roast">Roast level</label>
+          <select id="coffee-roast" value={selectedRoast} onChange={(e) => setSelectedRoast(e.target.value)} className="rounded-full border border-[#725144] bg-[#2A1B16] px-4 py-2.5 text-xs text-[#F5EBE6] focus:outline-none focus:ring-2 focus:ring-[#E58E26]">
+            <option value="all">All roast levels</option>
+            {[...new Set(COFFEE_PRODUCTS.map((product) => product.roastLevel))].map((roast) => <option key={roast} value={roast}>{roast}</option>)}
+          </select>
+          <label className="sr-only" htmlFor="coffee-variety">Coffee variety</label>
+          <select id="coffee-variety" value={selectedVariety} onChange={(e) => setSelectedVariety(e.target.value)} className="rounded-full border border-[#725144] bg-[#2A1B16] px-4 py-2.5 text-xs text-[#F5EBE6] focus:outline-none focus:ring-2 focus:ring-[#E58E26]">
+            <option value="all">All varieties</option>
+            {[...new Set(COFFEE_PRODUCTS.map((product) => product.variety))].map((variety) => <option key={variety} value={variety}>{variety}</option>)}
+          </select>
+          <span className="text-xs text-[#D4C3B7]/70" aria-live="polite">{filteredProducts.length} {filteredProducts.length === 1 ? 'coffee' : 'coffees'}</span>
         </div>
 
         {/* Product Cards Grid */}
