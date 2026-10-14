@@ -76,7 +76,8 @@ export const TeaCatalog: React.FC<TeaCatalogProps> = ({
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
                     referrerPolicy="no-referrer"
                   />
-                  <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#102016]/70 via-transparent to-black/10" />
+                  <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-transparent" />
+                  <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-gradient-to-b from-transparent via-[#203729]/75 to-[#203729]" />
                   <div className="absolute left-4 top-4">
                     <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-[#102016]/70 px-3.5 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white backdrop-blur-md">
                       <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#82D49A]" />
@@ -86,7 +87,7 @@ export const TeaCatalog: React.FC<TeaCatalogProps> = ({
                 </div>
 
                 {/* Card Content */}
-                <div className="flex flex-1 flex-col p-5 sm:p-6">
+                <div className="flex flex-1 flex-col bg-gradient-to-b from-[#203729] to-[#17291D] p-5 sm:p-6">
                   <div className="space-y-2">
                     <h3 className="font-serif-display text-xl font-bold leading-snug text-white transition-colors group-hover:text-[#8BE0A7] sm:text-2xl">
                       {product.name}
@@ -99,10 +100,12 @@ export const TeaCatalog: React.FC<TeaCatalogProps> = ({
                   <div className="mt-auto pt-6">
                     <button
                       onClick={(event) => { event.stopPropagation(); onSelectProduct(product); }}
-                      className="group/cta flex w-full items-center justify-center gap-2 rounded-full bg-[#2D8A5F] px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white shadow-[0_8px_20px_rgba(45,138,95,0.18)] transition-all duration-200 hover:bg-[#24724E] hover:shadow-[0_10px_24px_rgba(45,138,95,0.28)]"
+                      className="group/cta flex w-full items-center justify-between rounded-2xl border border-[#75C995]/30 bg-[#1D3627] px-4 py-2.5 text-left text-[#C5EDD0] transition-all duration-200 hover:border-[#8BE0A7] hover:bg-[#69C588] hover:text-[#0E2919] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8BE0A7] focus-visible:ring-offset-2 focus-visible:ring-offset-[#17291D]"
                     >
-                      Choose size
-                      <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover/cta:translate-x-1" aria-hidden="true" />
+                      <span className="text-xs font-bold uppercase tracking-[0.12em]">Choose size</span>
+                      <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#68C589] text-[#0E2919] transition-colors group-hover/cta:bg-[#E7F8EB]">
+                        <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover/cta:translate-x-0.5" />
+                      </span>
                     </button>
                   </div>
 
