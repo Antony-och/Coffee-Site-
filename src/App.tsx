@@ -156,7 +156,12 @@ export default function App() {
           </div>
         </section>
 
-        {/* Section 2: Product Collections (Coffee Reserve & Purified Teas) */}
+        {/* Section 2: About First Cup */}
+        <section id="about" className="scroll-mt-20">
+          <AboutSection setCurrentPage={handlePageChange} />
+        </section>
+
+        {/* Section 3: Product Collections (Coffee Reserve & Purified Teas) */}
         <section id="coffee" className="scroll-mt-20 py-12">
           <CoffeeCatalog
             currency={currency}
@@ -219,11 +224,6 @@ export default function App() {
               </div>
             </div>
           </div>
-        </section>
-
-        {/* Section 5: About Terroir */}
-        <section id="about" className="scroll-mt-20">
-          <AboutSection setCurrentPage={handlePageChange} />
         </section>
 
         {/* Section 6: Contact & Wholesale */}
