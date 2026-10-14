@@ -66,74 +66,46 @@ export const TeaCatalog: React.FC<TeaCatalogProps> = ({
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ duration: 0.4, delay: (index % 3) * 0.08 }}
                 onClick={() => onSelectProduct(product)}
-                className="group bg-[#1A3123] rounded-2xl border border-[#2B4B36] hover:border-[#52B788]/70 transition-all duration-200 overflow-hidden flex flex-col cursor-pointer shadow-sm hover:shadow-xl"
+                className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-[1.75rem] border border-[#54745D]/50 bg-gradient-to-b from-[#294333] via-[#203729] to-[#17291D] shadow-[0_12px_38px_rgba(0,0,0,0.22)] transition-all duration-300 hover:-translate-y-1 hover:border-[#75C995]/70 hover:shadow-[0_24px_54px_rgba(0,0,0,0.34)]"
               >
                 {/* Image */}
-                <div className="relative h-48 bg-[#122319] overflow-hidden">
+                <div className="relative h-56 overflow-hidden bg-[#122319] sm:h-64">
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute top-3 left-3 flex gap-1.5">
-                    <span className="px-2.5 py-1 rounded-full bg-[#122319]/80 backdrop-blur-sm text-white text-[11px] font-semibold border border-white/10">
-                      {product.type}
+                  <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-transparent" />
+                  <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-gradient-to-b from-transparent via-[#203729]/75 to-[#203729]" />
+                  <div className="absolute left-4 top-4">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-[#102016]/70 px-3.5 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white backdrop-blur-md">
+                      <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#82D49A]" />
+                      Tea type · {product.type}
                     </span>
-                  </div>
-                  {/* Subtle Liquor tone dot */}
-                  <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#122319]/80 backdrop-blur-sm border border-white/10 text-[11px] text-[#E8F3EB]">
-                    <span
-                      className="w-2.5 h-2.5 rounded-full border border-white/40"
-                      style={{ backgroundColor: product.liquorColor }}
-                    />
-                    <span>{product.origin}</span>
                   </div>
                 </div>
 
                 {/* Card Content */}
-                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                  <div className="space-y-1.5">
-                    <div className="text-[11px] font-medium text-[#A3C4AC]/70">
-                      {product.origin} • {product.polyphenols}
-                    </div>
-                    <h3 className="font-serif-display text-lg font-bold text-white group-hover:text-[#52B788] transition-colors leading-snug">
+                <div className="flex flex-1 flex-col bg-gradient-to-b from-[#203729] to-[#17291D] p-5 sm:p-6">
+                  <div className="space-y-2">
+                    <h3 className="font-serif-display text-xl font-bold leading-snug text-white transition-colors group-hover:text-[#8BE0A7] sm:text-2xl">
                       {product.name}
                     </h3>
-                    <p className="text-xs text-[#A3C4AC]/80 line-clamp-2 leading-relaxed">
+                    <p className="line-clamp-3 text-sm leading-6 text-[#BBD0C0]">
                       {product.description}
                     </p>
                   </div>
 
-                  {/* Tasting Notes */}
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {product.tastingNotes.slice(0, 3).map((note, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2 py-0.5 rounded-md bg-[#122319]/60 text-[11px] text-[#A3C4AC]"
-                      >
-                        {note}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Quote request & pack-size action */}
-                  <div className="pt-3 border-t border-[#2B4B36]/60 flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wider text-[#A3C4AC]/60 block font-semibold">
-                        Price on request
-                      </span>
-                      <span className="mt-1 block text-[10px] text-[#A3C4AC]/70">
-                        Team confirms before acceptance
-                      </span>
-                    </div>
-
+                  <div className="mt-auto pt-6">
                     <button
                       onClick={(event) => { event.stopPropagation(); onSelectProduct(product); }}
-                      className="px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors bg-[#2D6A4F] hover:bg-[#1f4a37] text-white"
+                      className="group/cta flex w-full items-center justify-between rounded-2xl border border-[#75C995]/30 bg-[#1D3627] px-4 py-2.5 text-left text-[#C5EDD0] transition-all duration-200 hover:border-[#8BE0A7] hover:bg-[#69C588] hover:text-[#0E2919] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8BE0A7] focus-visible:ring-offset-2 focus-visible:ring-offset-[#17291D]"
                     >
-                      Choose size
-                      <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                      <span className="text-xs font-bold uppercase tracking-[0.12em]">Choose size</span>
+                      <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#68C589] text-[#0E2919] transition-colors group-hover/cta:bg-[#E7F8EB]">
+                        <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover/cta:translate-x-0.5" />
+                      </span>
                     </button>
                   </div>
 
