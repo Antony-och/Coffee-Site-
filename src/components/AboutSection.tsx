@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, HeartHandshake, Mountain, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Coffee, Leaf, Mountain } from 'lucide-react';
 import { PageView } from '../types';
 
 const coffeeCup = new URL('../assets/images/kenyan_coffee_beans_1786601780276.jpg', import.meta.url).href;
@@ -8,21 +8,42 @@ interface AboutSectionProps {
   setCurrentPage: (page: PageView) => void;
 }
 
-const values = [
+const coffeeSteps = [
+  { title: 'Harvest ripe cherries', copy: 'Carefully select ripe coffee cherries from Kenya’s highland farms.' },
+  { title: 'Process the coffee', copy: 'Prepare each lot using its chosen washed or honey-processing method.' },
+  { title: 'Dry and grade', copy: 'Dry the coffee on raised beds, then sort the green beans by quality and grade.' },
+  { title: 'Roast in small batches', copy: 'Roast to bring out the character of each coffee lot.' },
+  { title: 'Grind and brew', copy: 'Brew the roasted coffee with your preferred method, from filter to espresso.' },
+];
+
+const teaSteps = [
+  { title: 'Pick fresh leaves', copy: 'Select tender tea leaves and buds from Kenya’s tea-growing regions.' },
+  { title: 'Wither the leaf', copy: 'Allow fresh leaves to soften as some moisture is gently reduced.' },
+  { title: 'Roll or cut', copy: 'Shape the leaf by rolling or CTC processing, depending on the tea style.' },
+  { title: 'Finish by style', copy: 'Oxidation and drying vary across black, green, and purple teas.' },
+  { title: 'Steep and enjoy', copy: 'Steep the prepared tea to draw out its aroma, colour, and flavour.' },
+];
+
+const journeys = [
   {
-    icon: Mountain,
-    title: 'A sense of place',
-    copy: 'Highland elevations and rich volcanic soils give each harvest its own Kenyan character.',
+    id: 'coffee-process',
+    name: 'Coffee',
+    path: 'Bean to cup',
+    icon: Coffee,
+    intro: 'From ripe cherry to a carefully roasted cup.',
+    steps: coffeeSteps,
+    iconStyle: 'bg-[#F5EBDD] text-[#92551F]',
+    numberStyle: 'bg-[#F5EBDD] text-[#92551F]',
   },
   {
-    icon: HeartHandshake,
-    title: 'People at the heart',
-    copy: 'We work alongside smallholder farming communities and the people behind every crop.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Care in every lot',
-    copy: 'Thoughtful sourcing and careful selection let the quality of each origin speak for itself.',
+    id: 'tea-process',
+    name: 'Tea',
+    path: 'Leaf to cup',
+    icon: Leaf,
+    intro: 'From fresh leaf to a cup shaped by its tea style.',
+    steps: teaSteps,
+    iconStyle: 'bg-[#E9EFE2] text-[#536C3B]',
+    numberStyle: 'bg-[#E9EFE2] text-[#536C3B]',
   },
 ];
 
@@ -49,7 +70,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) =>
 
         <div className="py-2 lg:py-8">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#5D6D3C]/20 bg-[#5D6D3C]/10 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#53623A]">
-            <Mountain className="h-3.5 w-3.5" />
+            <Mountain className="h-3.5 w-3.5" aria-hidden="true" />
             Grown with purpose
           </div>
           <h2 id="about-title" className="max-w-xl font-serif-display text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-[#2A2522] sm:text-5xl lg:text-[3.8rem]">
@@ -80,25 +101,53 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) =>
             className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#2D241E] px-6 py-3.5 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#49372B] focus-visible:outline-offset-4"
           >
             Explore the collections
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
       </div>
 
-      <div className="mt-14 grid gap-4 border-t border-[#DCD2C5] pt-8 sm:grid-cols-3 lg:mt-16 lg:gap-8 lg:pt-10">
-        {values.map(({ icon: Icon, title, copy }, index) => (
-          <article key={title} className="flex gap-4 rounded-2xl p-3 sm:p-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#5D6D3C] shadow-sm">
-              <Icon className="h-5 w-5" aria-hidden="true" />
-            </div>
-            <div>
-              <div className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#A85C16]">0{index + 1} / Our approach</div>
-              <h3 className="mt-1 font-serif-display text-lg font-bold text-[#2A2522]">{title}</h3>
-              <p className="mt-1.5 max-w-sm text-xs leading-6 text-[#777068]">{copy}</p>
-            </div>
-          </article>
-        ))}
-      </div>
+      <section aria-labelledby="journey-title" className="mt-14 border-t border-[#DCD2C5] pt-9 sm:mt-16 sm:pt-11">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#A85C16]">From harvest to cup</p>
+          <h3 id="journey-title" className="mt-2 font-serif-display text-3xl font-semibold tracking-[-0.03em] text-[#2A2522] sm:text-4xl">
+            From bean and leaf to cup
+          </h3>
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[#777068]">
+            Coffee and tea each have their own journey. Here are the key steps that shape the flavour in your cup.
+          </p>
+        </div>
+
+        <div className="mt-8 grid gap-5 lg:grid-cols-2 lg:gap-7">
+          {journeys.map(({ id, name, path, icon: Icon, intro, steps, iconStyle, numberStyle }) => (
+            <article key={id} aria-labelledby={`${id}-title`} className="rounded-[1.75rem] border border-[#E7DED2] bg-white/80 p-5 shadow-[0_12px_36px_rgba(42,37,34,0.045)] sm:p-7">
+              <div className="flex items-center gap-3">
+                <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${iconStyle}`}>
+                  <Icon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <div>
+                  <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#8A8178]">{path}</p>
+                  <h4 id={`${id}-title`} className="font-serif-display text-xl font-bold text-[#2A2522]">{name}</h4>
+                </div>
+              </div>
+              <p className="mt-4 text-xs leading-5 text-[#777068]">{intro}</p>
+
+              <ol className="mt-5 space-y-3.5">
+                {steps.map((step, index) => (
+                  <li key={step.title} className="grid grid-cols-[2rem_1fr] items-start gap-3">
+                    <span aria-hidden="true" className={`flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-bold ${numberStyle}`}>
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <div className="pt-0.5">
+                      <h5 className="text-sm font-semibold text-[#332A24]">{step.title}</h5>
+                      <p className="mt-0.5 text-xs leading-5 text-[#777068]">{step.copy}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </article>
+          ))}
+        </div>
+      </section>
     </div>
   </section>
 );
