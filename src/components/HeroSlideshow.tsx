@@ -9,7 +9,9 @@ interface HeroSlideshowProps {
 
 export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(() =>
+    typeof window === 'undefined' || !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -107,6 +109,7 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
         <button
           onClick={() => setIsPlaying(!isPlaying)}
           className="p-2 rounded-xl hover:bg-white/10 text-[#D97706] transition-colors"
+          aria-label={isPlaying ? 'Pause slideshow' : 'Play slideshow'}
           title={isPlaying ? 'Pause Slideshow' : 'Play Slideshow'}
         >
           {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -116,6 +119,7 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
         <button
           onClick={prevSlide}
           className="p-2 rounded-xl hover:bg-white/10 text-[#FAF7F2] transition-colors"
+          aria-label="Previous slide"
           title="Previous Slide"
         >
           <ChevronLeft className="w-5 h-5" />
@@ -127,6 +131,8 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
+              aria-label={`Show slide ${idx + 1}`}
+              aria-current={idx === currentIndex ? 'true' : undefined}
               className={`h-2 rounded-full transition-all duration-300 ${
                 idx === currentIndex ? 'w-8 bg-[#D97706]' : 'w-2 bg-[#D4C3A3]/40 hover:bg-[#D4C3A3]/70'
               }`}
@@ -139,6 +145,7 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
         <button
           onClick={nextSlide}
           className="p-2 rounded-xl hover:bg-white/10 text-[#FAF7F2] transition-colors"
+          aria-label="Next slide"
           title="Next Slide"
         >
           <ChevronRight className="w-5 h-5" />

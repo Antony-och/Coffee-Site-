@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { TEA_PRODUCTS } from '../data/teaData';
 import { TeaProduct, Currency, CartItem } from '../types';
@@ -18,13 +18,13 @@ export const TeaCatalog: React.FC<TeaCatalogProps> = ({
   onAddToCart,
   externalSearch = '',
 }) => {
-  const [selectedType, setSelectedType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>(externalSearch);
   const [addedItems, setAddedItems] = useState<Record<string, boolean>>({});
 
+  useEffect(() => setSearchQuery(externalSearch), [externalSearch]);
+
   const filteredProducts = useMemo(() => {
     return TEA_PRODUCTS.filter((item) => {
-      const matchType = selectedType === 'all' || item.type === selectedType;
       const query = searchQuery.toLowerCase();
       const matchSearch =
         !query ||
@@ -33,9 +33,9 @@ export const TeaCatalog: React.FC<TeaCatalogProps> = ({
         item.tastingNotes.some((note) => note.toLowerCase().includes(query)) ||
         item.type.toLowerCase().includes(query);
 
-      return matchType && matchSearch;
+      return matchSearch;
     });
-  }, [selectedType, searchQuery]);
+  }, [searchQuery]);
 
   const handleQuickAdd = (product: TeaProduct, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -59,7 +59,7 @@ export const TeaCatalog: React.FC<TeaCatalogProps> = ({
   };
 
   return (
-    <section id="tea" className="py-16 bg-[#162A1E] text-[#E8F3EB]">
+    <section className="py-16 bg-[#162A1E] text-[#E8F3EB]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
@@ -81,7 +81,7 @@ export const TeaCatalog: React.FC<TeaCatalogProps> = ({
           <div className="text-center py-16 bg-[#1F3728] rounded-2xl border border-dashed border-[#2D503C]">
             <Leaf className="w-12 h-12 text-[#52B788]/40 mx-auto mb-3" />
             <h3 className="font-serif-display text-lg font-bold text-white">No tea products found</h3>
-            <p className="text-xs text-[#A3C4AC] mt-1">Try broadening your search term or category selection.</p>
+            <p className="text-xs text-[#A3C4AC] mt-1">Try a different search or clear it to see all tea products.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

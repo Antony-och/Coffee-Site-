@@ -38,7 +38,7 @@ A premium Kenyan coffee and tea storefront with a luxury editorial brand directi
 
 3. Open the app in your browser at:
    ```bash
-   http://localhost:3001
+   http://localhost:3000
    ```
 
 ## Production Build

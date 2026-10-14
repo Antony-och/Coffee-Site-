@@ -1,5 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Mail, Phone, MapPin, Send, CheckCircle2, Clock, MessageSquare, ExternalLink, Navigation, ShoppingBag, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  ArrowRight,
+  CheckCircle2,
+  Clock,
+  ExternalLink,
+  Mail,
+  MapPin,
+  MessageSquare,
+  Navigation,
+  Phone,
+  Send,
+  ShieldCheck,
+} from 'lucide-react';
 import { CartItem, Currency } from '../types';
 import { formatPrice } from '../utils/currency';
 
@@ -35,7 +47,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   currency = 'USD' as Currency,
 }) => {
   const [submitted, setSubmitted] = useState<boolean>(false);
-  const [selectedHub, setSelectedHub] = useState<HubLocation>(HUBS[0]);
+  const formRef = useRef<HTMLFormElement>(null);
+  const selectedHub = HUBS[0];
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -43,12 +56,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     message: '',
   });
 
-  // Calculate cart totals
   const subtotalUsd = cartItems.reduce((sum, item) => sum + item.priceUsd * item.quantity, 0);
   const subtotalKes = cartItems.reduce((sum, item) => sum + item.priceKes * item.quantity, 0);
   const subtotalEur = cartItems.reduce((sum, item) => sum + item.priceEur * item.quantity, 0);
 
-  // Keep the order form empty by default and never prefill cart details.
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
@@ -74,7 +85,6 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
         item.priceEur * item.quantity,
         currency
       );
-
       return `• ${item.quantity}x ${item.name} (${item.format}) — ${lineTotal}`;
     });
 
@@ -92,7 +102,6 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
         item.priceEur * item.quantity,
         currency
       );
-
       return `• ${item.quantity}x ${item.name} (${item.format}) — ${lineTotal}`;
     });
 
@@ -102,6 +111,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
   const handleSendWhatsApp = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
+    if (!submitted && !formRef.current?.reportValidity()) return;
+
     const phone = '254725741543';
     const orderSummary = buildCartSummary();
     const defaultRequirements = buildDefaultRequirements();
@@ -117,6 +128,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
   const handleSendEmail = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
+    if (!submitted && !formRef.current?.reportValidity()) return;
+
     const emailTo = 'firstcupcoffeeltd@gmail.com';
     const orderSummary = buildCartSummary();
     const defaultRequirements = buildDefaultRequirements();
@@ -129,294 +142,277 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   };
 
   return (
-    <section id="contact" className="py-20 bg-[#FAF7F2] text-[#2A2522]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        
-        {/* Header */}
-        <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#D97706]/10 border border-[#D97706]/20 text-[#D97706] text-xs font-bold uppercase tracking-widest">
-            <Mail className="w-3.5 h-3.5" />
-            <span>Get In Touch</span>
-          </div>
-          <h1 className="font-serif-display text-3xl sm:text-4xl font-extrabold text-[#2A2522]">
-            Contact Our Export Team
-          </h1>
-          <p className="text-sm text-[#7A746E] leading-relaxed">
-            Have questions about our single-origin coffees, rare purple teas, or custom shipments? Send us a message or transmit your order via Email or WhatsApp.
-          </p>
-        </div>
+    <section className="relative overflow-hidden bg-[#F3EEE6] py-10 text-[#2A2522] sm:py-14 lg:py-16">
+      <div className="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8 lg:space-y-10">
+        {/* Contact hero */}
+        <div className="relative isolate overflow-hidden rounded-[2rem] bg-[#201611] text-[#FAF7F2] shadow-[0_24px_70px_rgba(42,30,21,0.18)]">
+          <img
+            src="/hero/hero_roastery_cupping.jpg"
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
+          />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#201611]/95 via-[#201611]/80 to-[#201611]/45" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#201611]/65 via-transparent to-[#201611]/10" />
 
-        {/* Quick Contact Info Cards */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-          <a
-            href="mailto:firstcupcoffeeltd@gmail.com"
-            className="group flex min-h-[13.5rem] flex-col items-center justify-center rounded-[1.7rem] border border-[#E2DDD2] bg-[#F7F2EC] px-6 py-7 text-center shadow-[0_1px_0_rgba(42,37,34,0.02)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(42,37,34,0.05)]"
-          >
-            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#F0D9B8] text-[#D97706] shadow-inner">
-              <Mail className="h-6 w-6" />
-            </div>
-            <div>
-              <h3 className="font-serif-display text-[1.02rem] font-bold uppercase tracking-[0.08em] text-[#2A2522]">
-                Email Us
-              </h3>
-              <p className="mt-2 text-[0.72rem] leading-relaxed text-[#6F665F]">
-                firstcupcoffeeltd@gmail.com
+          <div className="grid gap-9 p-6 sm:p-9 md:p-11 lg:grid-cols-[1.1fr_0.8fr] lg:items-center lg:gap-14 lg:p-14">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#E9C99F]/30 bg-black/20 px-3.5 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-[#F1D6B1] backdrop-blur-sm">
+                <MapPin className="h-3.5 w-3.5 text-[#EBA74E]" aria-hidden="true" />
+                First Cup · Ruiru, Kenya · Since 2016
+              </div>
+              <h1 className="mt-5 max-w-xl font-serif-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
+                Good coffee starts with a conversation.
+              </h1>
+              <p className="mt-5 max-w-xl text-sm leading-7 text-[#F1E4D2]/85 sm:text-base">
+                Tell us what you’re looking for. We can help with coffee and tea selections, wholesale enquiries, samples, and shipping questions.
               </p>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <a
+                  href="mailto:firstcupcoffeeltd@gmail.com"
+                  className="inline-flex min-h-12 items-center gap-2 rounded-full bg-[#E39432] px-5 py-3 text-xs font-bold uppercase tracking-[0.12em] text-[#24170E] transition hover:-translate-y-0.5 hover:bg-[#F0AA4F] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  Email our team
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </a>
+                <a
+                  href="https://wa.me/254725741543"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-12 items-center gap-2 rounded-full border border-white/35 bg-white/10 px-5 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white backdrop-blur-sm transition hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <MessageSquare className="h-4 w-4" aria-hidden="true" />
+                  WhatsApp
+                </a>
+              </div>
             </div>
-          </a>
 
-          <a
-            href="https://wa.me/254725741543"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex min-h-[13.5rem] flex-col items-center justify-center rounded-[1.7rem] border border-[#E2DDD2] bg-[#F7F2EC] px-6 py-7 text-center shadow-[0_1px_0_rgba(42,37,34,0.02)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(42,37,34,0.05)]"
-          >
-            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#DDE7D8] text-[#5D6D3C] shadow-inner">
-              <Phone className="h-6 w-6" />
-            </div>
-            <div>
-              <h3 className="font-serif-display text-[1.02rem] font-bold uppercase tracking-[0.08em] text-[#2A2522]">
-                WhatsApp Direct
-              </h3>
-              <p className="mt-2 text-[0.72rem] leading-relaxed text-[#6F665F]">
-                +254 725 741 543
-              </p>
-            </div>
-          </a>
-
-          <div className="flex min-h-[13.5rem] flex-col items-center justify-center rounded-[1.7rem] border border-[#E2DDD2] bg-[#F7F2EC] px-6 py-7 text-center shadow-[0_1px_0_rgba(42,37,34,0.02)]">
-            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#E7E2DD] text-[#2A2522] shadow-inner">
-              <Clock className="h-6 w-6" />
-            </div>
-            <div>
-              <h3 className="font-serif-display text-[1.02rem] font-bold uppercase tracking-[0.08em] text-[#2A2522]">
-                Working Hours
-              </h3>
-              <p className="mt-2 text-[0.72rem] leading-relaxed text-[#6F665F]">
-                Mon - Fri: 8:00 AM - 5:00 PM
-                <br />
-                Weekends: 8:00 AM - 1:00 PM
-              </p>
+            <div className="w-full rounded-[1.5rem] border border-white/15 bg-[#1C130F]/75 p-5 shadow-xl backdrop-blur-md sm:p-6 lg:justify-self-end">
+              <p className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-[#E9B66F]">Reach us directly</p>
+              <div className="mt-5 space-y-4">
+                <a href="mailto:firstcupcoffeeltd@gmail.com" className="flex items-start gap-3 text-sm text-white transition hover:text-[#F0C47F]">
+                  <Mail className="mt-0.5 h-4 w-4 shrink-0 text-[#E9B66F]" aria-hidden="true" />
+                  <span className="break-all">firstcupcoffeeltd@gmail.com</span>
+                </a>
+                <a href="tel:+254725741543" className="flex items-start gap-3 text-sm text-white transition hover:text-[#F0C47F]">
+                  <Phone className="mt-0.5 h-4 w-4 shrink-0 text-[#E9B66F]" aria-hidden="true" />
+                  <span>+254 725 741 543</span>
+                </a>
+              </div>
+              <div className="mt-5 border-t border-white/15 pt-4">
+                <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#F1E4D2]">
+                  <Clock className="h-3.5 w-3.5 text-[#E9B66F]" aria-hidden="true" />
+                  Office hours · EAT
+                </p>
+                <p className="mt-2 pl-[1.375rem] text-xs leading-6 text-[#F1E4D2]/70">
+                  Mon–Fri, 8:00 AM–5:00 PM<br />Weekends, 8:00 AM–1:00 PM
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Main Form & Interactive Map Grid */}
-        <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-7">
-          
-          {/* Contact Form */}
-          <div className="lg:col-span-4 mx-auto w-full rounded-[1.7rem] border border-[#DCD3C8] bg-[#F7F2EC] p-5 shadow-[0_1px_0_rgba(42,37,34,0.03)] sm:p-7">
+        {/* Inquiry form and office location */}
+        <div className="grid items-start gap-6 lg:grid-cols-[1.08fr_0.92fr] lg:gap-8">
+          <div className="min-w-0 rounded-[1.75rem] border border-[#E4DCD1] bg-[#FFFCF8] p-5 shadow-[0_10px_35px_rgba(42,37,34,0.05)] sm:p-7 lg:p-8">
+            <div className="mb-6 border-b border-[#E8E0D6] pb-5">
+              <div className="inline-flex items-center gap-2 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-[#8A5A2B]">
+                <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+                A real person will get back to you
+              </div>
+              <h2 className="mt-3 font-serif-display text-2xl font-bold text-[#2A2522] sm:text-3xl">
+                Send an enquiry
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-[#736A62]">
+                Share a few details and choose the best way to send your message.
+              </p>
+            </div>
+
             {submitted ? (
-              <div className="space-y-5 py-8 text-center">
+              <div className="space-y-5 py-5 text-center sm:py-8">
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#5D6D3C]/10 text-[#5D6D3C]">
-                  <CheckCircle2 className="h-8 w-8" />
+                  <CheckCircle2 className="h-8 w-8" aria-hidden="true" />
                 </div>
                 <div>
                   <h3 className="font-serif-display text-2xl font-bold text-[#2A2522]">
-                    Order Inquiry Received!
+                    Your enquiry is ready
                   </h3>
-                  <p className="mx-auto mt-2 max-w-md text-xs leading-relaxed text-[#7A746E]">
-                    Thank you, <strong>{formData.name || 'Customer'}</strong>. Your inquiry regarding <strong>{formData.subject}</strong> has been prepared.
+                  <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#736A62]">
+                    Thanks{formData.name ? `, ${formData.name}` : ''}. Review your details, then choose WhatsApp or email to send your {formData.subject.toLowerCase()} enquiry.
                   </p>
                 </div>
-
-                <div className="mx-auto max-w-md space-y-3 rounded-[1.2rem] border border-[#E5E1DA] bg-[#FAF7F2] p-4">
-                  <span className="block text-[11px] font-bold uppercase tracking-[0.18em] text-[#2A2522]">
-                    Send Directly
-                  </span>
-
+                <div className="mx-auto grid max-w-md gap-3 sm:grid-cols-2">
                   <button
+                    type="button"
                     onClick={handleSendWhatsApp}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-xs font-bold uppercase tracking-[0.1em] text-white shadow transition hover:bg-[#20bd5a]"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#4F713A] px-4 py-3 text-xs font-bold uppercase tracking-[0.1em] text-white transition hover:bg-[#3F5D2D]"
                   >
-                    <MessageSquare className="h-4 w-4" />
-                    <span>Send via WhatsApp</span>
+                    <MessageSquare className="h-4 w-4" aria-hidden="true" />
+                    Send via WhatsApp
                   </button>
-
                   <button
+                    type="button"
                     onClick={handleSendEmail}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#D97706] px-4 py-3 text-xs font-bold uppercase tracking-[0.1em] text-white shadow transition hover:bg-[#b86505]"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#D97706] px-4 py-3 text-xs font-bold uppercase tracking-[0.1em] text-white transition hover:bg-[#B85F05]"
                   >
-                    <Mail className="h-4 w-4" />
-                    <span>Send via Email</span>
+                    <Mail className="h-4 w-4" aria-hidden="true" />
+                    Send via email
                   </button>
                 </div>
-
                 <button
+                  type="button"
                   onClick={() => setSubmitted(false)}
-                  className="rounded-full border border-[#DCD3C8] px-5 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E] transition hover:bg-[#EAE2D8]"
+                  className="rounded-full border border-[#D8CEC1] px-5 py-2.5 text-xs font-semibold text-[#756B62] transition hover:bg-[#F2ECE4] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8A5A2B]"
                 >
-                  Edit Inquiry
+                  Edit enquiry
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="flex items-center justify-between border-b border-[#DCD3C8] pb-3">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-[0.35rem] border border-[#2A2522] bg-transparent text-[#2A2522]">
-                      <MessageSquare className="h-3 w-3" />
-                    </span>
-                    <h3 className="font-serif-display text-[1.05rem] font-bold uppercase tracking-[0.08em] text-[#2A2522]">
-                      Order & Inquiry Form
-                    </h3>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
-                      Your Name *
-                    </label>
+                    <label htmlFor="contact-name" className="mb-2 block text-xs font-semibold text-[#50473F]">Your name <span aria-hidden="true">*</span></label>
                     <input
+                      id="contact-name"
+                      name="name"
                       type="text"
+                      autoComplete="name"
                       required
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="e.g. Sarah Jenkins"
-                      className="h-11 w-full rounded-[0.8rem] border border-[#D8D0C5] bg-[#FAF7F2] px-3 text-sm text-[#2A2522] placeholder:text-[#9B938C] focus:border-[#D97706] focus:outline-none focus:ring-2 focus:ring-[#D97706]/20"
+                      className="h-12 w-full rounded-xl border border-[#D9D0C5] bg-white px-3.5 text-sm text-[#2A2522] placeholder:text-[#9B938C] focus:border-[#A46A32] focus:outline-none focus:ring-2 focus:ring-[#A46A32]/15"
                     />
                   </div>
-
                   <div>
-                    <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
-                      Email Address *
-                    </label>
+                    <label htmlFor="contact-email" className="mb-2 block text-xs font-semibold text-[#50473F]">Email address <span aria-hidden="true">*</span></label>
                     <input
+                      id="contact-email"
+                      name="email"
                       type="email"
+                      autoComplete="email"
                       required
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="e.g. sarah@example.com"
-                      className="h-11 w-full rounded-[0.8rem] border border-[#D8D0C5] bg-[#FAF7F2] px-3 text-sm text-[#2A2522] placeholder:text-[#9B938C] focus:border-[#D97706] focus:outline-none focus:ring-2 focus:ring-[#D97706]/20"
+                      placeholder="you@example.com"
+                      className="h-12 w-full rounded-xl border border-[#D9D0C5] bg-white px-3.5 text-sm text-[#2A2522] placeholder:text-[#9B938C] focus:border-[#A46A32] focus:outline-none focus:ring-2 focus:ring-[#A46A32]/15"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
-                    Inquiry Type
-                  </label>
-                  <div className="relative">
-                    <select
-                      value={formData.subject}
-                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      className="h-11 w-full appearance-none rounded-[0.8rem] border border-[#D8D0C5] bg-[#FAF7F2] px-3 pr-10 text-sm text-[#2A2522] focus:border-[#D97706] focus:outline-none focus:ring-2 focus:ring-[#D97706]/20"
-                    >
-                      <option value="Direct Order Request">Direct Order & Quote Request</option>
-                      <option value="Wholesale Coffee">Wholesale Coffee Micro-Lots</option>
-                      <option value="Purple Tea Orders">Purple Tea & Specialty Teas</option>
-                      <option value="Visit Facilities">Visit Milling & Farm Facilities</option>
-                      <option value="General Inquiry">General Question</option>
-                    </select>
-                    <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[#2A2522]">
-                      <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4"><path d="M5.25 7.5 10 12.25 14.75 7.5H5.25Z"/></svg>
-                    </span>
-                  </div>
+                  <label htmlFor="contact-subject" className="mb-2 block text-xs font-semibold text-[#50473F]">What can we help with?</label>
+                  <select
+                    id="contact-subject"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                    className="h-12 w-full rounded-xl border border-[#D9D0C5] bg-white px-3.5 text-sm text-[#2A2522] focus:border-[#A46A32] focus:outline-none focus:ring-2 focus:ring-[#A46A32]/15"
+                  >
+                    <option value="Direct Order Request">Direct Order & Quote Request</option>
+                    <option value="Wholesale Coffee">Wholesale Coffee Micro-Lots</option>
+                    <option value="Purple Tea Orders">Purple Tea & Specialty Teas</option>
+                    <option value="Visit Facilities">Visit Milling & Farm Facilities</option>
+                    <option value="General Inquiry">General Question</option>
+                  </select>
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
-                    Your Order Message / Requirements *
-                  </label>
+                  <label htmlFor="contact-message" className="mb-2 block text-xs font-semibold text-[#50473F]">Message or order requirements</label>
                   <textarea
+                    id="contact-message"
+                    name="message"
                     rows={5}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    placeholder="Tell us about your roasting, café, or import requirements..."
-                    className="w-full rounded-[0.8rem] border border-[#D8D0C5] bg-[#FAF7F2] p-3 text-sm text-[#2A2522] placeholder:text-[#9B938C] focus:border-[#D97706] focus:outline-none focus:ring-2 focus:ring-[#D97706]/20"
+                    placeholder="Tell us about the coffees or teas you’re interested in, your shipment needs, or any questions you have."
+                    className="w-full resize-y rounded-xl border border-[#D9D0C5] bg-white p-3.5 text-sm leading-6 text-[#2A2522] placeholder:text-[#9B938C] focus:border-[#A46A32] focus:outline-none focus:ring-2 focus:ring-[#A46A32]/15"
                   />
                 </div>
 
-                <div className="flex gap-3 pt-2">
+                <div className="grid gap-3 border-t border-[#E8E0D6] pt-5 sm:grid-cols-2">
                   <button
                     type="button"
                     onClick={handleSendWhatsApp}
-                    className="flex w-[48%] items-center justify-center gap-2 rounded-full bg-[#5D6D3C] px-3 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white shadow-[0_8px_18px_rgba(93,109,60,0.2)] transition hover:bg-[#495d2c]"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#4F713A] px-4 py-3 text-xs font-bold uppercase tracking-[0.1em] text-white transition hover:bg-[#3F5D2D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4F713A]"
                   >
-                    <MessageSquare className="h-4 w-4" />
-                    <span>Send via WhatsApp</span>
+                    <MessageSquare className="h-4 w-4" aria-hidden="true" />
+                    Send via WhatsApp
                   </button>
-
                   <button
                     type="button"
                     onClick={handleSendEmail}
-                    className="flex w-[48%] items-center justify-center gap-2 rounded-full bg-[#D97706] px-3 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white shadow-[0_8px_18px_rgba(217,119,6,0.2)] transition hover:bg-[#b86505]"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#D97706] px-4 py-3 text-xs font-bold uppercase tracking-[0.1em] text-white transition hover:bg-[#B85F05] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D97706]"
                   >
-                    <Mail className="h-4 w-4" />
-                    <span>Send via Email</span>
+                    <Send className="h-4 w-4" aria-hidden="true" />
+                    Send via email
                   </button>
                 </div>
+                <button
+                  type="submit"
+                  className="w-full rounded-xl border border-[#D9D0C5] px-4 py-2.5 text-xs font-semibold text-[#6B625A] transition hover:bg-[#F5F0EA] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A46A32]"
+                >
+                  Review before sending
+                </button>
               </form>
             )}
           </div>
 
-          {/* Interactive Hub Map */}
-          <div className="lg:col-span-3 bg-[#2D241E] text-[#FAF7F2] rounded-[1.8rem] p-5 shadow-[0_18px_35px_rgba(33,24,18,0.2)] flex flex-col justify-between space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between border-b border-[#D4C3A3]/20 pb-2.5">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full border border-[#D97706]/80 bg-[#D97706]/10 text-[#D97706]">
-                    <MapPin className="h-3 w-3" />
-                  </span>
-                  <h3 className="font-serif-display text-base font-bold tracking-[0.06em] text-white uppercase">
-                    Office Location
-                  </h3>
+          <aside className="space-y-5 lg:sticky lg:top-24">
+            <div className="overflow-hidden rounded-[1.75rem] bg-[#211713] text-[#FAF7F2] shadow-[0_18px_45px_rgba(33,24,18,0.14)]">
+              <div className="flex items-center justify-between gap-4 px-5 pb-4 pt-5 sm:px-6 sm:pt-6">
+                <div>
+                  <p className="text-[0.62rem] font-bold uppercase tracking-[0.2em] text-[#D9A05F]">Come find us</p>
+                  <h2 className="mt-1 font-serif-display text-xl font-bold text-white">Ruiru, Kenya</h2>
                 </div>
-                <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#D4C3A3]">
-                  Kenya
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-[#D4C3A3]/20 bg-white/5 px-3 py-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.1em] text-[#E7D7C1]">
+                  <MapPin className="h-3.5 w-3.5 text-[#D9A05F]" aria-hidden="true" />
+                  {selectedHub.elevation}
                 </span>
               </div>
-            </div>
 
-            <div className="relative h-[18rem] w-full overflow-hidden rounded-[1.25rem] border border-[#D4C3A3]/15 bg-[#E9E5DF] shadow-inner sm:h-[20rem]">
-              <iframe
-                title={`Map of ${selectedHub.name}`}
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                loading="lazy"
-                allowFullScreen
-                src={`https://maps.google.com/maps?q=${encodeURIComponent(selectedHub.mapQuery)}&t=m&z=10&ie=UTF8&iwloc=&output=embed`}
-                className="h-full w-full opacity-90"
-              ></iframe>
-
-              <div className="absolute left-3 top-3 flex items-center gap-2 rounded-lg border border-[#D4C3A3]/30 bg-[#2D241E]/80 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-sm">
-                <Navigation className="h-3.5 w-3.5 text-[#D97706]" />
-                <span>{selectedHub.name}</span>
-                <span className="text-[#D4C3A3]">({selectedHub.elevation})</span>
-              </div>
-
-              <div className="absolute inset-x-0 bottom-0 flex items-center justify-center bg-gradient-to-t from-[#2D241E]/80 via-[#2D241E]/20 to-transparent px-5 pb-5 pt-8">
-                <div className="rounded-full border border-white/10 bg-[#2D241E]/80 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#F8EBD7] backdrop-blur-sm">
-                  {selectedHub.name}
+              <div className="relative mx-4 h-64 overflow-hidden rounded-[1.2rem] border border-white/10 bg-[#E9E5DF] sm:mx-5 sm:h-72">
+                <iframe
+                  title={`Map of ${selectedHub.name}`}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  allowFullScreen
+                  src={`https://maps.google.com/maps?q=${encodeURIComponent(selectedHub.mapQuery)}&t=m&z=10&ie=UTF8&iwloc=&output=embed`}
+                  className="h-full w-full"
+                />
+                <div className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-lg border border-white/15 bg-[#211713]/85 px-3 py-2 text-[0.62rem] font-semibold text-white backdrop-blur-sm">
+                  <Navigation className="h-3.5 w-3.5 text-[#E9B66F]" aria-hidden="true" />
+                  First Cup Coffee & Tea
                 </div>
               </div>
-            </div>
 
-            <div className="rounded-[1.15rem] border border-[#D4C3A3]/15 bg-[#1C120E] p-4 text-xs text-[#F3E7D6]">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h4 className="font-bold text-base text-white">{selectedHub.name}</h4>
-                  <p className="mt-1 text-[11px] text-[#D4C3A3]">{selectedHub.address}</p>
-                </div>
+              <div className="p-5 sm:p-6">
+                <p className="text-sm font-semibold text-white">{selectedHub.address}</p>
+                <p className="mt-2 text-xs leading-5 text-[#D4C3A3]/75">{selectedHub.purpose}</p>
                 <a
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedHub.mapQuery)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-lg bg-[#D97706] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-white transition hover:bg-[#b86505]"
+                  className="mt-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#F0B566] transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F0B566]"
                 >
-                  <span>Open Map</span>
-                  <ExternalLink className="h-3 w-3" />
+                  Open directions
+                  <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
                 </a>
               </div>
-              <p className="mt-3 border-t border-[#D4C3A3]/10 pt-2 text-[11px] leading-relaxed text-[#D4C3A3]/80">
-                <span className="font-bold text-[#F3E7D6]">Primary Operations:</span> {selectedHub.purpose}
-              </p>
             </div>
-          </div>
 
+            <div className="rounded-[1.5rem] border border-[#E2D7CA] bg-[#FFFCF8] p-5 sm:p-6">
+              <p className="text-[0.62rem] font-bold uppercase tracking-[0.18em] text-[#8A5A2B]">Prefer a quick call?</p>
+              <a href="tel:+254725741543" className="mt-2 inline-flex items-center gap-2 font-serif-display text-xl font-bold text-[#2A2522] transition hover:text-[#A46A32]">
+                <Phone className="h-4 w-4 text-[#A46A32]" aria-hidden="true" />
+                +254 725 741 543
+              </a>
+              <p className="mt-2 text-xs leading-5 text-[#736A62]">We’re happy to talk through origin, lot availability, and export requirements.</p>
+            </div>
+          </aside>
         </div>
-
       </div>
     </section>
   );

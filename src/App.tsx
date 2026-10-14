@@ -7,11 +7,10 @@ import { CoffeeCatalog } from './components/CoffeeCatalog';
 import { TeaCatalog } from './components/TeaCatalog';
 import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
+import { TrustedBrands } from './components/TrustedBrands';
 import { ProductModal } from './components/ProductModal';
 import { SampleCartDrawer } from './components/SampleCartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
-import { TERROIR_STATS } from './data/companyData';
-import { Star } from 'lucide-react';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageView>('home');
@@ -42,7 +41,7 @@ export default function App() {
 
   // Auto update active section in navbar as user scrolls
   useEffect(() => {
-    const sectionIds: PageView[] = ['home', 'coffee', 'about', 'contact'];
+    const sectionIds: PageView[] = ['home', 'about', 'coffee', 'tea', 'contact'];
     const handleScroll = () => {
       const scrollPosition = window.scrollY + 200;
       for (let i = sectionIds.length - 1; i >= 0; i--) {
@@ -121,13 +120,7 @@ export default function App() {
         cartCount={totalCartCount}
         setIsCartOpen={setIsCartOpen}
         searchQuery={searchQuery}
-        setSearchQuery={(q) => {
-          setSearchQuery(q);
-          if (q) {
-            const coffeeEl = document.getElementById('coffee');
-            if (coffeeEl) coffeeEl.scrollIntoView({ behavior: 'smooth' });
-          }
-        }}
+        setSearchQuery={setSearchQuery}
       />
 
       {/* Streamlined Main Scrollable Flow */}
@@ -136,27 +129,14 @@ export default function App() {
         {/* Section 1: Hero Slideshow */}
         <section id="home" className="scroll-mt-20">
           <HeroSlideshow setCurrentPage={handlePageChange} />
-
-          {/* Terroir & High Altitude Stats Strip */}
-          <div className="bg-[#2D241E] text-[#FAF7F2] py-8 border-b border-[#E5E1DA]/20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
-                {TERROIR_STATS.map((stat, idx) => (
-                  <div key={idx} className="space-y-0.5">
-                    <span className="font-serif-display text-2xl font-extrabold text-[#D97706] block">
-                      {stat.value}
-                    </span>
-                    <h4 className="font-serif-display text-xs font-bold text-[#FAF7F2]">
-                      {stat.label}
-                    </h4>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
         </section>
 
-        {/* Section 2: Product Collections (Coffee Reserve & Purified Teas) */}
+        {/* Section 2: About First Cup */}
+        <section id="about" className="scroll-mt-20">
+          <AboutSection setCurrentPage={handlePageChange} />
+        </section>
+
+        {/* Section 3: Product Collections (Coffee Reserve & Purified Teas) */}
         <section id="coffee" className="scroll-mt-20 py-12">
           <CoffeeCatalog
             currency={currency}
@@ -175,58 +155,10 @@ export default function App() {
           />
         </section>
 
-        {/* Section 4: Sommelier Endorsements */}
-        <section className="py-16 bg-[#FAF7F2] text-[#2A2522]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-            <div className="text-center max-w-xl mx-auto">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#D97706] block">
-                Quality Certified
-              </span>
-              <h2 className="font-serif-display text-2xl font-bold text-[#2A2522]">
-                Cupping Ratings (88+ SCA)
-              </h2>
-            </div>
+        {/* Section 4: Trusted brand logos */}
+        <TrustedBrands />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-              <div className="bg-white border border-[#E5E1DA] rounded-2xl p-6 shadow-sm space-y-3">
-                <div className="flex text-[#D97706] gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-[#D97706]" />
-                  ))}
-                </div>
-                <p className="text-xs text-[#7A746E] leading-relaxed italic">
-                  "Mount Kenya Nyeri Reserve AA displayed sparkling blackcurrant acidity and a honeyed jasmine finish that scored 91.5. Exceptional single-origin export quality."
-                </p>
-                <div className="pt-2 border-t border-[#E5E1DA] text-xs">
-                  <strong className="text-[#2A2522] block">Marcus Vance</strong>
-                  <span className="text-[#7A746E]">Master Q-Grader, Specialty Coffee Guild</span>
-                </div>
-              </div>
-
-              <div className="bg-white border border-[#E5E1DA] rounded-2xl p-6 shadow-sm space-y-3">
-                <div className="flex text-[#D97706] gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-[#D97706]" />
-                  ))}
-                </div>
-                <p className="text-xs text-[#7A746E] leading-relaxed italic">
-                  "TRFK 306/1 Imperial Purple Tea is a revelation. The violet-tinged liquor produces an extraordinarily clean berry sweetness without harshness."
-                </p>
-                <div className="pt-2 border-t border-[#E5E1DA] text-xs">
-                  <strong className="text-[#2A2522] block">Elena Rostova</strong>
-                  <span className="text-[#7A746E]">Tea Sommelier, Tokyo & Zurich</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Section 5: About Terroir */}
-        <section id="about" className="scroll-mt-20">
-          <AboutSection setCurrentPage={handlePageChange} />
-        </section>
-
-        {/* Section 6: Contact & Wholesale */}
+        {/* Section 5: Contact & Wholesale */}
         <section id="contact" className="scroll-mt-20">
           <ContactSection cartItems={cartItems} currency={currency} />
         </section>

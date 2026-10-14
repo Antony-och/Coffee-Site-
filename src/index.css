@@ -15,6 +15,65 @@ html {
   scroll-behavior: smooth;
 }
 
+*:focus-visible {
+  outline: 2px solid #D97706;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes trusted-brands-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.trusted-brands-track {
+  display: flex;
+  width: max-content;
+  animation: trusted-brands-scroll 34s linear infinite;
+  will-change: transform;
+}
+
+.trusted-brands-group {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+.trusted-brands-marquee:hover:not(.is-paused) .trusted-brands-track {
+  animation-play-state: paused;
+}
+
+.trusted-brands-marquee.is-paused .trusted-brands-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trusted-brands-track {
+    animation: none !important;
+  }
+
+  .trusted-brands-marquee {
+    overflow-x: auto;
+  }
+}
+
 ::-webkit-scrollbar {
   width: 8px;
 }
