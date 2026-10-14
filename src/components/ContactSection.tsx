@@ -4,6 +4,7 @@ import {
   CheckCircle2,
   Clock,
   ExternalLink,
+  FileText,
   Mail,
   MapPin,
   MessageSquare,
@@ -348,12 +349,15 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     Send via email
                   </button>
                 </div>
-                <button
-                  type="submit"
-                  className="w-full rounded-xl border border-[#D9D0C5] px-4 py-2.5 text-xs font-semibold text-[#6B625A] transition hover:bg-[#F5F0EA] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A46A32]"
+                <a
+                  href="/company-profile.pdf"
+                  download="First-Cup-Company-Profile.pdf"
+                  aria-label="Download the First Cup Coffee & Tea company profile PDF"
+                  className="mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#D9D0C5] px-4 py-3 text-xs font-semibold uppercase tracking-[0.1em] text-[#6B625A] transition hover:bg-[#F5F0EA] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A46A32]"
                 >
-                  Review before sending
-                </button>
+                  <FileText className="h-4 w-4" aria-hidden="true" />
+                  Download company profile (PDF)
+                </a>
               </form>
             )}
           </div>
