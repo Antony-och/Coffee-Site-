@@ -4,25 +4,18 @@ import { formatPrice } from '../utils/currency';
 import {
   generateWhatsAppOrderMessage,
   generateWhatsAppOrderUrl,
-  generateEmailOrderUrl,
   EXPORT_WHATSAPP_PHONE,
-  EXPORT_EMAIL_ADDRESS,
 } from '../utils/orderNotification';
 import {
   X,
-  CreditCard,
   CheckCircle2,
   Phone,
-  Building2,
   ShieldCheck,
   ArrowRight,
-  ArrowLeft,
   Copy,
   Check,
   FileText,
-  Clock,
   Sparkles,
-  DollarSign,
   MessageSquare,
   Mail,
   Send,
@@ -50,8 +43,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [step, setStep] = useState<'details' | 'confirmation'>('details');
   const [copiedId, setCopiedId] = useState(false);
   const [copiedPayload, setCopiedPayload] = useState(false);
-  const [whatsappSent, setWhatsappSent] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
+  const [whatsappOpened, setWhatsappOpened] = useState(false);
   const [showTextPreview, setShowTextPreview] = useState(false);
   const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
 
@@ -91,13 +83,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const handleCompleteOrder = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!shippingDetails.fullName || !shippingDetails.email || !shippingDetails.streetAddress || !shippingDetails.city) {
+    if (!shippingDetails.fullName || !shippingDetails.phone || !shippingDetails.streetAddress || !shippingDetails.city) {
       return;
     }
 
     const randomNum = Math.floor(10000 + Math.random() * 90000);
     const orderId = `ORD-KHC-${randomNum}`;
-    const trackingNum = `KHC-EXP-${Math.floor(100000 + Math.random() * 900000)}`;
 
     const newOrder: Order = {
       id: orderId,
@@ -123,22 +114,20 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         paymentMethod: 'not_required',
         cardLastFour: 'N/A',
       },
-      trackingNumber: trackingNum,
-      estimatedDelivery: '3 - 5 Business Days via Direct In-House Air Express',
+      trackingNumber: 'Pending WhatsApp confirmation',
+      estimatedDelivery: 'To be confirmed by the export desk',
     };
 
     setPlacedOrder(newOrder);
-    onPlaceOrder(newOrder);
     setStep('confirmation');
 
     try {
       const waUrl = generateWhatsAppOrderUrl(newOrder, EXPORT_WHATSAPP_PHONE);
-      window.open(waUrl, '_blank');
-      setWhatsappSent(true);
-      window.location.href = generateEmailOrderUrl(newOrder, EXPORT_EMAIL_ADDRESS);
-      setEmailSent(true);
+      const whatsappWindow = window.open(waUrl, '_blank');
+      if (whatsappWindow) whatsappWindow.opener = null;
+      setWhatsappOpened(true);
     } catch {
-      // User can still click the prominent transmission buttons in the confirmation area.
+      // The confirmation screen keeps a manual WhatsApp link available if the popup is blocked.
     }
   };
 
@@ -150,14 +139,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   const handleSendWhatsApp = (order: Order) => {
     const url = generateWhatsAppOrderUrl(order, EXPORT_WHATSAPP_PHONE);
-    window.open(url, '_blank');
-    setWhatsappSent(true);
+    const whatsappWindow = window.open(url, '_blank');
+    if (whatsappWindow) whatsappWindow.opener = null;
+    setWhatsappOpened(true);
   };
 
-  const handleSendEmail = (order: Order) => {
-    const url = generateEmailOrderUrl(order, EXPORT_EMAIL_ADDRESS);
-    window.location.href = url;
-    setEmailSent(true);
+  const handleFinishOrder = (order: Order) => {
+    onPlaceOrder(order);
+    onClose();
   };
 
   const handleCopyOrderPayload = (order: Order) => {
@@ -191,7 +180,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       <!DOCTYPE html>
       <html>
         <head>
-          <title>First Cup Coffee & Tea Receipt</title>
+          <title>First Cup Coffee & Tea Order Summary</title>
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
             body {
@@ -323,16 +312,16 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <div class="tagline">Coffee & Tea</div>
               </div>
               <div class="meta">
-                <div><strong>Receipt #</strong> ${order.id}</div>
+                <div><strong>Request reference</strong> ${order.id}</div>
                 <div>${order.date}</div>
-                <div>${order.status}</div>
+                <div>WhatsApp order request</div>
               </div>
             </div>
 
-            <h1>Order Receipt</h1>
+            <h1>Order Request Summary</h1>
             <div class="customer-box">
               <div><strong>Customer:</strong> ${order.shippingDetails.fullName}</div>
-              <div><strong>Email:</strong> ${order.shippingDetails.email}</div>
+              <div><strong>Email:</strong> ${order.shippingDetails.email || 'Not provided'}</div>
               <div><strong>Phone:</strong> ${order.shippingDetails.phone}</div>
               <div><strong>Shipping:</strong> ${order.shippingDetails.streetAddress}, ${order.shippingDetails.city}, ${order.shippingDetails.country}</div>
             </div>
@@ -352,9 +341,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             </table>
 
             <div class="totals">
-              <div class="totals-row"><span>Subtotal</span><span>${formatPrice(order.subtotalUsd, order.subtotalKes, order.subtotalEur, currency)}</span></div>
-              <div class="totals-row"><span>Shipping</span><span>${formatPrice(order.shippingFeeUsd, order.shippingFeeKes, order.shippingFeeEur, currency)}</span></div>
-              <div class="totals-row grand"><span>Total</span><span>${formatPrice(order.totalUsd, order.totalKes, order.totalEur, currency)}</span></div>
+              <div class="totals-row"><span>Merchandise subtotal</span><span>${formatPrice(order.subtotalUsd, order.subtotalKes, order.subtotalEur, currency)}</span></div>
+              <div class="totals-row"><span>Delivery</span><span>To be confirmed</span></div>
+              <div class="totals-row grand"><span>Final total</span><span>To be confirmed</span></div>
             </div>
           </div>
         </body>
@@ -382,13 +371,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <div className="pt-0.5">
                 <p className="text-[9px] uppercase tracking-[0.22em] text-[#7A746E]">First Cup Coffee & Tea</p>
                 <h2 className="font-serif-display text-[2rem] sm:text-[2.4rem] font-semibold tracking-[-0.05em] text-[#201B1A] leading-[0.92] mt-1.5">
-                  {step === 'confirmation' ? 'Order Confirmed' : 'Checkout'}
+                  {step === 'confirmation' ? 'Order Ready' : 'Checkout'}
                 </h2>
               </div>
             </div>
 
             <button
+              type="button"
               onClick={onClose}
+              aria-label="Close checkout"
               className="flex h-9 w-9 items-center justify-center rounded-full border border-[#E5E1DA] bg-white text-[#6F665F] transition hover:bg-[#F3EEE8]"
             >
               <X className="w-4 h-4" />
@@ -396,8 +387,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           </div>
 
           <div className="mt-4 flex items-center justify-between rounded-[1rem] border border-[#E9E1D8] bg-white/80 px-3.5 py-2.5 text-[10px] uppercase tracking-[0.18em] text-[#7A746E] shadow-[0_8px_18px_rgba(42,37,34,0.04)]">
-            <span>{step === 'details' ? 'Shipping & delivery' : 'Order confirmed'}</span>
-            <span className="font-bold text-[#A85A12]">{step === 'confirmation' ? placedOrder?.id || '—' : 'Step 1'}</span>
+            <span>{step === 'details' ? 'Contact & delivery' : 'WhatsApp handoff'}</span>
+            <span className="font-bold text-[#A85A12]">{step === 'confirmation' ? placedOrder?.id || '—' : 'Details'}</span>
           </div>
         </div>
 
@@ -459,11 +450,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
                   <div>
                     <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7A746E]">
-                      Email *
+                      Email (optional)
                     </label>
                     <input
                       type="email"
-                      required
                       value={shippingDetails.email}
                       onChange={(e) => setShippingDetails({ ...shippingDetails, email: e.target.value })}
                       placeholder="e.g. david@roastery.com"
@@ -580,7 +570,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   type="submit"
                   className="flex items-center gap-2 rounded-full bg-[#201B1A] px-5 py-3.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition hover:bg-[#120F0E] shadow-[0_18px_30px_rgba(32,27,26,0.14)]"
                 >
-                  <span>Send to Email & WhatsApp</span>
+                  <span>Continue to WhatsApp</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -592,86 +582,57 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           {step === 'confirmation' && placedOrder && (
             <div className="space-y-6">
               
-              {/* Green Success Banner */}
-              <div className="bg-[#5D6D3C]/10 border border-[#5D6D3C]/30 rounded-3xl p-6 text-center space-y-3">
-                <div className="w-14 h-14 bg-[#5D6D3C] text-white rounded-full flex items-center justify-center mx-auto shadow-md">
-                  <CheckCircle2 className="w-8 h-8" />
+              {/* WhatsApp handoff status */}
+              <div className="rounded-3xl border border-[#EAD3AA] bg-[#FBF2E3] p-6 text-center space-y-3">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#D97706] text-white shadow-md">
+                  <MessageSquare className="h-7 w-7" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#5D6D3C]">
-                    Order Placed Successfully
+                  <span className="text-xs font-bold uppercase tracking-widest text-[#A85A12]">
+                    Ready to send in WhatsApp
                   </span>
                   <h3 className="font-serif-display text-2xl font-extrabold text-[#2A2522] mt-0.5">
-                    Order Reference #{placedOrder.id}
+                    Request #{placedOrder.id}
                   </h3>
                   <p className="text-xs text-[#7A746E] max-w-md mx-auto mt-1">
-                    Thank you, <strong>{placedOrder.shippingDetails.fullName}</strong>. Your export consignment has been registered. Complete the transmission below to dispatch instant copies to WhatsApp and Email.
+                    Your order text is prepared for WhatsApp. Review it there and tap <strong>Send</strong> to submit your request; return here and finish checkout afterward.
                   </p>
                 </div>
               </div>
 
-              {/* PRIMARY TRANSMISSION ACTION CARDS (WhatsApp & Email) */}
+              {/* WhatsApp-only handoff */}
               <div className="bg-[#2D241E] text-white rounded-3xl p-5 sm:p-6 space-y-4 shadow-lg border border-[#D4C3A3]/20">
                 <div className="flex items-center justify-between border-b border-[#D4C3A3]/20 pb-3">
                   <div className="flex items-center gap-2">
                     <Send className="w-4 h-4 text-[#D97706]" />
                     <h4 className="font-serif-display text-sm font-bold text-white uppercase tracking-wider">
-                      Send Order to WhatsApp & Email
+                      WhatsApp order message
                     </h4>
                   </div>
                   <span className="text-[10px] text-[#D4C3A3] font-mono bg-white/10 px-2 py-0.5 rounded">
-                    5-Point Verified Payload
+                    Prefilled for review
                   </span>
                 </div>
 
                 <p className="text-xs text-[#D4C3A3]/90 leading-relaxed">
-                  Transmit this complete order record directly to our export desk and keep a copy in your personal channels.
+                  WhatsApp opens with your items, quantities, contact details, and delivery address. Nothing is sent automatically—review the message and tap Send in WhatsApp.
                 </p>
 
-                {/* Direct Action Buttons */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {/* WhatsApp Direct Send */}
-                  <button
-                    onClick={() => handleSendWhatsApp(placedOrder)}
-                    className={`p-4 rounded-2xl font-bold text-xs flex flex-col justify-between space-y-2 transition-all shadow-md ${
-                      whatsappSent
-                        ? 'bg-[#128C7E] text-white ring-2 ring-white/30'
-                        : 'bg-[#25D366] hover:bg-[#20bd5a] text-white hover:scale-[1.01]'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-2">
-                        <MessageSquare className="w-5 h-5 fill-current" />
-                        <span className="font-bold text-sm">Send to WhatsApp</span>
-                      </div>
-                      <ExternalLink className="w-4 h-4 opacity-80" />
-                    </div>
-                    <div className="text-[11px] text-left text-white/90">
-                      {whatsappSent ? '✓ Opened WhatsApp (+254 700 000 000)' : 'Chat with Export Desk (+254 700 000 000)'}
-                    </div>
-                  </button>
+                <button
+                  type="button"
+                  onClick={() => handleSendWhatsApp(placedOrder)}
+                  className="flex w-full items-center justify-between gap-3 rounded-2xl bg-[#25D366] p-4 text-left text-white shadow-md transition hover:bg-[#20bd5a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <span className="flex items-center gap-2 font-bold text-sm">
+                    <MessageSquare className="h-5 w-5 fill-current" />
+                    {whatsappOpened ? 'Open WhatsApp again' : 'Open WhatsApp to send'}
+                  </span>
+                  <span className="flex items-center gap-1.5 text-[0.68rem] font-semibold text-white/90">
+                    +254 700 000 000 <ExternalLink className="h-4 w-4" />
+                  </span>
+                </button>
 
-                  {/* Email Direct Send */}
-                  <button
-                    onClick={() => handleSendEmail(placedOrder)}
-                    className={`p-4 rounded-2xl font-bold text-xs flex flex-col justify-between space-y-2 transition-all shadow-md ${
-                      emailSent
-                        ? 'bg-[#b86505] text-white ring-2 ring-white/30'
-                        : 'bg-[#D97706] hover:bg-[#b86505] text-white hover:scale-[1.01]'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-2">
-                        <Mail className="w-5 h-5" />
-                        <span className="font-bold text-sm">Send via Email</span>
-                      </div>
-                      <ExternalLink className="w-4 h-4 opacity-80" />
-                    </div>
-                    <div className="text-[11px] text-left text-white/90 truncate w-full">
-                      {emailSent ? `✓ Opened Mail Client (CC: ${placedOrder.shippingDetails.email})` : `Send to export@kenyanhighlandcoffee.co.ke`}
-                    </div>
-                  </button>
-                </div>
+                {/* Message preview and copy actions */}
 
                 {/* Secondary Quick Actions: Copy Payload & Toggle Preview */}
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#D4C3A3]/10 text-xs">
@@ -748,10 +709,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <div className="bg-white border border-[#E5E1DA] rounded-xl p-3 space-y-1">
                     <div className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-[#7A746E]">
                       <Mail className="w-3.5 h-3.5 text-[#D97706]" />
-                      <span>3. Email Address</span>
+                      <span>3. Email (optional)</span>
                     </div>
-                    <p className="font-bold text-[#2A2522] text-sm break-all">{placedOrder.shippingDetails.email}</p>
-                    <p className="text-[10px] text-[#5D6D3C] font-semibold">✓ Invoice queued for delivery</p>
+                    <p className="font-bold text-[#2A2522] text-sm break-all">{placedOrder.shippingDetails.email || 'Not provided'}</p>
+                    <p className="text-[10px] text-[#5D6D3C] font-semibold">Included in WhatsApp text if provided</p>
                   </div>
 
                   {/* 4. Delivery Location */}
@@ -777,7 +738,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       <ShoppingBag className="w-3.5 h-3.5 text-[#D97706]" />
                       5. Itemized Order Items ({placedOrder.items.reduce((acc, i) => acc + i.quantity, 0)})
                     </span>
-                    <span className="text-[11px] text-[#7A746E]">Payment: <strong className="capitalize text-[#2A2522]">{placedOrder.shippingDetails.paymentMethod}</strong></span>
+                    <span className="text-[11px] text-[#7A746E]">Payment: <strong className="text-[#2A2522]">To confirm</strong></span>
                   </div>
 
                   <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
@@ -794,13 +755,28 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   </div>
 
                   <div className="pt-2 border-t border-[#E5E1DA] flex justify-between items-center text-sm font-bold text-[#2A2522]">
-                    <span>Total Order Value:</span>
+                    <span>Merchandise subtotal:</span>
                     <span className="font-serif-display text-lg text-[#D97706]">
-                      {formatPrice(placedOrder.totalUsd, placedOrder.totalKes, placedOrder.totalEur, currency)}
+                      {formatPrice(placedOrder.subtotalUsd, placedOrder.subtotalKes, placedOrder.subtotalEur, currency)}
                     </span>
                   </div>
+                  <p className="text-[10px] leading-relaxed text-[#7A746E]">Delivery charges and final total will be confirmed by the team in WhatsApp.</p>
                 </div>
 
+              </div>
+
+              <div className="rounded-2xl border border-[#CFE4D2] bg-[#F0F8F0] p-4 sm:p-5">
+                <p className="mb-3 text-sm leading-6 text-[#405B43]">
+                  After you tap <strong>Send</strong> in WhatsApp, return here to finish checkout and clear your cart.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => handleFinishOrder(placedOrder)}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#2F6B3C] px-4 py-3 text-xs font-bold uppercase tracking-[0.1em] text-white transition hover:bg-[#245631] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#245631]"
+                >
+                  <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                  I sent the WhatsApp message — finish checkout
+                </button>
               </div>
 
               {/* Receipt Actions */}
@@ -810,7 +786,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   className="flex-1 py-3 rounded-full border border-[#E5E1DA] bg-white hover:bg-gray-50 text-xs font-bold text-[#2A2522] flex items-center justify-center gap-2 transition-colors shadow-sm"
                 >
                   <FileText className="w-4 h-4 text-[#D97706]" />
-                  <span>Print Digital Receipt</span>
+                  <span>Print Order Summary</span>
                 </button>
 
                 <button

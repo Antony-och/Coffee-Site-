@@ -189,13 +189,15 @@ export default function App() {
       />
 
       {/* Interactive Order Checkout Modal */}
-      <CheckoutModal
-        isOpen={isCheckoutOpen}
-        onClose={() => setIsCheckoutOpen(false)}
-        cartItems={cartItems}
-        currency={currency}
-        onPlaceOrder={handlePlaceOrder}
-      />
+      {isCheckoutOpen && (
+        <CheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          cartItems={cartItems}
+          currency={currency}
+          onPlaceOrder={handlePlaceOrder}
+        />
+      )}
 
     </div>
   );

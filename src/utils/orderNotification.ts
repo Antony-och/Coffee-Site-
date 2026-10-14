@@ -4,26 +4,14 @@ import { formatPrice } from './currency';
 export const EXPORT_WHATSAPP_PHONE = '254700000000'; // Kenyan Highland Coffee & Tea Export Desk
 export const EXPORT_EMAIL_ADDRESS = 'export@kenyanhighlandcoffee.co.ke';
 
-/**
- * Builds a clear, structured WhatsApp order message including:
- * - Buyer's Name
- * - Order Details (Items, Formats, Quantities, Pricing)
- * - Delivery Location
- * - Phone Number
- * - Email Address
- */
 export function generateWhatsAppOrderMessage(order: Order): string {
   const { shippingDetails, items, currency } = order;
-  const formattedTotal = formatPrice(order.totalUsd, order.totalKes, order.totalEur, currency);
   const formattedSubtotal = formatPrice(order.subtotalUsd, order.subtotalKes, order.subtotalEur, currency);
-  const paymentLabel = shippingDetails.paymentMethod === 'not_required'
-    ? 'No payment required at this stage – details sent via Email/WhatsApp'
-    : shippingDetails.paymentMethod.toUpperCase();
 
   const itemList = items
     .map(
       (item, idx) =>
-        `${idx + 1}. *${item.name}*\n   • Qty: ${item.quantity}\n   • Packaging: ${item.format}\n   • Item Total: ${formatPrice(
+        `${idx + 1}. *${item.name}*\n   Format: ${item.format}\n   Quantity: ${item.quantity}\n   Item subtotal: ${formatPrice(
           item.priceUsd * item.quantity,
           item.priceKes * item.quantity,
           item.priceEur * item.quantity,
@@ -32,45 +20,16 @@ export function generateWhatsAppOrderMessage(order: Order): string {
     )
     .join('\n\n');
 
-  const location = [
+  const deliveryAddress = [
     shippingDetails.streetAddress,
     shippingDetails.city,
     shippingDetails.country,
-    shippingDetails.postalCode ? `Postal Code: ${shippingDetails.postalCode}` : '',
+    shippingDetails.postalCode,
   ]
     .filter(Boolean)
     .join(', ');
 
-  return `☕🍃 *NEW ORDER CONFIRMATION*
-*Kenyan Highland Coffee & Tea Export Reserve*
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📋 *Order Reference:* \`${order.id}\`
-📅 *Date:* ${order.date}
-🏷️ *Status:* ${order.status}
-
-👤 *BUYER DETAILS:*
-• *Full Name:* ${shippingDetails.fullName}
-• *Phone Number:* ${shippingDetails.phone}${shippingDetails.mpesaPhone && shippingDetails.mpesaPhone !== shippingDetails.phone ? ` (M-PESA: ${shippingDetails.mpesaPhone})` : ''}
-• *Email Address:* ${shippingDetails.email}
-${shippingDetails.companyName ? `• *Company / Roastery:* ${shippingDetails.companyName}\n` : ''}
-📍 *DELIVERY LOCATION:*
-• *Address:* ${shippingDetails.streetAddress}
-• *City / Town:* ${shippingDetails.city}
-• *Country:* ${shippingDetails.country}
-${shippingDetails.postalCode ? `• *Postal / ZIP Code:* ${shippingDetails.postalCode}\n` : ''}
-📦 *ORDER SUMMARY:*
-${itemList}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💰 *FINANCIAL SUMMARY:*
-• *Subtotal:* ${formattedSubtotal}
-• *Shipping Method:* ${shippingDetails.shippingMethod.toUpperCase().replace('_', ' ')} (Air Express)
-• *Total Payable:* ${formattedTotal}
-• *Payment Mode:* ${paymentLabel}
-• *Tracking Code:* ${order.trackingNumber}
-• *Estimated Delivery:* ${order.estimatedDelivery}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-_Sent via Kenyan Highland Coffee & Tea Official Export Portal_`;
+  return `Hello First Cup Coffee & Tea,\n\nI'd like to request the following order.\n\n*Request reference:* ${order.id}\n*Date:* ${order.date}\n\n*Customer*\nName: ${shippingDetails.fullName}\nPhone: ${shippingDetails.phone}${shippingDetails.email ? `\nEmail: ${shippingDetails.email}` : ''}${shippingDetails.companyName ? `\nCompany: ${shippingDetails.companyName}` : ''}\n\n*Delivery address*\n${deliveryAddress}\n\n*Items*\n${itemList}\n\n*Merchandise subtotal:* ${formattedSubtotal}\n*Delivery charge and final total:* Please confirm with me before payment.\n\nPlease confirm availability, delivery options, and payment instructions. Thank you.`;
 }
 
 /**
