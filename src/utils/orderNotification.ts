@@ -1,7 +1,8 @@
 import { Order } from '../types';
 import { formatPrice } from './currency';
 
-export const EXPORT_WHATSAPP_PHONE = '254700000000'; // Kenyan Highland Coffee & Tea Export Desk
+export const EXPORT_WHATSAPP_PHONE = '254725741543'; // First Cup Coffee & Tea
+export const EXPORT_WHATSAPP_DISPLAY_PHONE = '+254 725 741 543';
 export const EXPORT_EMAIL_ADDRESS = 'export@kenyanhighlandcoffee.co.ke';
 
 export function generateWhatsAppOrderMessage(order: Order): string {
@@ -109,7 +110,7 @@ ${itemList}
 ============================================================
 This order copy has been logged into the Kenyan Highland Coffee & Tea export system.
 Logistics Hub: JKIA Air Cargo Logistics Zone, Nairobi, Kenya.
-Support Desk: ${EXPORT_EMAIL_ADDRESS} | WhatsApp: +254 700 000 000
+Support Desk: ${EXPORT_EMAIL_ADDRESS} | WhatsApp: ${EXPORT_WHATSAPP_DISPLAY_PHONE}
 ============================================================`;
 }
 
