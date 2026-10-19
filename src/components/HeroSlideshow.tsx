@@ -77,11 +77,7 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
           {/* CTA Buttons */}
           <div className="flex flex-wrap gap-4 pt-2">
             <button
-              onClick={() => {
-                setCurrentPage(currentSlide.primaryCtaAction);
-                const el = document.getElementById(currentSlide.primaryCtaAction);
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
+              onClick={() => setCurrentPage(currentSlide.primaryCtaAction)}
               className="px-6 py-3.5 rounded-full bg-[#D97706] hover:bg-[#b45309] text-white font-bold text-sm tracking-wide shadow-xl flex items-center gap-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
             >
               <span>{currentSlide.primaryCtaText}</span>
@@ -89,11 +85,7 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
             </button>
 
             <button
-              onClick={() => {
-                setCurrentPage(currentSlide.secondaryCtaAction);
-                const el = document.getElementById(currentSlide.secondaryCtaAction);
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
+              onClick={() => setCurrentPage(currentSlide.secondaryCtaAction)}
               className="px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-[#D4C3A3]/40 backdrop-blur-md text-[#FAF7F2] font-semibold text-sm tracking-wide transition-all shadow"
             >
               {currentSlide.secondaryCtaText}

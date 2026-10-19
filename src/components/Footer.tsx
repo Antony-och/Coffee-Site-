@@ -43,12 +43,6 @@ const OFFICES = [
 export const Footer: React.FC<FooterProps> = ({ setCurrentPage }) => {
   const handlePageClick = (page: PageView) => {
     setCurrentPage(page);
-    const element = document.getElementById(page === 'process' ? 'journey-title' : page);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
   };
 
   return (

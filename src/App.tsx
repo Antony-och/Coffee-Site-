@@ -1,52 +1,57 @@
-import { useState, useEffect } from 'react';
-import { PageView, CoffeeProduct, TeaProduct, CartItem } from './types';
+import { useEffect, useState } from 'react';
+import type { PageView, CoffeeProduct, TeaProduct, CartItem } from './types';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { HeroSlideshow } from './components/HeroSlideshow';
 import { CoffeeCatalog } from './components/CoffeeCatalog';
 import { TeaCatalog } from './components/TeaCatalog';
 import { AboutSection } from './components/AboutSection';
+import { ProcessSection } from './components/ProcessSection';
 import { ContactSection } from './components/ContactSection';
 import { TrustedBrands } from './components/TrustedBrands';
 import { ProductModal } from './components/ProductModal';
 import { SampleCartDrawer } from './components/SampleCartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
+import { pageFromPathname, PAGE_PATHS } from './utils/pageRoutes';
+
+const PAGE_TITLES: Record<PageView, string> = {
+  home: 'First Cup Coffee & Tea | Kenyan Coffee and Tea',
+  about: 'Our Story | First Cup Coffee & Tea',
+  coffee: 'Kenyan Coffee | First Cup Coffee & Tea',
+  tea: 'Kenyan Tea | First Cup Coffee & Tea',
+  process: 'From Harvest to Cup | First Cup Coffee & Tea',
+  contact: 'Contact | First Cup Coffee & Tea',
+};
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<PageView>('home');
+  const [currentPage, setCurrentPage] = useState<PageView>(() => pageFromPathname(window.location.pathname));
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
   const [selectedProduct, setSelectedProduct] = useState<CoffeeProduct | TeaProduct | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Auto update active section in navbar as user scrolls
   useEffect(() => {
-    const sectionIds: PageView[] = ['home', 'about', 'coffee', 'tea', 'contact'];
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 200;
-      for (let i = sectionIds.length - 1; i >= 0; i--) {
-        const id = sectionIds[i];
-        const element = document.getElementById(id);
-        if (element && scrollPosition >= element.offsetTop - 50) {
-          setCurrentPage(id);
-          break;
-        }
-      }
+    const handlePopState = () => {
+      setCurrentPage(pageFromPathname(window.location.pathname));
+      window.scrollTo(0, 0);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  useEffect(() => {
+    document.title = PAGE_TITLES[currentPage];
+  }, [currentPage]);
+
   const handlePageChange = (page: PageView) => {
-    setCurrentPage(page);
-    const element = document.getElementById(page);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    const path = PAGE_PATHS[page];
+    if (window.location.pathname !== path) {
+      window.history.pushState({ page }, '', path);
     }
+    setCurrentPage(page);
+    window.scrollTo(0, 0);
   };
 
   const handleAddToCart = (newItem: CartItem) => {
@@ -85,6 +90,44 @@ export default function App() {
 
   const totalCartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'home':
+        return (
+          <>
+            <section id="home" aria-label="Home">
+              <HeroSlideshow setCurrentPage={handlePageChange} />
+            </section>
+            <TrustedBrands />
+          </>
+        );
+      case 'about':
+        return <AboutSection setCurrentPage={handlePageChange} />;
+      case 'coffee':
+        return (
+          <section id="coffee" className="bg-[#FAF7F2] py-12">
+            <CoffeeCatalog onSelectProduct={setSelectedProduct} externalSearch={searchQuery} />
+          </section>
+        );
+      case 'tea':
+        return (
+          <section id="tea" className="bg-[#FAF7F2]">
+            <TeaCatalog onSelectProduct={setSelectedProduct} externalSearch={searchQuery} />
+          </section>
+        );
+      case 'process':
+        return <ProcessSection />;
+      case 'contact':
+        return (
+          <section id="contact">
+            <ContactSection cartItems={cartItems} />
+          </section>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF7F2] text-[#2A2522] selection:bg-[#D97706] selection:text-white">
       <Navbar
@@ -96,34 +139,8 @@ export default function App() {
         setSearchQuery={setSearchQuery}
       />
 
-      <main className="flex-1 space-y-0">
-        <section id="home" className="scroll-mt-20">
-          <HeroSlideshow setCurrentPage={handlePageChange} />
-        </section>
-
-        <section id="about" className="scroll-mt-20">
-          <AboutSection setCurrentPage={handlePageChange} />
-        </section>
-
-        <section id="coffee" className="scroll-mt-20 py-12">
-          <CoffeeCatalog
-            onSelectProduct={setSelectedProduct}
-            externalSearch={searchQuery}
-          />
-        </section>
-
-        <section id="tea" className="scroll-mt-20">
-          <TeaCatalog
-            onSelectProduct={setSelectedProduct}
-            externalSearch={searchQuery}
-          />
-        </section>
-
-        <TrustedBrands />
-
-        <section id="contact" className="scroll-mt-20">
-          <ContactSection cartItems={cartItems} />
-        </section>
+      <main key={currentPage} className="flex-1">
+        {renderPage()}
       </main>
 
       <Footer setCurrentPage={handlePageChange} />

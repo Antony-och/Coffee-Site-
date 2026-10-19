@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PageView } from '../types';
-import { Coffee, Leaf, Compass, Info, Mail, Calculator, ShoppingBag, Menu, X, Search } from 'lucide-react';
+import { Coffee, Leaf, Compass, Info, Mail, GitBranch, ShoppingBag, Menu, X, Search } from 'lucide-react';
 
 interface NavbarProps {
   currentPage: PageView;
@@ -36,6 +36,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navItems: { id: PageView; label: string; icon: React.ReactNode }[] = [
     { id: 'home', label: 'Home', icon: <Compass className="w-4 h-4" /> },
     { id: 'about', label: 'About', icon: <Info className="w-4 h-4" /> },
+    { id: 'process', label: 'Process', icon: <GitBranch className="w-4 h-4" /> },
     { id: 'coffee', label: 'Coffee', icon: <Coffee className="w-4 h-4" /> },
     { id: 'tea', label: 'Tea', icon: <Leaf className="w-4 h-4" /> },
     { id: 'contact', label: 'Contact', icon: <Mail className="w-4 h-4" /> },
@@ -44,12 +45,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const handleNavClick = (page: PageView) => {
     setCurrentPage(page);
     setIsMobileMenuOpen(false);
-    const element = document.getElementById(page);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    setIsSearchOpen(false);
   };
 
   return (
