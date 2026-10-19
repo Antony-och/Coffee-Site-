@@ -60,10 +60,6 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
                 Discover distinctive Kenyan coffee and tea, thoughtfully selected from highland-growing communities.
               </p>
             </div>
-            <div className="max-w-sm rounded-2xl border border-[#E5DCCF] bg-white/70 px-4 py-3 text-xs leading-5 text-[#675D53]">
-              <span className="block font-bold uppercase tracking-[0.12em] text-[#835A3B]">Price on request</span>
-              Our team confirms pricing, availability, and delivery for every request.
-            </div>
           </div>
 
           <div className="grid gap-5 md:grid-cols-2 md:gap-6">
@@ -159,7 +155,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
         </div>
       </section>
 
-      <WhyChooseSection />
+      <WhyChooseSection onOpenAbout={() => setCurrentPage('about')} />
     </>
   );
 };

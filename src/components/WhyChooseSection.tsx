@@ -8,9 +8,12 @@ const reasons = [
   { icon: BadgeCheck, index: '04', title: 'Traceable quality', copy: 'Lots are cupped, logged, and traceable from source to cup, with details confirmed by our team.', accent: 'bg-[#DAD5E8]' },
 ];
 
-interface WhyChooseSectionProps { compact?: boolean; }
+interface WhyChooseSectionProps {
+  compact?: boolean;
+  onOpenAbout?: () => void;
+}
 
-export const WhyChooseSection: React.FC<WhyChooseSectionProps> = ({ compact = false }) => (
+export const WhyChooseSection: React.FC<WhyChooseSectionProps> = ({ compact = false, onOpenAbout }) => (
   <section aria-labelledby="why-first-cup-title" className={`relative overflow-hidden bg-[#EFE7DC] text-[#2A2522] ${compact ? 'py-14 sm:py-16' : 'py-20 sm:py-24 lg:py-28'}`}>
     <div aria-hidden="true" className="absolute -right-24 top-12 h-72 w-72 rounded-full border-[24px] border-[#D6C2AD]/35" />
     <div aria-hidden="true" className="absolute -left-20 bottom-8 h-48 w-48 rounded-full bg-[#D8E3D5]/45 blur-3xl" />
@@ -30,7 +33,11 @@ export const WhyChooseSection: React.FC<WhyChooseSectionProps> = ({ compact = fa
               <div className="relative flex h-full flex-col justify-between">
                 <div className="flex items-start justify-between gap-3 sm:gap-4"><span className="font-serif-display text-3xl leading-none text-[#CDBBA9] sm:text-4xl">{index}</span><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#2F4335] text-[#F9F3EA] transition duration-300 group-hover:rotate-[-8deg] group-hover:scale-105 sm:h-10 sm:w-10 sm:rounded-2xl"><Icon className="h-4 w-4 sm:h-[18px] sm:w-[18px]" strokeWidth={1.6} aria-hidden="true" /></span></div>
                 <div className="mt-7 sm:mt-10"><h3 className="max-w-[14rem] font-serif-display text-lg font-semibold leading-tight text-[#2A2522] sm:text-xl">{title}</h3><p className="mt-2.5 max-w-sm text-xs leading-5 text-[#68615A] sm:mt-3 sm:text-[13px] sm:leading-6">{copy}</p></div>
-                <div className="mt-4 flex items-center justify-between border-t border-[#EEE4D8] pt-3 text-[8px] font-bold uppercase tracking-[0.13em] text-[#A85C16] sm:mt-5 sm:text-[9px] sm:tracking-[0.16em]"><span>What sets us apart</span><ArrowUpRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" /></div>
+                {onOpenAbout ? (
+                  <button type="button" onClick={onOpenAbout} className="mt-4 flex w-full items-center justify-between border-t border-[#EEE4D8] pt-3 text-left text-[8px] font-bold uppercase tracking-[0.13em] text-[#A85C16] transition-colors hover:text-[#835A3B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A85C16] sm:mt-5 sm:text-[9px] sm:tracking-[0.16em]"><span>What sets us apart</span><ArrowUpRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" /></button>
+                ) : (
+                  <div className="mt-4 flex items-center justify-between border-t border-[#EEE4D8] pt-3 text-[8px] font-bold uppercase tracking-[0.13em] text-[#A85C16] sm:mt-5 sm:text-[9px] sm:tracking-[0.16em]"><span>What sets us apart</span><ArrowUpRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" /></div>
+                )}
               </div>
             </article>
           ))}

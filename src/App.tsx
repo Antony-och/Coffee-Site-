@@ -17,7 +17,7 @@ import { pageFromPathname, PAGE_PATHS } from './utils/pageRoutes';
 
 const PAGE_TITLES: Record<PageView, string> = {
   home: 'First Cup Coffee & Tea | Kenyan Coffee and Tea',
-  about: 'Our Story | First Cup Coffee & Tea',
+  about: 'About Us | First Cup Coffee & Tea',
   coffee: 'Kenyan Coffee | First Cup Coffee & Tea',
   tea: 'Kenyan Tea | First Cup Coffee & Tea',
   contact: 'Contact | First Cup Coffee & Tea',
@@ -29,8 +29,8 @@ const PAGE_META: Record<PageView, { description: string; keywords: string }> = {
     keywords: 'Kenyan coffee, Kenyan tea, highland coffee, artisanal tea, First Cup, coffee exporter',
   },
   about: {
-    description: 'Meet First Cup Coffee & Tea, a Kenyan-owned team connecting highland growing communities with thoughtful coffee and tea craft.',
-    keywords: 'First Cup story, Kenyan coffee company, Kenyan tea company, coffee sourcing, tea sourcing',
+    description: 'Learn about First Cup Coffee & Tea, a Kenyan-owned coffee and tea company helping buyers source, prepare, and export distinctive highland products.',
+    keywords: 'about First Cup, Kenyan coffee exporter, Kenyan tea exporter, coffee sourcing, tea sourcing, coffee export',
   },
   coffee: {
     description: 'Explore traceable Kenyan Arabica coffee by grade, roast, origin, and process, from bright highland lots to bold espresso roasts.',

@@ -134,7 +134,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ cartItems = [] }
                 First Cup · Ruiru, Kenya · Since 2016
               </div>
               <h1 className="mt-5 max-w-xl font-serif-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
-                Good coffee starts with a conversation.
+                Experience Love At First Sip
               </h1>
               <p className="mt-5 max-w-xl text-sm leading-7 text-[#F1E4D2]/85 sm:text-base">
                 Tell us what you’re looking for. We can help with coffee and tea selections, wholesale enquiries, samples, and shipping questions.
@@ -282,9 +282,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ cartItems = [] }
                     className="h-12 w-full rounded-xl border border-[#D9D0C5] bg-white px-3.5 text-sm text-[#2A2522] focus:border-[#A46A32] focus:outline-none focus:ring-2 focus:ring-[#A46A32]/15"
                   >
                     <option value="Direct Order Request">Direct Order & Quote Request</option>
-                    <option value="Wholesale Coffee">Wholesale Coffee Micro-Lots</option>
-                    <option value="Purple Tea Orders">Purple Tea & Specialty Teas</option>
-                    <option value="Visit Facilities">Visit Milling & Farm Facilities</option>
+                    <option value="Wholesale Coffee">Wholesale Coffee & Roasted Lots</option>
+                    <option value="Purple Tea Orders">Specialty Tea & Blends</option>
+                    <option value="Export Enquiry">Export Enquiry</option>
+                    <option value="Vending / Supply">Vending / Supply</option>
                     <option value="General Inquiry">General Question</option>
                   </select>
                 </div>
