@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 import type { PageView, CoffeeProduct, TeaProduct, CartItem } from './types';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
-import { HeroSlideshow } from './components/HeroSlideshow';
 import { CoffeeCatalog } from './components/CoffeeCatalog';
 import { TeaCatalog } from './components/TeaCatalog';
 import { AboutSection } from './components/AboutSection';
 import { ProcessSection } from './components/ProcessSection';
 import { ContactSection } from './components/ContactSection';
-import { TrustedBrands } from './components/TrustedBrands';
+import { HomePage } from './components/HomePage';
 import { ProductModal } from './components/ProductModal';
 import { SampleCartDrawer } from './components/SampleCartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
@@ -19,7 +18,6 @@ const PAGE_TITLES: Record<PageView, string> = {
   about: 'Our Story | First Cup Coffee & Tea',
   coffee: 'Kenyan Coffee | First Cup Coffee & Tea',
   tea: 'Kenyan Tea | First Cup Coffee & Tea',
-  process: 'From Harvest to Cup | First Cup Coffee & Tea',
   contact: 'Contact | First Cup Coffee & Tea',
 };
 
@@ -32,13 +30,34 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
-    const handlePopState = () => {
-      setCurrentPage(pageFromPathname(window.location.pathname));
-      window.scrollTo(0, 0);
+    const scrollToCurrentHash = () => {
+      const targetId = decodeURIComponent(window.location.hash.slice(1));
+      if (targetId) {
+        window.requestAnimationFrame(() => {
+          document.getElementById(targetId)?.scrollIntoView({ block: 'start' });
+        });
+      }
     };
 
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    const syncLocation = () => {
+      const legacyProcessPath = window.location.pathname === '/process';
+      setCurrentPage(pageFromPathname(window.location.pathname));
+      if (legacyProcessPath) {
+        window.history.replaceState({ page: 'coffee' }, '', '/coffee#coffee-process');
+        scrollToCurrentHash();
+      } else {
+        window.scrollTo(0, 0);
+        scrollToCurrentHash();
+      }
+    };
+
+    window.addEventListener('popstate', syncLocation);
+    if (window.location.pathname === '/process') {
+      syncLocation();
+    } else if (window.location.hash) {
+      scrollToCurrentHash();
+    }
+    return () => window.removeEventListener('popstate', syncLocation);
   }, []);
 
   useEffect(() => {
@@ -93,30 +112,23 @@ export default function App() {
   const renderPage = () => {
     switch (currentPage) {
       case 'home':
-        return (
-          <>
-            <section id="home" aria-label="Home">
-              <HeroSlideshow setCurrentPage={handlePageChange} />
-            </section>
-            <TrustedBrands />
-          </>
-        );
+        return <HomePage setCurrentPage={handlePageChange} />;
       case 'about':
         return <AboutSection setCurrentPage={handlePageChange} />;
       case 'coffee':
         return (
-          <section id="coffee" className="bg-[#FAF7F2] py-12">
+          <div id="coffee">
             <CoffeeCatalog onSelectProduct={setSelectedProduct} externalSearch={searchQuery} />
-          </section>
+            <ProcessSection kind="coffee" />
+          </div>
         );
       case 'tea':
         return (
-          <section id="tea" className="bg-[#FAF7F2]">
+          <div id="tea">
             <TeaCatalog onSelectProduct={setSelectedProduct} externalSearch={searchQuery} />
-          </section>
+            <ProcessSection kind="tea" />
+          </div>
         );
-      case 'process':
-        return <ProcessSection />;
       case 'contact':
         return (
           <section id="contact">

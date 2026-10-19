@@ -1,4 +1,4 @@
-export type PageView = 'home' | 'coffee' | 'tea' | 'process' | 'about' | 'contact';
+export type PageView = 'home' | 'coffee' | 'tea' | 'about' | 'contact';
 
 export interface CoffeeProduct {
   id: string;
