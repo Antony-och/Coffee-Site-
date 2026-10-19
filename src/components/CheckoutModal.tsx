@@ -141,7 +141,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           <tr>
             <td>${escapeHtml(item.name)}</td>
             <td>${item.quantity}</td>
-            <td>${escapeHtml(item.format)}</td>
+            <td>${escapeHtml(item.roastLevel ? `${item.roastLevel} · ${item.format}` : item.format)}</td>
           </tr>
         `
       )
@@ -379,7 +379,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                         <img src={item.image} alt={item.name} className="h-10 w-10 rounded-xl object-cover ring-1 ring-[#E5E1DA]" />
                         <div className="min-w-0">
                           <span className="block truncate text-sm font-semibold text-[#2A2522]">{item.name}</span>
-                          <span className="block text-[10px] text-[#7A746E]">Quantity: {item.quantity} {item.quantity === 1 ? 'pack' : 'packs'} • {item.format}</span>
+                          <span className="block text-[10px] text-[#7A746E]">Quantity: {item.quantity} {item.quantity === 1 ? 'pack' : 'packs'} • {item.roastLevel ? `${item.roastLevel} · ` : ''}{item.format}</span>
                         </div>
                       </div>
                     </div>

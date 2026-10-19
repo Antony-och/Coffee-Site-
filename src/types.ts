@@ -85,6 +85,7 @@ export interface CartItem {
   productId: string;
   name: string;
   format: string;
+  roastLevel?: CoffeeProduct['roastLevel'];
   quantity: number;
   image: string;
 }

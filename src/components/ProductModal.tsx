@@ -26,6 +26,12 @@ interface ProductModalContentProps {
   onAddToCart: (item: CartItem) => void;
 }
 
+const COFFEE_ROAST_OPTIONS: CoffeeProduct['roastLevel'][] = [
+  'Light City',
+  'Medium Full-City',
+  'Dark Espresso Roast',
+];
+
 const ProductModalContent: React.FC<ProductModalContentProps> = ({
   product,
   onClose,
@@ -36,6 +42,9 @@ const ProductModalContent: React.FC<ProductModalContentProps> = ({
   const tea = isCoffee ? null : product;
   const [selectedFormat, setSelectedFormat] = useState<string>(
     product.packagingFormats[0] || 'Default Packaging'
+  );
+  const [selectedRoast, setSelectedRoast] = useState<CoffeeProduct['roastLevel']>(
+    isCoffee ? (product as CoffeeProduct).roastLevel : 'Medium Full-City'
   );
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
@@ -70,11 +79,12 @@ const ProductModalContent: React.FC<ProductModalContentProps> = ({
     if (isAdded) return;
 
     onAddToCart({
-      id: `${product.id}-${selectedFormat.replace(/\s+/g, '-')}`,
+      id: `${product.id}-${selectedRoast.replace(/\s+/g, '-')}-${selectedFormat.replace(/\s+/g, '-')}`,
       type: isCoffee ? 'coffee' : 'tea',
       productId: product.id,
       name: product.name,
       format: selectedFormat,
+      roastLevel: isCoffee ? selectedRoast : undefined,
       quantity,
       image: product.image,
     });
@@ -173,8 +183,8 @@ const ProductModalContent: React.FC<ProductModalContentProps> = ({
                     <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.altitude}</dd>
                   </div>
                   <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
-                    <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Roast</dt>
-                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.roastLevel}</dd>
+                    <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Choose roast</dt>
+                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{selectedRoast}</dd>
                   </div>
                   <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
                     <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Process</dt>
@@ -213,6 +223,29 @@ const ProductModalContent: React.FC<ProductModalContentProps> = ({
                 ))}
               </div>
             </div>
+
+            {isCoffee && (
+              <fieldset>
+                <legend className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.15em] text-[#8A5A2B]">Choose roast</legend>
+                <div className="grid grid-cols-3 gap-2">
+                  {COFFEE_ROAST_OPTIONS.map((roast) => (
+                    <button
+                      key={roast}
+                      type="button"
+                      onClick={() => setSelectedRoast(roast)}
+                      aria-pressed={selectedRoast === roast}
+                      className={`min-h-11 rounded-xl border px-2 py-2 text-center text-[11px] font-semibold leading-4 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A46A32] sm:text-xs ${
+                        selectedRoast === roast
+                          ? 'border-[#34251B] bg-[#34251B] text-white shadow-sm'
+                          : 'border-[#DFD5C9] bg-white text-[#4E443B] hover:border-[#A46A32] hover:bg-[#FBF7F1]'
+                      }`}
+                    >
+                      {roast}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+            )}
 
             <fieldset>
               <legend className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.15em] text-[#8A5A2B]">Choose pack size</legend>

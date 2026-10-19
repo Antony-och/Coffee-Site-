@@ -70,14 +70,14 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ cartItems = [] }
   const buildDefaultRequirements = () => {
     if (cartItems.length === 0) return '';
 
-    const lines = cartItems.map((item) => `• ${item.quantity} × ${item.format} pack — ${item.name}`);
+    const lines = cartItems.map((item) => `• ${item.quantity} × ${item.format} pack${item.roastLevel ? ` (${item.roastLevel})` : ''} — ${item.name}`);
     return `Order requirements:\nPrice on request. Our team will confirm prices, availability and delivery before your order is accepted.\n\nItems requested:\n${lines.join('\n')}`;
   };
 
   const buildCartSummary = () => {
     if (cartItems.length === 0) return '';
 
-    const lines = cartItems.map((item) => `• ${item.quantity} × ${item.format} pack — ${item.name}`);
+    const lines = cartItems.map((item) => `• ${item.quantity} × ${item.format} pack${item.roastLevel ? ` (${item.roastLevel})` : ''} — ${item.name}`);
     return `ORDER REQUEST SUMMARY\n${lines.join('\n')}\n\nPrice on request. Our team will confirm prices, availability and delivery before your order is accepted.\n`;
   };
 

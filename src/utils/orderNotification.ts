@@ -8,7 +8,7 @@ export function generateWhatsAppOrderMessage(request: OrderRequest): string {
   const itemList = items
     .map(
       (item, index) =>
-        `${index + 1}. *${item.name}*\n   Pack size: ${item.format}\n   Quantity: ${item.quantity} ${item.quantity === 1 ? 'pack' : 'packs'}`
+        `${index + 1}. *${item.name}*\n   ${item.roastLevel ? `Roast: ${item.roastLevel}\n   ` : ''}Pack size: ${item.format}\n   Quantity: ${item.quantity} ${item.quantity === 1 ? 'pack' : 'packs'}`
     )
     .join('\n\n');
 

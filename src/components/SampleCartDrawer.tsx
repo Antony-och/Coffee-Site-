@@ -155,7 +155,7 @@ export const SampleCartDrawer: React.FC<SampleCartDrawerProps> = ({
                               {item.type === 'coffee' ? 'Coffee' : 'Tea'}
                             </p>
                             <h4 className="truncate font-serif-display text-sm font-bold leading-5 text-[#2A211B]">{item.name}</h4>
-                            <p className="mt-1 line-clamp-1 text-[0.68rem] text-[#766D64]">{item.format}</p>
+                            <p className="mt-1 line-clamp-1 text-[0.68rem] text-[#766D64]">{item.roastLevel ? `${item.roastLevel} · ${item.format}` : item.format}</p>
                           </div>
                           <button
                             type="button"
