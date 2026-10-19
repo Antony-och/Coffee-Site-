@@ -41,12 +41,15 @@ export const CoffeeCatalog: React.FC<CoffeeCatalogProps> = ({
             <Coffee className="w-3.5 h-3.5 text-[#F5B041]" />
             <span>High-Altitude Arabica Reserve</span>
           </div>
-          <h2 className="font-serif-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white">
+          <h1 className="font-serif-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white">
             Single-Origin Coffee Reserve
-          </h2>
+          </h1>
           <p className="text-sm sm:text-base text-[#D4C3B7] leading-relaxed">
             Hand-harvested at 1,800m–2,200m altitude from Mount Kenya & Nyeri volcanic soils. Double fermented in mountain spring waters and sun-dried on African raised beds.
           </p>
+          <a href="#coffee-process" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#F5B041] transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F5B041]">
+            See the bean-to-cup process <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </a>
         </div>
 
         {/* Product Cards Grid */}

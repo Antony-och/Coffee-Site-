@@ -41,12 +41,15 @@ export const TeaCatalog: React.FC<TeaCatalogProps> = ({
             <Leaf className="w-3.5 h-3.5 text-[#52B788]" />
             <span>Highland Artisanal Teas</span>
           </div>
-          <h2 className="font-serif-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white">
+          <h1 className="font-serif-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white">
             Purified Highland Teas
-          </h2>
+          </h1>
           <p className="text-sm sm:text-base text-[#A3C4AC] leading-relaxed">
             Including world-exclusive TRFK 306/1 Purple Tea, Kericho Safari Gold CTC Black Tea, and hand-rolled Orthodox Green Tea cultivated in the cloud forests of Kericho & Limuru.
           </p>
+          <a href="#tea-process" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#A2E0B5] transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A2E0B5]">
+            See the leaf-to-cup process <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </a>
         </div>
 
         {/* Product Cards Grid */}

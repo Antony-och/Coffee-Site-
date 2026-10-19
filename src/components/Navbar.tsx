@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PageView } from '../types';
-import { Coffee, Leaf, Compass, Info, Mail, Calculator, ShoppingBag, Menu, X, Search } from 'lucide-react';
+import { Coffee, Leaf, Compass, Info, Mail, ShoppingBag, Menu, X, Search } from 'lucide-react';
 
 interface NavbarProps {
   currentPage: PageView;
@@ -44,12 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const handleNavClick = (page: PageView) => {
     setCurrentPage(page);
     setIsMobileMenuOpen(false);
-    const element = document.getElementById(page);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    setIsSearchOpen(false);
   };
 
   return (

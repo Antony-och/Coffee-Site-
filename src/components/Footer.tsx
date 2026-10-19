@@ -43,12 +43,6 @@ const OFFICES = [
 export const Footer: React.FC<FooterProps> = ({ setCurrentPage }) => {
   const handlePageClick = (page: PageView) => {
     setCurrentPage(page);
-    const element = document.getElementById(page === 'process' ? 'journey-title' : page);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
   };
 
   return (
@@ -102,8 +96,8 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentPage }) => {
             <h2 id="footer-links-title" className="text-[0.62rem] font-bold uppercase tracking-[0.19em] text-[#D9A05F]">Quick Links</h2>
             <ul className="mt-4 space-y-2.5 text-[0.78rem] text-[#DCCEB8]/80">
               <li><button onClick={() => handlePageClick('about')} className="transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9A05F]">Our Story</button></li>
-              <li><button onClick={() => handlePageClick('coffee')} className="transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9A05F]">Catalog</button></li>
-              <li><button onClick={() => handlePageClick('process')} className="transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9A05F]">Process</button></li>
+              <li><button onClick={() => handlePageClick('coffee')} className="transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9A05F]">Coffee</button></li>
+              <li><button onClick={() => handlePageClick('tea')} className="transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9A05F]">Tea</button></li>
               <li><button onClick={() => handlePageClick('contact')} className="transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9A05F]">Contact</button></li>
             </ul>
           </nav>
