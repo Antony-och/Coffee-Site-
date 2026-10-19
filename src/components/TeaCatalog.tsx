@@ -41,9 +41,9 @@ export const TeaCatalog: React.FC<TeaCatalogProps> = ({
             <Leaf className="w-3.5 h-3.5 text-[#52B788]" />
             <span>Highland Artisanal Teas</span>
           </div>
-          <h2 className="font-serif-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white">
+          <h1 className="font-serif-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white">
             Purified Highland Teas
-          </h2>
+          </h1>
           <p className="text-sm sm:text-base text-[#A3C4AC] leading-relaxed">
             Including world-exclusive TRFK 306/1 Purple Tea, Kericho Safari Gold CTC Black Tea, and hand-rolled Orthodox Green Tea cultivated in the cloud forests of Kericho & Limuru.
           </p>
