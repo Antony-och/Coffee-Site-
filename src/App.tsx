@@ -8,6 +8,7 @@ import { AboutSection } from './components/AboutSection';
 import { ProcessSection } from './components/ProcessSection';
 import { ContactSection } from './components/ContactSection';
 import { HomePage } from './components/HomePage';
+import { TrustedBrands } from './components/TrustedBrands';
 import { ProductModal } from './components/ProductModal';
 import { SampleCartDrawer } from './components/SampleCartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
@@ -154,6 +155,8 @@ export default function App() {
       <main key={currentPage} className="flex-1">
         {renderPage()}
       </main>
+
+      {currentPage === 'home' && <TrustedBrands />}
 
       <Footer setCurrentPage={handlePageChange} />
 

@@ -4,7 +4,7 @@ import { COFFEE_PRODUCTS } from '../data/coffeeData';
 import { TEA_PRODUCTS } from '../data/teaData';
 import type { PageView } from '../types';
 import { HeroSlideshow } from './HeroSlideshow';
-import { TrustedBrands } from './TrustedBrands';
+import { WhyChooseSection } from './WhyChooseSection';
 
 interface HomePageProps {
   setCurrentPage: (page: PageView) => void;
@@ -44,8 +44,6 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
       <section id="home" aria-label="Home">
         <HeroSlideshow setCurrentPage={setCurrentPage} />
       </section>
-
-      <TrustedBrands />
 
       <section aria-labelledby="home-collections-title" className="bg-[#FAF7F2] py-16 text-[#2A2522] sm:py-20 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -160,6 +158,8 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
           </dl>
         </div>
       </section>
+
+      <WhyChooseSection />
     </>
   );
 };

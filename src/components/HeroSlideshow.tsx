@@ -69,6 +69,10 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
             {currentSlide.title}
           </h1>
 
+          <p className="-mt-3 font-serif-display text-xl font-medium italic tracking-wide text-[#F3C27D] drop-shadow-md sm:text-2xl">
+            Experience Love At First Sip
+          </p>
+
           {/* Subtitle / Description */}
           <p className="text-[#D4C3A3] text-sm sm:text-base lg:text-lg leading-relaxed font-normal max-w-xl drop-shadow">
             {currentSlide.description}
