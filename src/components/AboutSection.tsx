@@ -3,7 +3,6 @@ import { ArrowRight, Coffee, CupSoda, Droplets, Flame, Hand, Leaf, Mountain, Ref
 import { motion, useReducedMotion } from 'motion/react';
 import { PageView } from '../types';
 
-const coffeeCup = new URL('../assets/images/kenyan_coffee_beans_1786601780276.jpg', import.meta.url).href;
 const processTokens = {
   '--process-canvas': '#F7F4EE',
   '--process-surface': '#FFFEFC',
@@ -69,20 +68,25 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ setCurrentPage }) =>
   <section aria-labelledby="about-title" className="overflow-hidden bg-[#F6F1EA] py-16 text-[#2A2522] sm:py-20 lg:py-24">
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div className="grid items-center gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
-        <div className="relative min-h-[24rem] overflow-hidden rounded-[2rem] bg-[#2D241E] shadow-[0_26px_60px_rgba(42,37,34,0.16)] sm:min-h-[32rem]">
-          <img
-            src={coffeeCup}
-            alt="A cup of freshly brewed coffee beside roasted beans"
-            className="absolute inset-0 h-full w-full object-cover object-[66%_center]"
-            loading="lazy"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1D1713]/85 via-[#1D1713]/10 to-transparent" />
-          <div className="absolute left-5 top-5 rounded-full border border-white/25 bg-[#2D241E]/55 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white backdrop-blur-sm sm:left-7 sm:top-7">
+        <div className="relative isolate flex min-h-[24rem] items-center justify-center overflow-hidden rounded-[2rem] bg-[#2D241E] shadow-[0_26px_60px_rgba(42,37,34,0.16)] sm:min-h-[32rem]">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-4 rounded-[1.5rem] border border-[#D9A05F]/20" />
+          <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 h-[23rem] w-[23rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#D9A05F]/10 sm:h-[27rem] sm:w-[27rem]" />
+          <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 h-[18rem] w-[18rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.04]" />
+          <span className="absolute left-5 top-5 rounded-full border border-white/15 bg-white/[0.04] px-3.5 py-2 text-[9px] font-bold uppercase tracking-[0.2em] text-[#E8D8C2] sm:left-7 sm:top-7">
             Our Kenyan roots · Since 2016
-          </div>
-          <div className="absolute inset-x-5 bottom-5 rounded-[1.4rem] border border-white/15 bg-[#211913]/70 p-5 text-white backdrop-blur-md sm:inset-x-7 sm:bottom-7 sm:p-6">
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#F0B866]">From the highlands</span>
-            <p className="mt-2 max-w-sm font-serif-display text-2xl leading-tight sm:text-3xl">A landscape you can taste.</p>
+          </span>
+          <div className="relative z-10 flex flex-col items-center px-6 py-16 text-center">
+            <img
+              src="/brand/first-cup-logo-white-500.png"
+              alt="First Cup Coffee & Tea logo"
+              className="h-auto w-40 drop-shadow-[0_12px_28px_rgba(0,0,0,0.25)] sm:w-52 lg:w-60"
+              loading="lazy"
+            />
+            <div className="mt-5 flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.22em] text-[#D9A05F]">
+              <span className="h-px w-6 bg-[#D9A05F]/60" aria-hidden="true" />
+              Coffee · Tea · Kenya
+              <span className="h-px w-6 bg-[#D9A05F]/60" aria-hidden="true" />
+            </div>
           </div>
         </div>
 
