@@ -282,8 +282,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ cartItems = [] }
                     className="h-12 w-full rounded-xl border border-[#D9D0C5] bg-white px-3.5 text-sm text-[#2A2522] focus:border-[#A46A32] focus:outline-none focus:ring-2 focus:ring-[#A46A32]/15"
                   >
                     <option value="Direct Order Request">Direct Order & Quote Request</option>
-                    <option value="Wholesale Coffee">Wholesale Coffee Micro-Lots</option>
-                    <option value="Purple Tea Orders">Purple Tea & Specialty Teas</option>
+                    <option value="Wholesale Coffee">Wholesale Coffee & Roasted Lots</option>
+                    <option value="Purple Tea Orders">Specialty Tea & Blends</option>
                     <option value="Export Enquiry">Export Enquiry</option>
                     <option value="Vending / Supply">Vending / Supply</option>
                     <option value="General Inquiry">General Question</option>
