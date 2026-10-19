@@ -134,7 +134,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ cartItems = [] }
                 First Cup · Ruiru, Kenya · Since 2016
               </div>
               <h1 className="mt-5 max-w-xl font-serif-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
-                Good coffee starts with a conversation.
+                Experience Love At First Sip
               </h1>
               <p className="mt-5 max-w-xl text-sm leading-7 text-[#F1E4D2]/85 sm:text-base">
                 Tell us what you’re looking for. We can help with coffee and tea selections, wholesale enquiries, samples, and shipping questions.
