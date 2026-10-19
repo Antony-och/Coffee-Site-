@@ -155,7 +155,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
         </div>
       </section>
 
-      <WhyChooseSection />
+      <WhyChooseSection onOpenAbout={() => setCurrentPage('about')} />
     </>
   );
 };
