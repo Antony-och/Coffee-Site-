@@ -23,6 +23,39 @@ const PAGE_TITLES: Record<PageView, string> = {
   contact: 'Contact | First Cup Coffee & Tea',
 };
 
+const PAGE_META: Record<PageView, { description: string; keywords: string }> = {
+  home: {
+    description: 'Discover distinctive Kenyan highland coffee and artisanal tea, selected with care for roasters, cafés, retailers, and curious tea lovers.',
+    keywords: 'Kenyan coffee, Kenyan tea, highland coffee, artisanal tea, First Cup, coffee exporter',
+  },
+  about: {
+    description: 'Meet First Cup Coffee & Tea, a Kenyan-owned team connecting highland growing communities with thoughtful coffee and tea craft.',
+    keywords: 'First Cup story, Kenyan coffee company, Kenyan tea company, coffee sourcing, tea sourcing',
+  },
+  coffee: {
+    description: 'Explore traceable Kenyan Arabica coffee by grade, roast, origin, and process, from bright highland lots to bold espresso roasts.',
+    keywords: 'Kenyan Arabica, coffee grades, AA coffee, coffee roasts, Nyeri coffee, coffee exporter',
+  },
+  tea: {
+    description: 'Explore Kenyan tea by leaf grade and style, including black, green, purple, chai, and blended teas from highland growing regions.',
+    keywords: 'Kenyan tea, tea grades, black tea, purple tea, green tea, Kenyan tea exporter',
+  },
+  contact: {
+    description: 'Contact First Cup Coffee & Tea for samples, wholesale enquiries, export availability, and current coffee and tea lot details.',
+    keywords: 'coffee wholesale enquiry, tea wholesale enquiry, Kenyan coffee samples, Kenyan tea samples',
+  },
+};
+
+function setMetaTag(attribute: 'name' | 'property', key: string, content: string) {
+  let tag = document.head.querySelector<HTMLMetaElement>(`meta[${attribute}="${key}"]`);
+  if (!tag) {
+    tag = document.createElement('meta');
+    tag.setAttribute(attribute, key);
+    document.head.appendChild(tag);
+  }
+  tag.content = content;
+}
+
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageView>(() => pageFromPathname(window.location.pathname));
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -63,7 +96,17 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    document.title = PAGE_TITLES[currentPage];
+    const meta = PAGE_META[currentPage];
+    const title = PAGE_TITLES[currentPage];
+    document.title = title;
+    setMetaTag('name', 'description', meta.description);
+    setMetaTag('name', 'keywords', meta.keywords);
+    setMetaTag('property', 'og:title', title);
+    setMetaTag('property', 'og:description', meta.description);
+    setMetaTag('property', 'og:type', 'website');
+    setMetaTag('property', 'og:site_name', 'First Cup Coffee & Tea');
+    setMetaTag('name', 'twitter:title', title);
+    setMetaTag('name', 'twitter:description', meta.description);
   }, [currentPage]);
 
   const handlePageChange = (page: PageView) => {

@@ -23,14 +23,14 @@ export const WhyChooseSection: React.FC<WhyChooseSectionProps> = ({ compact = fa
           <div className="mt-8 flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#835A3B]"><span className="h-px w-10 bg-[#B9825B]" /> Origin · care · character</div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
           {reasons.map(({ icon: Icon, index, title, copy, accent }) => (
-            <article key={title} className="group relative min-h-[15.5rem] overflow-hidden rounded-[1.5rem] border border-[#DCCBBC] bg-[#FFFCF8] p-5 shadow-[0_14px_35px_rgba(75,52,34,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_45px_rgba(75,52,34,0.12)] sm:p-6">
-              <div className={`absolute -right-8 -top-8 h-28 w-28 rounded-full ${accent} opacity-60 transition duration-500 group-hover:scale-125`} />
+            <article key={title} className="group relative min-h-[13.5rem] overflow-hidden rounded-[1.25rem] border border-[#DCCBBC] bg-[#FFFCF8] p-4 shadow-[0_14px_35px_rgba(75,52,34,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_45px_rgba(75,52,34,0.12)] sm:min-h-[15.5rem] sm:rounded-[1.5rem] sm:p-6">
+              <div className={`absolute -right-7 -top-7 h-24 w-24 rounded-full ${accent} opacity-60 transition duration-500 group-hover:scale-125 sm:-right-8 sm:-top-8 sm:h-28 sm:w-28`} />
               <div className="relative flex h-full flex-col justify-between">
-                <div className="flex items-start justify-between gap-4"><span className="font-serif-display text-4xl leading-none text-[#CDBBA9]">{index}</span><span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#2F4335] text-[#F9F3EA] transition duration-300 group-hover:rotate-[-8deg] group-hover:scale-105"><Icon className="h-[18px] w-[18px]" strokeWidth={1.6} aria-hidden="true" /></span></div>
-                <div className="mt-10"><h3 className="max-w-[13rem] font-serif-display text-xl font-semibold leading-tight text-[#2A2522]">{title}</h3><p className="mt-3 max-w-sm text-[13px] leading-6 text-[#68615A]">{copy}</p></div>
-                <div className="mt-5 flex items-center justify-between border-t border-[#EEE4D8] pt-3 text-[9px] font-bold uppercase tracking-[0.16em] text-[#A85C16]"><span>What sets us apart</span><ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" /></div>
+                <div className="flex items-start justify-between gap-3 sm:gap-4"><span className="font-serif-display text-3xl leading-none text-[#CDBBA9] sm:text-4xl">{index}</span><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#2F4335] text-[#F9F3EA] transition duration-300 group-hover:rotate-[-8deg] group-hover:scale-105 sm:h-10 sm:w-10 sm:rounded-2xl"><Icon className="h-4 w-4 sm:h-[18px] sm:w-[18px]" strokeWidth={1.6} aria-hidden="true" /></span></div>
+                <div className="mt-7 sm:mt-10"><h3 className="max-w-[14rem] font-serif-display text-lg font-semibold leading-tight text-[#2A2522] sm:text-xl">{title}</h3><p className="mt-2.5 max-w-sm text-xs leading-5 text-[#68615A] sm:mt-3 sm:text-[13px] sm:leading-6">{copy}</p></div>
+                <div className="mt-4 flex items-center justify-between border-t border-[#EEE4D8] pt-3 text-[8px] font-bold uppercase tracking-[0.13em] text-[#A85C16] sm:mt-5 sm:text-[9px] sm:tracking-[0.16em]"><span>What sets us apart</span><ArrowUpRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" /></div>
               </div>
             </article>
           ))}
