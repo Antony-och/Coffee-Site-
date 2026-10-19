@@ -2,14 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Award,
   Check,
-  Clock,
   Coffee,
   Leaf,
   MapPin,
   Minus,
   Mountain,
   Plus,
-  Thermometer,
   X,
 } from 'lucide-react';
 import { CartItem, CoffeeProduct, TeaProduct } from '../types';
@@ -171,47 +169,26 @@ const ProductModalContent: React.FC<ProductModalContentProps> = ({
               </p>
             </div>
 
-            <dl className="grid grid-cols-2 gap-2.5 sm:gap-3">
-              {isCoffee ? (
-                <>
-                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
-                    <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Cultivar</dt>
-                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.variety}</dd>
-                  </div>
-                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
-                    <dt className="flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]"><Mountain className="h-3 w-3" aria-hidden="true" />Altitude</dt>
-                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.altitude}</dd>
-                  </div>
-                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
-                    <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Choose roast</dt>
-                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{selectedRoast}</dd>
-                  </div>
-                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
-                    <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Process</dt>
-                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.process}</dd>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
-                    <dt className="flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]"><Mountain className="h-3 w-3" aria-hidden="true" />Altitude</dt>
-                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{tea?.altitude}</dd>
-                  </div>
-                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
-                    <dt className="flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]"><Thermometer className="h-3 w-3" aria-hidden="true" />Steep temp</dt>
-                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{tea?.steepTemp}</dd>
-                  </div>
-                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
-                    <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Oxidation</dt>
-                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{tea?.oxidationLevel}</dd>
-                  </div>
-                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
-                    <dt className="flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]"><Clock className="h-3 w-3" aria-hidden="true" />Steep time</dt>
-                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{tea?.steepTime}</dd>
-                  </div>
-                </>
-              )}
-            </dl>
+            {isCoffee && (
+              <dl className="grid grid-cols-2 gap-2.5 sm:gap-3">
+                <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
+                  <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Cultivar</dt>
+                  <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.variety}</dd>
+                </div>
+                <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
+                  <dt className="flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]"><Mountain className="h-3 w-3" aria-hidden="true" />Altitude</dt>
+                  <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.altitude}</dd>
+                </div>
+                <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
+                  <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Choose roast</dt>
+                  <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{selectedRoast}</dd>
+                </div>
+                <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
+                  <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Process</dt>
+                  <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.process}</dd>
+                </div>
+              </dl>
+            )}
 
             <div>
               <h3 className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.15em] text-[#8A5A2B]">Tasting notes</h3>
