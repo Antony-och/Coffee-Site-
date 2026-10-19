@@ -6,6 +6,7 @@ import { CoffeeCatalog } from './components/CoffeeCatalog';
 import { TeaCatalog } from './components/TeaCatalog';
 import { AboutSection } from './components/AboutSection';
 import { ProcessSection } from './components/ProcessSection';
+import { EducationSection } from './components/EducationSection';
 import { ContactSection } from './components/ContactSection';
 import { HomePage } from './components/HomePage';
 import { TrustedBrands } from './components/TrustedBrands';
@@ -121,6 +122,7 @@ export default function App() {
           <div id="coffee">
             <CoffeeCatalog onSelectProduct={setSelectedProduct} externalSearch={searchQuery} />
             <ProcessSection kind="coffee" />
+            <EducationSection kind="coffee" />
           </div>
         );
       case 'tea':
@@ -128,6 +130,7 @@ export default function App() {
           <div id="tea">
             <TeaCatalog onSelectProduct={setSelectedProduct} externalSearch={searchQuery} />
             <ProcessSection kind="tea" />
+            <EducationSection kind="tea" />
           </div>
         );
       case 'contact':
