@@ -1,5 +1,5 @@
-import React from 'react';
-import { ArrowUpRight, BookOpen, CalendarDays, Coffee, MapPin, Sparkles, Users } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { ArrowUpRight, BookOpen, CalendarDays, Coffee, MapPin, Sparkles, Users, X } from 'lucide-react';
 
 const categories = [
   {
@@ -13,6 +13,11 @@ const categories = [
     theme: 'bg-[#E9B66F] text-[#2D241E]',
     muted: 'text-[#6F4A25]',
     items: ['Cupping tables', 'Trade tastings', 'Seasonal gatherings'],
+    stories: [
+      { label: 'A table for curious palates', title: 'What happens at a First Cup cupping', copy: 'A guided tasting that makes room for questions, origin notes, and the small details that shape a memorable cup.' },
+      { label: 'On the calendar', title: 'Gather around the next harvest', copy: 'Follow seasonal tastings and trade moments designed to bring growers, makers, and buyers closer together.' },
+      { label: 'The ritual', title: 'Why shared cups taste better', copy: 'The best conversations often start with a fresh brew, a little time, and a table with room for one more.' },
+    ],
   },
   {
     id: 'activations',
@@ -25,6 +30,11 @@ const categories = [
     theme: 'bg-[#C96E32] text-[#FFF8EF]',
     muted: 'text-[#FFE2C6]',
     items: ['Café collaborations', 'Vending moments', 'Menu launches'],
+    stories: [
+      { label: 'In the field', title: 'Designing a better service moment', copy: 'From the first pour to the last detail, thoughtful activations turn everyday service into a reason to remember.' },
+      { label: 'Partner notes', title: 'Coffee that works beyond the counter', copy: 'Explore flexible formats for cafés, offices, hospitality teams, and vending environments.' },
+      { label: 'Made together', title: 'The thinking behind a collaboration', copy: 'A closer look at how a shared brief becomes a menu, moment, or experience with its own character.' },
+    ],
   },
   {
     id: 'community',
@@ -37,6 +47,11 @@ const categories = [
     theme: 'bg-[#5D6D3C] text-[#F5F2E7]',
     muted: 'text-[#D7E2BD]',
     items: ['Farmer connections', 'Local partnerships', 'Shared knowledge'],
+    stories: [
+      { label: 'At origin', title: 'The people behind the harvest', copy: 'Meet the care, patience, and knowledge carried through the communities that grow Kenya’s coffee and tea.' },
+      { label: 'Shared knowledge', title: 'What a closer connection changes', copy: 'Better conversations at every step help create more thoughtful sourcing, preparation, and service.' },
+      { label: 'Local roots', title: 'Small moments, lasting ties', copy: 'Community is built through the everyday details: showing up, listening closely, and making space to grow together.' },
+    ],
   },
   {
     id: 'coffee-stories',
@@ -49,10 +64,35 @@ const categories = [
     theme: 'bg-[#2D241E] text-[#FAF7F2]',
     muted: 'text-[#E8D8C2]/75',
     items: ['Origin notes', 'Roast journals', 'Brew guidance'],
+    stories: [
+      { label: 'Origin notes', title: 'A highland lot, in its own voice', copy: 'Trace the character of a coffee from altitude and cultivar to process, roast, and the final sip.' },
+      { label: 'Roast journal', title: 'Finding the balance in the drum', copy: 'Roasting is a conversation between time, temperature, and the distinct personality of each lot.' },
+      { label: 'Brew guidance', title: 'Make room for the details', copy: 'Small changes in grind, water, and pace can open up a whole new way to experience the cup.' },
+    ],
   },
 ];
 
-export const EventsStoriesSection: React.FC = () => (
+type Story = (typeof categories)[number]['stories'][number];
+
+export const EventsStoriesSection: React.FC = () => {
+  const [activeCategory, setActiveCategory] = useState<(typeof categories)[number] | null>(null);
+
+  useEffect(() => {
+    if (!activeCategory) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setActiveCategory(null);
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [activeCategory]);
+
+  return (
+  <>
   <div className="bg-[#F6F1EA] text-[#2A2522]">
     <section aria-labelledby="events-stories-title" className="relative isolate overflow-hidden bg-[#201611] text-[#FAF7F2]">
       <img src="/hero/hero_roastery_cupping.jpg" alt="Coffee cupping table at First Cup" className="absolute inset-0 -z-20 h-full w-full object-cover object-center opacity-40" />
@@ -84,7 +124,7 @@ export const EventsStoriesSection: React.FC = () => (
               </div>
               <div className={`flex flex-col justify-between p-6 sm:p-8 lg:p-10 ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
                 <div><div className={`text-[10px] font-bold uppercase tracking-[0.2em] ${muted}`}>{eyebrow}</div><h3 className="mt-4 font-serif-display text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">{title}</h3><p className={`mt-2 text-xs font-bold uppercase tracking-[0.16em] ${muted}`}>{accent}</p><p className={`mt-6 max-w-lg text-sm leading-7 ${muted}`}>{description}</p></div>
-                <div className="mt-8 flex flex-wrap items-end justify-between gap-5 border-t border-current/15 pt-5"><div className="flex flex-wrap gap-x-4 gap-y-2">{items.map((item) => <span key={item} className={`text-[10px] font-bold uppercase tracking-[0.12em] ${muted}`}>{item}</span>)}</div><a href={`#${id}`} className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] transition hover:gap-3">Explore <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></a></div>
+                <div className="mt-8 flex flex-wrap items-end justify-between gap-5 border-t border-current/15 pt-5"><div className="flex flex-wrap gap-x-4 gap-y-2">{items.map((item) => <span key={item} className={`text-[10px] font-bold uppercase tracking-[0.12em] ${muted}`}>{item}</span>)}</div><button type="button" onClick={() => setActiveCategory(categories.find((category) => category.id === id) ?? null)} className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] transition hover:gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current">Explore <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></button></div>
               </div>
             </div>
           </article>
@@ -96,4 +136,26 @@ export const EventsStoriesSection: React.FC = () => (
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8"><div><span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#A85C16]">Have a story to share?</span><h2 className="mt-3 max-w-2xl font-serif-display text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">Bring First Cup to your next gathering.</h2></div><a href="/contact" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-[#2D241E] px-6 py-3 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:-translate-y-0.5 hover:bg-[#49372B]">Start a conversation <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></a></div>
     </section>
   </div>
-);
+  {activeCategory && (
+    <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[#100D0A]/75 p-4 backdrop-blur-sm" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setActiveCategory(null); }}>
+      <div role="dialog" aria-modal="true" aria-labelledby="story-modal-title" className={`relative max-h-[88vh] w-full max-w-3xl overflow-y-auto rounded-[1.75rem] ${activeCategory.theme} shadow-[0_30px_100px_rgba(0,0,0,0.45)]`}>
+        <button type="button" onClick={() => setActiveCategory(null)} aria-label="Close story panel" className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-current/20 bg-black/10 transition hover:bg-black/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"><X className="h-5 w-5" aria-hidden="true" /></button>
+        <div className="p-6 sm:p-9">
+          <div className={`text-[10px] font-bold uppercase tracking-[0.2em] ${activeCategory.muted}`}>{activeCategory.eyebrow}</div>
+          <h2 id="story-modal-title" className="mt-3 pr-10 font-serif-display text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">{activeCategory.title}</h2>
+          <p className={`mt-3 max-w-xl text-sm leading-7 ${activeCategory.muted}`}>{activeCategory.description}</p>
+          <div className="mt-8 grid gap-3">
+            {activeCategory.stories.map((story: Story, index: number) => (
+              <article key={story.title} className="rounded-2xl border border-current/15 bg-black/[0.08] p-5 sm:p-6">
+                <div className="flex items-start gap-4"><span className={`font-serif-display text-2xl ${activeCategory.muted}`}>0{index + 1}</span><div><div className={`text-[10px] font-bold uppercase tracking-[0.16em] ${activeCategory.muted}`}>{story.label}</div><h3 className="mt-2 font-serif-display text-2xl font-semibold leading-tight">{story.title}</h3><p className={`mt-3 text-sm leading-6 ${activeCategory.muted}`}>{story.copy}</p></div></div>
+              </article>
+            ))}
+          </div>
+          <a href="/contact" className="mt-7 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] transition hover:gap-3">Talk to the team <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></a>
+        </div>
+      </div>
+    </div>
+  )}
+  </>
+  );
+};
