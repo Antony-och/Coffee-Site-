@@ -61,6 +61,8 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
               src={slide.image}
               alt={slide.title}
               className="w-full h-full object-cover object-center transform scale-105 transition-transform duration-10000"
+              loading={idx === currentIndex ? 'eager' : 'lazy'}
+              decoding="async"
               referrerPolicy="no-referrer"
             />
           )}
