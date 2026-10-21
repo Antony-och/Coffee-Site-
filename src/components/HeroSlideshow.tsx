@@ -42,12 +42,25 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
             idx === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
           }`}
         >
-          <img
-            src={slide.image}
-            alt={slide.title}
-            className="w-full h-full object-cover object-center transform scale-105 transition-transform duration-10000"
-            referrerPolicy="no-referrer"
-          />
+          {slide.video ? (
+            <video
+              src={slide.video}
+              poster={slide.image}
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-label={slide.title}
+              className="w-full h-full object-cover object-center transform scale-105"
+            />
+          ) : (
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="w-full h-full object-cover object-center transform scale-105 transition-transform duration-10000"
+              referrerPolicy="no-referrer"
+            />
+          )}
           {/* Earthy Dark Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#2D241E]/95 via-[#2D241E]/75 to-transparent"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-[#2D241E] via-transparent to-transparent"></div>

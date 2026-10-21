@@ -58,6 +58,7 @@ export interface HeroSlide {
   subtitle: string;
   description: string;
   image: string;
+  video?: string;
   primaryCtaText: string;
   primaryCtaAction: PageView;
   secondaryCtaText: string;

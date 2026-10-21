@@ -72,6 +72,19 @@ export const HERO_SLIDES: HeroSlide[] = [
     primaryCtaAction: 'tea',
     secondaryCtaText: 'OUR STORY',
     secondaryCtaAction: 'about',
+  },
+  {
+    id: 'slide-7',
+    badge: 'First Cup Coffee & Tea · Nairobi',
+    title: 'A cup worth coming back to.',
+    subtitle: 'From Kenya, with feeling',
+    description: 'A small moment from Nairobi, where rich coffee, warm hospitality, and the First Cup ritual meet.',
+    image: '/hero/hero_roastery_cupping.jpg',
+    video: '/hero/first-cup-nairobi-hero.mp4',
+    primaryCtaText: 'EXPLORE COFFEE',
+    primaryCtaAction: 'coffee',
+    secondaryCtaText: 'CONTACT US',
+    secondaryCtaAction: 'contact',
   }
 ];
 
