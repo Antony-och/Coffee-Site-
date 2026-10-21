@@ -14,6 +14,19 @@ export const HERO_SLIDES: HeroSlide[] = [
     secondaryCtaAction: 'tea',
   },
   {
+    id: 'slide-video-nairobi',
+    badge: 'VIDEO · First Cup Coffee & Tea · Nairobi',
+    title: 'A cup worth coming back to.',
+    subtitle: 'From Kenya, with feeling',
+    description: 'A small moment from Nairobi, where rich coffee, warm hospitality, and the First Cup ritual meet.',
+    image: '/hero/hero_roastery_cupping.jpg',
+    video: '/hero/first-cup-nairobi-hero.mp4',
+    primaryCtaText: 'EXPLORE COFFEE',
+    primaryCtaAction: 'coffee',
+    secondaryCtaText: 'CONTACT US',
+    secondaryCtaAction: 'contact',
+  },
+  {
     id: 'slide-2',
     badge: 'Exceptional Quality & Heritage',
     title: 'Kenyan Premium Coffee',
@@ -73,19 +86,6 @@ export const HERO_SLIDES: HeroSlide[] = [
     secondaryCtaText: 'OUR STORY',
     secondaryCtaAction: 'about',
   },
-  {
-    id: 'slide-7',
-    badge: 'First Cup Coffee & Tea · Nairobi',
-    title: 'A cup worth coming back to.',
-    subtitle: 'From Kenya, with feeling',
-    description: 'A small moment from Nairobi, where rich coffee, warm hospitality, and the First Cup ritual meet.',
-    image: '/hero/hero_roastery_cupping.jpg',
-    video: '/hero/first-cup-nairobi-hero.mp4',
-    primaryCtaText: 'EXPLORE COFFEE',
-    primaryCtaAction: 'coffee',
-    secondaryCtaText: 'CONTACT US',
-    secondaryCtaAction: 'contact',
-  }
 ];
 
 export const COFFEE_PROCESS_STEPS: ProcessStep[] = [

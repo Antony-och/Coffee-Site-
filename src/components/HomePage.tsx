@@ -20,10 +20,10 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
       page: 'coffee' as const,
       icon: <Coffee className="h-4 w-4" aria-hidden="true" />,
       category: `Kenyan coffee · Grade ${featuredCoffee.grade}`,
-      name: featuredCoffee.name,
+      name: 'Premium Coffee',
       detail: featuredCoffee.subTitle,
       origin: featuredCoffee.region,
-      image: featuredCoffee.image,
+      image: '/home/premium-coffee-products.png',
       cta: 'Explore coffee',
     },
     {
