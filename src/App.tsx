@@ -8,6 +8,7 @@ import { AboutSection } from './components/AboutSection';
 import { ProcessSection } from './components/ProcessSection';
 import { EducationSection } from './components/EducationSection';
 import { ContactSection } from './components/ContactSection';
+import { EventsStoriesSection } from './components/EventsStoriesSection';
 import { HomePage } from './components/HomePage';
 import { TrustedBrands } from './components/TrustedBrands';
 import { ProductModal } from './components/ProductModal';
@@ -20,6 +21,7 @@ const PAGE_TITLES: Record<PageView, string> = {
   about: 'About Us | First Cup Coffee & Tea',
   coffee: 'Kenyan Coffee | First Cup Coffee & Tea',
   tea: 'Kenyan Tea | First Cup Coffee & Tea',
+  events: 'Events & Stories | First Cup Coffee & Tea',
   contact: 'Contact | First Cup Coffee & Tea',
 };
 
@@ -39,6 +41,10 @@ const PAGE_META: Record<PageView, { description: string; keywords: string }> = {
   tea: {
     description: 'Explore Kenyan tea by leaf grade and style, including black, green, purple, chai, and blended teas from highland growing regions.',
     keywords: 'Kenyan tea, tea grades, black tea, purple tea, green tea, Kenyan tea exporter',
+  },
+  events: {
+    description: 'Explore First Cup events, activations, community connections, and coffee stories from Kenya to every place we share the cup.',
+    keywords: 'First Cup events, coffee events Kenya, coffee activations, coffee community, Kenyan coffee stories',
   },
   contact: {
     description: 'Contact First Cup Coffee & Tea for samples, wholesale enquiries, export availability, and current coffee and tea lot details.',
@@ -176,6 +182,8 @@ export default function App() {
             <EducationSection kind="tea" />
           </div>
         );
+      case 'events':
+        return <EventsStoriesSection />;
       case 'contact':
         return (
           <section id="contact">

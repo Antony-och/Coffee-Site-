@@ -1,5 +1,6 @@
 import { FactoryLocation, HeroSlide, ProcessStep } from '../types';
 
+/** EDITABLE HERO CONTENT: add, remove, reorder, or replace image/video slides here. */
 export const HERO_SLIDES: HeroSlide[] = [
   {
     id: 'slide-1',
@@ -12,6 +13,19 @@ export const HERO_SLIDES: HeroSlide[] = [
     primaryCtaAction: 'coffee',
     secondaryCtaText: 'EXPLORE TEAS',
     secondaryCtaAction: 'tea',
+  },
+  {
+    id: 'slide-video-nairobi',
+    badge: 'VIDEO · First Cup Coffee & Tea · Nairobi',
+    title: 'A cup worth coming back to.',
+    subtitle: 'From Kenya, with feeling',
+    description: 'A small moment from Nairobi, where rich coffee, warm hospitality, and the First Cup ritual meet.',
+    image: '/hero/hero_roastery_cupping.jpg',
+    video: '/hero/first-cup-nairobi-hero.mp4',
+    primaryCtaText: 'EXPLORE COFFEE',
+    primaryCtaAction: 'coffee',
+    secondaryCtaText: 'CONTACT US',
+    secondaryCtaAction: 'contact',
   },
   {
     id: 'slide-2',
@@ -72,9 +86,10 @@ export const HERO_SLIDES: HeroSlide[] = [
     primaryCtaAction: 'tea',
     secondaryCtaText: 'OUR STORY',
     secondaryCtaAction: 'about',
-  }
+  },
 ];
 
+/** EDITABLE COFFEE PROCESS CONTENT: step copy and process images. */
 export const COFFEE_PROCESS_STEPS: ProcessStep[] = [
   {
     stepNumber: 1,
@@ -168,6 +183,7 @@ export const COFFEE_PROCESS_STEPS: ProcessStep[] = [
   }
 ];
 
+/** EDITABLE TEA PROCESS CONTENT: step copy and process images. */
 export const TEA_PROCESS_STEPS: ProcessStep[] = [
   {
     stepNumber: 1,

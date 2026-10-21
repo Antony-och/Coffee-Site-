@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PageView } from '../types';
-import { Coffee, Leaf, Compass, Info, Mail, ShoppingBag, Menu, X, Search } from 'lucide-react';
+import { CalendarDays, Coffee, Leaf, Compass, Info, Mail, ShoppingBag, Menu, X, Search } from 'lucide-react';
 
 interface NavbarProps {
   currentPage: PageView;
@@ -38,6 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'about', label: 'About Us', icon: <Info className="w-4 h-4" /> },
     { id: 'coffee', label: 'Coffee', icon: <Coffee className="w-4 h-4" /> },
     { id: 'tea', label: 'Tea', icon: <Leaf className="w-4 h-4" /> },
+    { id: 'events', label: 'Events & Stories', icon: <CalendarDays className="w-4 h-4" /> },
     { id: 'contact', label: 'Contact', icon: <Mail className="w-4 h-4" /> },
   ];
 

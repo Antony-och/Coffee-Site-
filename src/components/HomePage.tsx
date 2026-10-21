@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, Coffee, Leaf, Mountain } from 'lucide-react';
 import { COFFEE_PRODUCTS } from '../data/coffeeData';
 import { TEA_PRODUCTS } from '../data/teaData';
+import { SITE_ASSETS } from '../data/siteAssets';
 import type { PageView } from '../types';
 import { HeroSlideshow } from './HeroSlideshow';
 import { WhyChooseSection } from './WhyChooseSection';
@@ -14,16 +15,17 @@ const featuredCoffee = COFFEE_PRODUCTS.find((product) => product.isFeatured) ?? 
 const featuredTea = TEA_PRODUCTS.find((product) => product.isFeatured) ?? TEA_PRODUCTS[0];
 
 export const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
+  // EDITABLE CONTENT: Home collection cards. Change copy here and image paths in src/data/siteAssets.ts.
   const collections = [
     {
       id: 'coffee',
       page: 'coffee' as const,
       icon: <Coffee className="h-4 w-4" aria-hidden="true" />,
       category: `Kenyan coffee · Grade ${featuredCoffee.grade}`,
-      name: featuredCoffee.name,
+      name: 'Premium Coffee',
       detail: featuredCoffee.subTitle,
       origin: featuredCoffee.region,
-      image: featuredCoffee.image,
+      image: SITE_ASSETS.home.premiumCoffeeCollection,
       cta: 'Explore coffee',
     },
     {
@@ -41,10 +43,12 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
 
   return (
     <>
+      {/* HOME HERO: slide content lives in src/data/companyData.ts. */}
       <section id="home" aria-label="Home">
         <HeroSlideshow setCurrentPage={setCurrentPage} />
       </section>
 
+      {/* HOME COLLECTIONS: featured coffee and tea cards. */}
       <section aria-labelledby="home-collections-title" className="bg-[#FAF7F2] py-16 text-[#2A2522] sm:py-20 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-9 flex flex-col gap-5 sm:mb-12 md:flex-row md:items-end md:justify-between">
@@ -105,6 +109,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
         </div>
       </section>
 
+      {/* HOME STORY: About Us bridge and company proof points. */}
       <section aria-labelledby="home-story-title" className="bg-[#2D241E] py-14 text-[#FAF7F2] sm:py-16 lg:py-20">
         <div className="mx-auto grid max-w-7xl gap-9 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-14 lg:px-8">
           <div>

@@ -34,7 +34,7 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
   return (
     <div className="relative w-full h-[600px] sm:h-[680px] lg:h-[720px] bg-[#2D241E] text-white overflow-hidden select-none border-b border-[#E5E1DA]/20">
       
-      {/* Background Slide Image with Crossfade */}
+      {/* HERO SLIDESHOW: edit slide content and media in src/data/companyData.ts. */}
       {HERO_SLIDES.map((slide, idx) => (
         <div
           key={slide.id}
@@ -42,19 +42,33 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
             idx === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
           }`}
         >
-          <img
-            src={slide.image}
-            alt={slide.title}
-            className="w-full h-full object-cover object-center transform scale-105 transition-transform duration-10000"
-            referrerPolicy="no-referrer"
-          />
+          {/* HERO MEDIA: video slides use image as their poster fallback. */}
+          {slide.video ? (
+            <video
+              src={slide.video}
+              poster={slide.image}
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-label={slide.title}
+              className="w-full h-full object-cover object-center transform scale-105"
+            />
+          ) : (
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="w-full h-full object-cover object-center transform scale-105 transition-transform duration-10000"
+              referrerPolicy="no-referrer"
+            />
+          )}
           {/* Earthy Dark Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#2D241E]/95 via-[#2D241E]/75 to-transparent"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-[#2D241E] via-transparent to-transparent"></div>
         </div>
       ))}
 
-      {/* Slide Content Overlay */}
+      {/* HERO CONTENT: badge, title, description, and CTAs come from the active slide. */}
       <div className="relative z-20 max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center">
         <div className="max-w-2xl space-y-6">
           
@@ -99,7 +113,7 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
         </div>
       </div>
 
-      {/* Navigation Controls */}
+      {/* HERO CONTROLS: autoplay, previous/next, indicators, and slide count. */}
       <div className="absolute bottom-8 right-4 sm:right-8 lg:right-12 z-30 flex items-center gap-4 bg-[#2D241E]/80 border border-[#E5E1DA]/30 backdrop-blur-md p-2 rounded-2xl shadow-2xl">
         {/* Play/Pause */}
         <button
