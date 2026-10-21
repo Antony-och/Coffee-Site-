@@ -7,6 +7,6 @@
  */
 export const SITE_ASSETS = {
   home: {
-    premiumCoffeeCollection: '/home/premium-coffee-products.png',
+    premiumCoffeeCollection: '/home/premium-coffee-products.webp',
   },
 } as const;

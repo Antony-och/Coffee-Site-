@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { HERO_SLIDES } from '../data/companyData';
 import { PageView } from '../types';
-import { ChevronLeft, ChevronRight, Pause, Play, Sparkles, ArrowRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Pause, Play, ArrowRight } from 'lucide-react';
 
 interface HeroSlideshowProps {
   setCurrentPage: (page: PageView) => void;
@@ -15,11 +15,12 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
 
   useEffect(() => {
     if (!isPlaying) return;
-    const timer = setInterval(() => {
+    const slideDuration = HERO_SLIDES[currentIndex]?.video ? 11000 : 6000;
+    const timer = setTimeout(() => {
       setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 6000);
-    return () => clearInterval(timer);
-  }, [isPlaying]);
+    }, slideDuration);
+    return () => clearTimeout(timer);
+  }, [isPlaying, currentIndex]);
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
@@ -43,7 +44,7 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
           }`}
         >
           {/* HERO MEDIA: video slides use image as their poster fallback. */}
-          {slide.video ? (
+          {slide.video && idx === currentIndex ? (
             <video
               src={slide.video}
               poster={slide.image}
@@ -51,6 +52,7 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
               muted
               loop
               playsInline
+              preload="auto"
               aria-label={slide.title}
               className="w-full h-full object-cover object-center transform scale-105"
             />
@@ -59,6 +61,8 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
               src={slide.image}
               alt={slide.title}
               className="w-full h-full object-cover object-center transform scale-105 transition-transform duration-10000"
+              loading={idx === currentIndex ? 'eager' : 'lazy'}
+              decoding="async"
               referrerPolicy="no-referrer"
             />
           )}
@@ -72,12 +76,6 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
       <div className="relative z-20 max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center">
         <div className="max-w-2xl space-y-6">
           
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#5D6D3C] border border-[#D4C3A3]/40 text-[#FAF7F2] text-xs font-bold uppercase tracking-wider backdrop-blur-md shadow-lg">
-            <Sparkles className="w-3.5 h-3.5 text-[#D97706]" />
-            <span>{currentSlide.badge}</span>
-          </div>
-
           {/* Title */}
           <h1 className="font-serif-display text-3xl sm:text-5xl lg:text-6xl font-extrabold text-[#FAF7F2] leading-tight tracking-wide drop-shadow-md">
             {currentSlide.title}
