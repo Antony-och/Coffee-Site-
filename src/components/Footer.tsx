@@ -98,6 +98,7 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentPage }) => {
               <li><button onClick={() => handlePageClick('about')} className="transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9A05F]">About Us</button></li>
               <li><button onClick={() => handlePageClick('coffee')} className="transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9A05F]">Coffee</button></li>
               <li><button onClick={() => handlePageClick('tea')} className="transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9A05F]">Tea</button></li>
+              <li><button onClick={() => handlePageClick('events')} className="transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9A05F]">Events &amp; Stories</button></li>
               <li><button onClick={() => handlePageClick('contact')} className="transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9A05F]">Contact</button></li>
             </ul>
           </nav>

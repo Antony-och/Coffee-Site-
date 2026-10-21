@@ -5,6 +5,7 @@ export const PAGE_PATHS: Record<PageView, string> = {
   about: '/about',
   coffee: '/coffee',
   tea: '/tea',
+  events: '/events-stories',
   contact: '/contact',
 };
 
@@ -14,6 +15,7 @@ const PAGE_BY_PATH: Record<string, PageView> = {
   '/about': 'about',
   '/coffee': 'coffee',
   '/tea': 'tea',
+  '/events-stories': 'events',
   '/process': 'coffee',
   '/contact': 'contact',
 };
