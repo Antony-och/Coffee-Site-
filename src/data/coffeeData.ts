@@ -1,5 +1,6 @@
 import { CoffeeProduct } from '../types';
 
+/** EDITABLE COFFEE CATALOG: product names, descriptions, grades, and image paths. */
 export const COFFEE_PRODUCTS: CoffeeProduct[] = [
   {
     id: 'coffee-classic-dark',

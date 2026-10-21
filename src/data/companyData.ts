@@ -1,5 +1,6 @@
 import { FactoryLocation, HeroSlide, ProcessStep } from '../types';
 
+/** EDITABLE HERO CONTENT: add, remove, reorder, or replace image/video slides here. */
 export const HERO_SLIDES: HeroSlide[] = [
   {
     id: 'slide-1',
@@ -88,6 +89,7 @@ export const HERO_SLIDES: HeroSlide[] = [
   },
 ];
 
+/** EDITABLE COFFEE PROCESS CONTENT: step copy and process images. */
 export const COFFEE_PROCESS_STEPS: ProcessStep[] = [
   {
     stepNumber: 1,
@@ -181,6 +183,7 @@ export const COFFEE_PROCESS_STEPS: ProcessStep[] = [
   }
 ];
 
+/** EDITABLE TEA PROCESS CONTENT: step copy and process images. */
 export const TEA_PROCESS_STEPS: ProcessStep[] = [
   {
     stepNumber: 1,

@@ -1,5 +1,6 @@
 import { TeaProduct } from '../types';
 
+/** EDITABLE TEA CATALOG: product names, descriptions, grades, and image paths. */
 export const TEA_PRODUCTS: TeaProduct[] = [
   {
     id: 'tea-premium',
