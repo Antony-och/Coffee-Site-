@@ -15,11 +15,12 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
 
   useEffect(() => {
     if (!isPlaying) return;
-    const timer = setInterval(() => {
+    const slideDuration = HERO_SLIDES[currentIndex]?.video ? 11000 : 6000;
+    const timer = setTimeout(() => {
       setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 6000);
-    return () => clearInterval(timer);
-  }, [isPlaying]);
+    }, slideDuration);
+    return () => clearTimeout(timer);
+  }, [isPlaying, currentIndex]);
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
@@ -43,7 +44,7 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
           }`}
         >
           {/* HERO MEDIA: video slides use image as their poster fallback. */}
-          {slide.video ? (
+          {slide.video && idx === currentIndex ? (
             <video
               src={slide.video}
               poster={slide.image}
@@ -51,6 +52,7 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
               muted
               loop
               playsInline
+              preload="auto"
               aria-label={slide.title}
               className="w-full h-full object-cover object-center transform scale-105"
             />
