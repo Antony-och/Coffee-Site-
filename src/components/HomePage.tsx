@@ -36,7 +36,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
       name: featuredTea.name,
       detail: featuredTea.subTitle,
       origin: featuredTea.origin,
-      image: featuredTea.image,
+      image: SITE_ASSETS.home.premiumTeaCollection,
       cta: 'Explore tea',
     },
   ];
