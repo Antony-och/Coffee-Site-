@@ -15,7 +15,7 @@ export const COFFEE_PRODUCTS: CoffeeProduct[] = [
     cuppingScore: 91.5,
     flavorNotes: ['Blackcurrant', 'Grapefruit Zest', 'Jasmine', 'Cane Sugar sweetness'],
     description: 'Harvested from the red volcanic slopes of Mount Kenya, this AA grade lot represents the crown jewel of Kenyan Arabica. Double fermented with pristine mountain spring water and sun-dried on African raised beds.',
-    image: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=1000&q=80',
+    image: '/products/coffee/classic-dark-roast.webp',
     recommendedBrew: ['V60 Pour Over', 'Chemex', 'Aeropress'],
     packagingFormats: ['25g', '100g', '250g', '500g'],
     isFeatured: true,
