@@ -60,7 +60,7 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ setCurrentPage }) 
             <img
               src={slide.image}
               alt={slide.title}
-              className="w-full h-full object-cover object-center transform scale-105 transition-transform duration-10000"
+              className={`w-full h-full object-cover object-center transition-transform duration-10000 ${slide.id === 'slide-1' ? '' : 'transform scale-105'}`}
               loading={idx === currentIndex ? 'eager' : 'lazy'}
               decoding="async"
               referrerPolicy="no-referrer"
