@@ -8,5 +8,6 @@
 export const SITE_ASSETS = {
   home: {
     premiumCoffeeCollection: '/home/premium-coffee-products.webp',
+    premiumTeaCollection: '/home/premium-tea-products.webp',
   },
 } as const;
