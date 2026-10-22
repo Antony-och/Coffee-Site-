@@ -13,7 +13,7 @@ export const TEA_PRODUCTS: TeaProduct[] = [
     polyphenols: '16.8% Anthocyanins & TAC',
     liquorColor: '#7C3AED',
     description: 'Kenya is the exclusive world pioneer of Purple Tea. Grown at extreme UV high altitudes, the leaves produce vivid purple anthocyanin pigments with double the antioxidant levels of green tea and a delicate, sweet plum flavor.',
-    image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=1000&q=80',
+    image: '/home/premium-tea-products.webp',
     steepTime: '3 - 4 mins',
     steepTemp: '80°C - 85°C (176°F)',
     tastingNotes: ['Sweet Plum', 'Wild Sweetberry', 'Floral Hibiscus', 'Clean Citrus finish'],
