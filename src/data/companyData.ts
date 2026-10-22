@@ -8,7 +8,7 @@ export const HERO_SLIDES: HeroSlide[] = [
     title: 'PREMIUM KENYAN COFFEE & TEA',
     subtitle: 'First Cup Coffee & Tea',
     description: 'Experience the rich, bold flavors of Kenya’s finest Arabica beans and the delicate, refreshing taste of our premium teas, grown in the fertile highlands.',
-    image: '/hero/hero_highlands.jpg',
+    image: '/hero/hero_first_cup_coffee_cups.webp',
     primaryCtaText: 'SHOP COFFEE',
     primaryCtaAction: 'coffee',
     secondaryCtaText: 'EXPLORE TEAS',
