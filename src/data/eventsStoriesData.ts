@@ -20,6 +20,116 @@ export const STORY_CATEGORY_ORDER: StoryCategory[] = ['Events', 'Activations', '
 /** Add future posts here. The feed automatically sorts every post newest first and uses the same gallery/card/detail template. */
 export const EVENT_STORY_POSTS: StoryPost[] = [
   {
+    id: 'before-the-gates-masterclass-crimeshield-2026',
+    category: 'Events',
+    title: 'First Cup Coffee & Tea Partners with CrimeShield Security for the Before the Gates Masterclass 2026',
+    date: '2026-11-11',
+    excerpt: "Supporting safer events, building industry connections, and bringing exceptional coffee experiences to the forefront of Kenya's events industry.",
+    body: `Great events are built on partnerships, collaboration, and a shared commitment to creating meaningful experiences.
+
+On **6th November 2026**, First Cup Coffee & Tea was proud to be part of the **Before the Gates Masterclass 2026**, hosted by **CrimeShield Security Limited** at Wojo, Nairobi.
+
+As an **Event Sponsor and Hospitality Partner**, First Cup Coffee & Tea joined other industry stakeholders in supporting an important initiative dedicated to strengthening event safety, security, and professional standards within Kenya's events industry.
+
+### Supporting a Safer Events Industry
+
+The Before the Gates Masterclass was designed to equip event professionals and stakeholders with practical knowledge and insights into creating safer, better-managed events.
+
+Hosted by CrimeShield Security Limited, the masterclass explored critical areas including event security readiness, pre-crowd assessments, entry point management, crowd control, VIP protection, and incident response.
+
+These conversations highlighted an important reality: successful events begin long before the audience arrives. Proper preparation, effective security planning, and collaboration are essential to delivering safe and memorable experiences.
+
+At First Cup Coffee & Tea, we recognise the importance of initiatives that contribute to the growth and professionalism of the events industry. Supporting this masterclass was an opportunity to be part of a conversation that matters.
+
+### First Cup Coffee & Tea: More Than a Coffee Experience
+
+Our involvement as an Event Sponsor and Hospitality Partner reflects our commitment to supporting events, creating connections, and contributing to memorable guest experiences.
+
+We believe coffee plays an important role in bringing people together. From corporate conferences and professional workshops to sporting events and VIP gatherings, a great coffee experience creates opportunities for conversations, networking, and collaboration.
+
+Through our partnership, we were proud to bring the First Cup Coffee & Tea experience into a professional learning environment, supporting the people and conversations shaping the future of the events industry.
+
+### Partnerships That Create Impact
+
+Being part of the Before the Gates Masterclass reinforces our belief in the power of meaningful partnerships.
+
+We appreciate **CrimeShield Security Limited** for creating a platform that brings event professionals together to share knowledge, improve industry practices, and champion safer event environments.
+
+We are proud to support initiatives that go beyond the event itself and contribute to building a stronger, more prepared, and more professional events industry.
+
+### Our Commitment to the Events Industry
+
+From premium sporting experiences and VVIP hospitality to corporate gatherings, masterclasses, and industry events, First Cup Coffee & Tea continues to explore opportunities to serve, support, and partner with organisations across different sectors.
+
+Our participation in the Before the Gates Masterclass is another step in that journey.
+
+We look forward to building more partnerships, supporting impactful initiatives, and bringing quality coffee experiences to events that bring people together.
+
+**First Cup Coffee & Tea — Bringing people together, one cup at a time.**
+
+**Interested in partnering with us?**
+
+Whether you are organising a corporate event, conference, masterclass, sporting occasion, or private function, First Cup Coffee & Tea is ready to be part of your experience.
+
+Get in touch with our team for event sponsorship collaborations, hospitality partnerships, coffee catering, and event vending opportunities.`,
+    images: ['/hero/hero_first_cup_coffee_cups.webp', '/hero/hero_roastery_cupping.jpg', '/hero/hero_coffee_beans.jpg'],
+    readTime: '3 min read',
+    eventDate: '6 November 2026 · Before the Gates Masterclass 2026',
+    location: 'Wojo, Nairobi',
+  },
+  {
+    id: 'nyayo-stadium-afc-leopards-shabana-fc-2026',
+    category: 'Events',
+    title: 'First Cup Coffee & Tea Returns to Nyayo Stadium for AFC Leopards vs Shabana FC',
+    date: '2026-11-11',
+    excerpt: 'Bringing the coffee experience to another exciting Kenyan Premier League matchday on 25th October 2026.',
+    body: `Great experiences are worth repeating, and for First Cup Coffee & Tea, the opportunity to be part of the sporting atmosphere at Nyayo National Stadium was another memorable milestone.
+
+On **25th October 2026**, First Cup Coffee & Tea had the pleasure of vending coffee in the **VVIP section at Nyayo National Stadium, Nairobi**, during the Kenyan Premier League (KPL) fixture between **AFC Leopards and Shabana FC**.
+
+Following our previous experience serving guests during the CAF Confederation Cup encounter between Tusker FC and Singida Black Stars FC, returning to the same prestigious setting was another exciting opportunity for our brand.
+
+### Another Matchday, Another Coffee Experience
+
+Nyayo National Stadium once again provided the perfect setting for a day where Kenyan football, hospitality, and great experiences came together.
+
+With two well-supported Kenyan football clubs taking to the pitch, the atmosphere was filled with the excitement and passion that make local football special.
+
+For our team, being part of the VVIP hospitality experience meant another opportunity to bring quality coffee service closer to guests attending the match.
+
+### Serving Coffee Beyond the Café
+
+At First Cup Coffee & Tea, we believe coffee should be part of every great experience.
+
+Whether it is a morning coffee break, a corporate gathering, a private function, or a major sporting event, our goal remains the same: delivering enjoyable coffee experiences wherever people come together.
+
+Our participation at Nyayo Stadium continues to demonstrate our commitment to taking our coffee services beyond traditional café settings and into unique hospitality environments.
+
+### Building on Our Sporting Event Experience
+
+Being invited back to serve at Nyayo Stadium was particularly meaningful. It represented an opportunity to build on our previous event experience, strengthen our presence in the hospitality space, and connect with a wider audience.
+
+From continental football to the Kenyan Premier League, we are proud to see First Cup Coffee & Tea becoming part of experiences that bring people together.
+
+We appreciate the opportunity, the hospitality, and everyone who made the experience possible.
+
+### The Journey Continues
+
+Every event creates a new opportunity to connect, serve, and grow.
+
+As we continue expanding our reach, we look forward to partnering with more event organisers, businesses, institutions, and sporting platforms to bring the First Cup Coffee & Tea experience to more people.
+
+**First Cup Coffee & Tea — Bringing people together, one cup at a time.**
+
+Planning a sporting event, corporate function, or special occasion? Let us bring the coffee experience to you.
+
+**Get in touch with First Cup Coffee & Tea for event vending and coffee catering partnerships.**`,
+    images: ['/hero/hero_first_cup_coffee_cups.webp', '/hero/hero_roastery_cupping.jpg', '/hero/hero_coffee_beans.jpg'],
+    readTime: '3 min read',
+    eventDate: '25 October 2026 · Kenyan Premier League matchday',
+    location: 'VVIP section · Nyayo National Stadium, Nairobi',
+  },
+  {
     id: 'nyayo-stadium-vvip-coffee-experience',
     category: 'Events',
     title: 'First Cup Coffee & Tea Takes the Coffee Experience to the VVIP Section at Nyayo Stadium',
