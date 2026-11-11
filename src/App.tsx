@@ -10,6 +10,7 @@ import { EducationSection } from './components/EducationSection';
 import { ContactSection } from './components/ContactSection';
 import { EventsStoriesSection } from './components/EventsStoriesSection';
 import { HomePage } from './components/HomePage';
+import { DigitalVCardPage } from './components/DigitalVCardPage';
 import { TrustedBrands } from './components/TrustedBrands';
 import { ProductModal } from './components/ProductModal';
 import { SampleCartDrawer } from './components/SampleCartDrawer';
@@ -23,6 +24,7 @@ const PAGE_TITLES: Record<PageView, string> = {
   tea: 'Kenyan Tea | First Cup Coffee & Tea',
   events: 'Events & Stories | First Cup Coffee & Tea',
   contact: 'Contact | First Cup Coffee & Tea',
+  vcard: 'Digital Business Card | First Cup Coffee & Tea',
 };
 
 const PAGE_META: Record<PageView, { description: string; keywords: string }> = {
@@ -49,6 +51,10 @@ const PAGE_META: Record<PageView, { description: string; keywords: string }> = {
   contact: {
     description: 'Contact First Cup Coffee & Tea for samples, wholesale enquiries, export availability, and current coffee and tea lot details.',
     keywords: 'coffee wholesale enquiry, tea wholesale enquiry, Kenyan coffee samples, Kenyan tea samples',
+  },
+  vcard: {
+    description: 'Save First Cup Coffee & Tea to your contacts, connect with our Nyeri Highlands team, and explore our Kenyan coffee catalog.',
+    keywords: 'First Cup Coffee & Tea vCard, Nyeri Highlands coffee, wholesale coffee contact, SL28, SL34',
   },
 };
 
@@ -190,6 +196,8 @@ export default function App() {
             <ContactSection cartItems={cartItems} />
           </section>
         );
+      case 'vcard':
+        return <DigitalVCardPage setCurrentPage={handlePageChange} />;
       default:
         return null;
     }
@@ -197,14 +205,16 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF7F2] text-[#2A2522] selection:bg-[#D97706] selection:text-white">
-      <Navbar
-        currentPage={currentPage}
-        setCurrentPage={handlePageChange}
-        cartCount={totalCartCount}
-        setIsCartOpen={setIsCartOpen}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-      />
+      {currentPage !== 'vcard' && (
+        <Navbar
+          currentPage={currentPage}
+          setCurrentPage={handlePageChange}
+          cartCount={totalCartCount}
+          setIsCartOpen={setIsCartOpen}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
+      )}
 
       <main key={currentPage} className="flex-1">
         {renderPage()}

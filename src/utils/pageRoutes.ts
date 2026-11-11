@@ -7,6 +7,7 @@ export const PAGE_PATHS: Record<PageView, string> = {
   tea: '/tea',
   events: '/events-stories',
   contact: '/contact',
+  vcard: '/vcard',
 };
 
 const PAGE_BY_PATH: Record<string, PageView> = {
@@ -18,6 +19,7 @@ const PAGE_BY_PATH: Record<string, PageView> = {
   '/events-stories': 'events',
   '/process': 'coffee',
   '/contact': 'contact',
+  '/vcard': 'vcard',
 };
 
 export function pageFromPathname(pathname: string): PageView {
