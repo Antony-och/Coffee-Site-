@@ -20,6 +20,53 @@ export const STORY_CATEGORY_ORDER: StoryCategory[] = ['Events', 'Activations', '
 /** Add future posts here. The feed automatically sorts every post newest first and uses the same gallery/card/detail template. */
 export const EVENT_STORY_POSTS: StoryPost[] = [
   {
+    id: 'nyayo-stadium-vvip-coffee-experience',
+    category: 'Events',
+    title: 'First Cup Coffee & Tea Takes the Coffee Experience to the VVIP Section at Nyayo Stadium',
+    date: '2026-11-11',
+    excerpt: 'A special opportunity to showcase quality Kenyan coffee at the CAF Confederation Cup clash between Tusker FC and Singida Black Stars FC.',
+    body: `Some opportunities are more than just business engagements — they are moments that allow a brand to step into new spaces, connect with new audiences, and showcase what it does best.
+
+For First Cup Coffee & Tea, one such memorable opportunity came at Nyayo National Stadium in Nairobi, where we had the privilege of vending coffee in the VVIP section during the CAF Confederation Cup second qualifying round encounter between Kenya's Tusker FC and Tanzania's Singida Black Stars FC.
+
+A Special Matchday Experience
+
+The occasion brought together the excitement of African football and the atmosphere of one of Kenya's major sporting venues. With football fans, distinguished guests, and VIP attendees gathering for this continental fixture, it was an exciting opportunity for First Cup Coffee & Tea to be part of the matchday experience.
+
+Being selected to serve in the VVIP section was a proud moment for our team. It gave us an opportunity to bring our coffee experience into a premium sporting environment and introduce our brand to a different audience.
+
+Bringing Great Coffee to the Game
+
+At First Cup Coffee & Tea, we believe great coffee belongs everywhere — from homes and offices to hospitality spaces and major events.
+
+Our participation at Nyayo Stadium reflected this belief. Beyond vending coffee, we were proud to represent a Kenyan coffee brand in an environment where quality, hospitality, and memorable experiences come together.
+
+It was also an opportunity to demonstrate the versatility of our coffee offering and our interest in serving different occasions, audiences, and event settings.
+
+Beyond the Football Pitch
+
+The CAF Confederation Cup fixture was more than a football match for us. It was an opportunity to build connections, increase brand visibility, and gain valuable experience in event-based coffee service.
+
+Being part of an event of this calibre reinforces our ambition to take First Cup Coffee & Tea into more corporate gatherings, sporting events, hospitality spaces, and premium experiences.
+
+We are grateful for the opportunity and proud of our team for representing the brand.
+
+More Experiences. More Connections. More Coffee.
+
+From the farm to the cup, and now to major sporting occasions, our journey continues to create opportunities to share the quality and experience of coffee.
+
+This is one of the many experiences that remind us why we do what we do.
+
+First Cup Coffee & Tea — Bringing people together, one cup at a time.
+
+For event vending, corporate coffee services, and partnership opportunities, get in touch with our team.
+
+Let's make your next event a memorable coffee experience.`,
+    images: ['/hero/hero_first_cup_coffee_cups.webp', '/hero/hero_roastery_cupping.jpg', '/hero/hero_coffee_beans.jpg'],
+    readTime: '5 min read',
+    eventDate: 'CAF Confederation Cup matchday · Nyayo National Stadium',
+  },
+  {
     id: 'first-cup-cupping-table',
     category: 'Events',
     title: 'A table for curious palates',
