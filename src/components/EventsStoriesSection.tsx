@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, CalendarDays, Coffee, MapPin, Sparkles, Users, X } from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, CalendarDays, Clock3, Coffee, MapPin, Sparkles, Users, X } from 'lucide-react';
 import { EVENT_STORY_POSTS, STORY_CATEGORY_ORDER, type StoryCategory, type StoryPost } from '../data/eventsStoriesData';
 
 const CATEGORY_CONFIG: Record<StoryCategory, { icon: React.ElementType; shortLabel: string; className: string; tagClassName: string; accentClassName: string }> = {
@@ -37,14 +37,14 @@ const formatDate = (date: string) => new Intl.DateTimeFormat('en-GB', { day: 'nu
 
 const PostMeta: React.FC<{ post: StoryPost; muted?: boolean }> = ({ post, muted = false }) => {
   const config = CATEGORY_CONFIG[post.category];
-  const detail = post.category === 'Events' ? post.eventDate : post.category === 'Activations' ? post.partner : post.category === 'Community' ? post.location : post.origin;
-  const DetailIcon = post.category === 'Events' || post.category === 'Community' ? MapPin : Coffee;
+  const detail = post.location ?? post.eventDate ?? (post.category === 'Activations' ? post.partner : post.origin);
+  const DetailIcon = post.location || post.eventDate ? MapPin : Coffee;
   return (
-    <div className={`flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] font-bold uppercase tracking-[0.13em] ${muted ? 'text-current/65' : config.accentClassName}`}>
-      <span>{formatDate(post.date)}</span>
-      <span className="h-1 w-1 rounded-full bg-current/40" aria-hidden="true" />
-      <span>{post.readTime}</span>
-      {detail && <><span className="h-1 w-1 rounded-full bg-current/40" aria-hidden="true" /><span className="inline-flex items-center gap-1.5"><DetailIcon className="h-3 w-3" aria-hidden="true" />{detail}</span></>}
+    <div className={`flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] font-bold uppercase tracking-[0.13em] ${muted ? 'text-current/65' : 'text-[#756B62]'}`}>
+      <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 ${config.tagClassName}`}>{post.category}</span>
+      <span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3 w-3" aria-hidden="true" /><span className="sr-only">Published on </span><time dateTime={post.date}>{formatDate(post.date)}</time></span>
+      <span className="inline-flex items-center gap-1.5"><Clock3 className="h-3 w-3" aria-hidden="true" />{post.readTime}</span>
+      {detail && <span className="inline-flex items-center gap-1.5"><DetailIcon className="h-3 w-3" aria-hidden="true" />{detail}</span>}
     </div>
   );
 };
@@ -85,10 +85,44 @@ const StoryPostModal: React.FC<StoryPostModalProps> = ({ post, imageIndex, onIma
   const Icon = config.icon;
   const previousImageIndex = (imageIndex - 1 + post.images.length) % post.images.length;
   const nextImageIndex = (imageIndex + 1) % post.images.length;
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    closeButtonRef.current?.focus();
+
+    const keepFocusInDialog = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex="0"]');
+      if (!focusable?.length) {
+        event.preventDefault();
+        dialogRef.current?.focus();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const focusIsOutside = !dialogRef.current?.contains(document.activeElement);
+      if (event.shiftKey && (document.activeElement === first || focusIsOutside)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || focusIsOutside)) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', keepFocusInDialog);
+    return () => {
+      document.removeEventListener('keydown', keepFocusInDialog);
+      if (previouslyFocused?.isConnected) previouslyFocused.focus();
+    };
+  }, []);
 
   return (
     <div
-      className="fixed inset-0 z-[90] flex items-center justify-center bg-[#100D0A]/80 p-3 backdrop-blur-md sm:p-5"
+      className="fixed inset-0 z-[90] flex items-center justify-center overflow-y-auto overscroll-contain bg-[#100D0A]/80 p-2 backdrop-blur-md sm:p-5"
       role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
@@ -98,9 +132,11 @@ const StoryPostModal: React.FC<StoryPostModalProps> = ({ post, imageIndex, onIma
         role="dialog"
         aria-modal="true"
         aria-labelledby="post-dialog-title"
-        className="relative grid max-h-[94vh] w-full max-w-6xl overflow-hidden rounded-[1.75rem] border border-white/70 bg-[#FFFCF8] text-[#2D241E] shadow-[0_35px_120px_rgba(0,0,0,0.5)] lg:grid-cols-[1.04fr_0.96fr]"
+        ref={dialogRef}
+        tabIndex={-1}
+        className="relative flex h-[min(94dvh,54rem)] w-full max-w-6xl flex-col overflow-hidden rounded-[1.4rem] border border-white/70 bg-[#FFFCF8] text-[#2D241E] shadow-[0_35px_120px_rgba(0,0,0,0.5)] sm:rounded-[1.75rem] lg:grid lg:grid-cols-[1.04fr_0.96fr] lg:grid-rows-1"
       >
-        <section className="relative min-h-[21rem] overflow-hidden bg-[#201611] sm:min-h-[27rem] lg:min-h-[43rem]">
+        <section aria-label="Story image gallery" className="relative h-[36dvh] min-h-[14rem] max-h-[21rem] shrink-0 overflow-hidden bg-[#201611] lg:h-auto lg:min-h-0 lg:max-h-none">
           <img
             src={post.images[imageIndex]}
             alt={`${post.title} image ${imageIndex + 1}`}
@@ -112,7 +148,8 @@ const StoryPostModal: React.FC<StoryPostModalProps> = ({ post, imageIndex, onIma
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close post"
+            ref={closeButtonRef}
+            aria-label="Close story"
             className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-[#201611]/65 text-white backdrop-blur-md transition hover:bg-[#201611] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             <X className="h-5 w-5" />
@@ -131,7 +168,7 @@ const StoryPostModal: React.FC<StoryPostModalProps> = ({ post, imageIndex, onIma
                 <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#E9B66F]">The First Cup journal</p>
                 <p className="mt-2 max-w-md font-serif-display text-xl font-semibold leading-tight text-white sm:text-2xl">{post.title}</p>
               </div>
-              <span className="shrink-0 rounded-full border border-white/20 bg-black/25 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-white/80 backdrop-blur-sm">
+              <span role="status" aria-live="polite" aria-atomic="true" className="shrink-0 rounded-full border border-white/20 bg-black/25 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-white/80 backdrop-blur-sm">
                 {imageIndex + 1} / {post.images.length}
               </span>
             </div>
@@ -143,7 +180,7 @@ const StoryPostModal: React.FC<StoryPostModalProps> = ({ post, imageIndex, onIma
                     key={image}
                     type="button"
                     onClick={() => onImageChange(index)}
-                    aria-label={`Show post image ${index + 1}`}
+                    aria-label={`Show photo ${index + 1} of ${post.images.length}`}
                     aria-pressed={imageIndex === index}
                     className={`h-12 w-16 shrink-0 overflow-hidden rounded-lg border-2 transition sm:h-14 sm:w-20 ${imageIndex === index ? 'border-[#E9B66F]' : 'border-white/15 opacity-65 hover:opacity-100'}`}
                   >
@@ -155,7 +192,7 @@ const StoryPostModal: React.FC<StoryPostModalProps> = ({ post, imageIndex, onIma
                 <button
                   type="button"
                   onClick={() => onImageChange(previousImageIndex)}
-                  aria-label="Previous post image"
+                  aria-label="Previous story photo"
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-black/25 text-white backdrop-blur-sm transition hover:bg-black/45 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   <ArrowLeft className="h-4 w-4" />
@@ -163,7 +200,7 @@ const StoryPostModal: React.FC<StoryPostModalProps> = ({ post, imageIndex, onIma
                 <button
                   type="button"
                   onClick={() => onImageChange(nextImageIndex)}
-                  aria-label="Next post image"
+                  aria-label="Next story photo"
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-black/25 text-white backdrop-blur-sm transition hover:bg-black/45 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   <ArrowRight className="h-4 w-4" />
@@ -173,19 +210,23 @@ const StoryPostModal: React.FC<StoryPostModalProps> = ({ post, imageIndex, onIma
           </div>
         </section>
 
-        <section className="flex min-h-0 flex-col bg-[#FFFCF8]">
-          <div className="min-h-0 overflow-y-auto p-6 sm:p-9 lg:p-11">
+        <section aria-label="Story details" className="flex min-h-0 flex-1 flex-col bg-[#FFFCF8]">
+          <div role="region" aria-label={`${post.title} story content`} tabIndex={0} className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#A85C16] sm:p-9 lg:p-11">
             <div className="flex flex-wrap items-center gap-3">
               <PostMeta post={post} />
             </div>
             <h2 id="post-dialog-title" className="mt-6 max-w-xl font-serif-display text-3xl font-semibold leading-[1.02] tracking-[-0.04em] text-[#241B16] sm:text-5xl">{post.title}</h2>
             <p className="mt-5 border-l-2 border-[#E9B66F] pl-4 text-sm font-medium leading-7 text-[#756B62] sm:text-base">{post.excerpt}</p>
             <div className="my-7 h-px bg-[#E7DDD2]" />
-            <p className="whitespace-pre-line text-sm leading-7 text-[#5E554D] sm:text-[0.95rem] sm:leading-8">{post.body}</p>
+            <div className="space-y-5 text-sm leading-7 text-[#5E554D] sm:text-[0.95rem] sm:leading-8">
+              {post.body.split(/\n\s*\n/).map((paragraph, index) => (
+                <p key={`${post.id}-paragraph-${index}`} className="whitespace-pre-line">{paragraph}</p>
+              ))}
+            </div>
             <div className="mt-9 rounded-2xl border border-[#E5D9CC] bg-[#F7F1E9] p-5 sm:p-6">
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A85C16]">Bring First Cup to your next gathering</p>
               <p className="mt-2 font-serif-display text-xl font-semibold leading-tight text-[#2D241E]">Let’s make your next event a memorable coffee experience.</p>
-              <a href="/contact" className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-[#2D241E] px-5 py-3 text-[10px] font-bold uppercase tracking-[0.14em] text-white transition hover:-translate-y-0.5 hover:bg-[#49372B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2D241E]">Talk to the team <ArrowUpRight className="h-4 w-4" /></a>
+              <a href="/contact" className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-full bg-[#2D241E] px-6 py-3 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:-translate-y-0.5 hover:bg-[#49372B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2D241E]">Talk to the Team <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></a>
             </div>
           </div>
         </section>
@@ -203,6 +244,7 @@ export const EventsStoriesSection: React.FC = () => {
   const filteredPosts = activeCategory === 'All' ? posts : posts.filter((post) => post.category === activeCategory);
   const featuredPost = filteredPosts[0];
   const remainingPosts = filteredPosts.slice(1);
+  const closePost = useCallback(() => setActivePost(null), []);
   const openPost = (post: StoryPost) => {
     setActivePost(post);
     setActiveImageIndex(0);
@@ -242,7 +284,7 @@ export const EventsStoriesSection: React.FC = () => {
           post={activePost}
           imageIndex={activeImageIndex}
           onImageChange={setActiveImageIndex}
-          onClose={() => setActivePost(null)}
+          onClose={closePost}
         />
       )}
     </div>
