@@ -164,20 +164,48 @@ const ProductModalContent: React.FC<ProductModalContentProps> = ({
             </div>
 
             {isCoffee && (
-              <dl className="grid grid-cols-2 gap-2.5 sm:gap-3">
-                <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
-                  <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Cultivar</dt>
-                  <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.variety}</dd>
-                </div>
-                <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
-                  <dt className="flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]"><Mountain className="h-3 w-3" aria-hidden="true" />Altitude</dt>
-                  <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.altitude}</dd>
-                </div>
-                <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
-                  <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Process</dt>
-                  <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.process}</dd>
-                </div>
-              </dl>
+              <section aria-labelledby="coffee-profile-title">
+                <h3 id="coffee-profile-title" className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.15em] text-[#8A5A2B]">Coffee Profile</h3>
+                <dl className="grid grid-cols-2 gap-2.5 sm:gap-3">
+                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
+                    <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Coffee variety</dt>
+                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.variety}</dd>
+                  </div>
+                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
+                    <dt className="flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]"><Mountain className="h-3 w-3" aria-hidden="true" />Growing elevation</dt>
+                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.altitude}</dd>
+                  </div>
+                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
+                    <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Bean classification</dt>
+                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.grade}</dd>
+                  </div>
+                  <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
+                    <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Processing method</dt>
+                    <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.process}</dd>
+                  </div>
+                </dl>
+              </section>
+            )}
+
+            {isCoffee && (
+              <>
+                <section aria-labelledby="coffee-tasting-notes-title">
+                  <h3 id="coffee-tasting-notes-title" className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.15em] text-[#8A5A2B]">Tasting notes</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {coffee?.flavorNotes.map((note) => (
+                      <span key={note} className="rounded-full border border-[#E5D9C9] bg-[#F5EFE6] px-3 py-1.5 text-xs font-medium text-[#4C4138]">{note}</span>
+                    ))}
+                  </div>
+                </section>
+                <section aria-labelledby="coffee-brew-methods-title">
+                  <h3 id="coffee-brew-methods-title" className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.15em] text-[#8A5A2B]">Recommended brew methods</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {coffee?.recommendedBrew.map((method) => (
+                      <span key={method} className="rounded-full border border-[#E5D9C9] bg-white px-3 py-1.5 text-xs font-medium text-[#4C4138]">{method}</span>
+                    ))}
+                  </div>
+                </section>
+              </>
             )}
 
             {!isCoffee && (

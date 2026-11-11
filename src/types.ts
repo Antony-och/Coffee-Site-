@@ -9,7 +9,7 @@ export interface CoffeeProduct {
   region: 'Nyeri Highlands' | 'Kirinyaga' | 'Kiambu Estate' | 'Mount Kenya Slopes' | 'Embu';
   altitude: string; // e.g. "1,850m - 2,100m"
   roastLevel: 'Light City' | 'Medium Full-City' | 'Dark Espresso Roast';
-  process: 'Washed (Eco-Pulped & Sun-Dried)' | 'Natural Honey Process' | 'Anaerobic Washed';
+  process: 'Washed (Eco-Pulped & Sun-Dried)' | 'Fully Washed (Eco-Pulped and Sun-Dried)' | 'Natural Honey Process' | 'Anaerobic Washed';
   cuppingScore: number; // e.g. 89.5
   flavorNotes: string[];
   description: string;
