@@ -15,6 +15,18 @@ export const HERO_SLIDES: HeroSlide[] = [
     secondaryCtaAction: 'tea',
   },
   {
+    id: 'slide-first-cup-mug',
+    badge: 'First Cup Coffee & Tea',
+    title: 'Your first cup starts here.',
+    subtitle: 'A warmer coffee ritual',
+    description: 'Settle into the rich aroma of freshly roasted coffee and experience a cup made for slow, memorable moments.',
+    image: '/hero/hero_first_cup_mug.webp',
+    primaryCtaText: 'SHOP COFFEE',
+    primaryCtaAction: 'coffee',
+    secondaryCtaText: 'ABOUT US',
+    secondaryCtaAction: 'about',
+  },
+  {
     id: 'slide-video-nairobi',
     badge: 'VIDEO · First Cup Coffee & Tea · Nairobi',
     title: 'A cup worth coming back to.',
