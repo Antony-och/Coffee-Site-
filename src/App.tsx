@@ -183,7 +183,7 @@ export default function App() {
           </div>
         );
       case 'events':
-        return <EventsStoriesSection />;
+        return <EventsStoriesSection setCurrentPage={handlePageChange} />;
       case 'contact':
         return (
           <section id="contact">

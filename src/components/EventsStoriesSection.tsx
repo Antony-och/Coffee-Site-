@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, CalendarDays, Clock3, Coffee, MapPin, Sparkles, Users, X } from 'lucide-react';
 import { EVENT_STORY_POSTS, STORY_CATEGORY_ORDER, type StoryCategory, type StoryPost } from '../data/eventsStoriesData';
+import type { PageView } from '../types';
 
 const CATEGORY_CONFIG: Record<StoryCategory, { icon: React.ElementType; shortLabel: string; className: string; tagClassName: string; accentClassName: string }> = {
   Events: {
@@ -79,9 +80,10 @@ interface StoryPostModalProps {
   imageIndex: number;
   onImageChange: (index: number) => void;
   onClose: () => void;
+  onContact: () => void;
 }
 
-const StoryPostModal: React.FC<StoryPostModalProps> = ({ post, imageIndex, onImageChange, onClose }) => {
+const StoryPostModal: React.FC<StoryPostModalProps> = ({ post, imageIndex, onImageChange, onClose, onContact }) => {
   const config = CATEGORY_CONFIG[post.category];
   const Icon = config.icon;
   const previousImageIndex = (imageIndex - 1 + post.images.length) % post.images.length;
@@ -236,7 +238,7 @@ const StoryPostModal: React.FC<StoryPostModalProps> = ({ post, imageIndex, onIma
             <div className="mt-9 rounded-2xl border border-[#E5D9CC] bg-[#F7F1E9] p-5 sm:p-6">
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A85C16]">Bring First Cup to your next gathering</p>
               <p className="mt-2 font-serif-display text-xl font-semibold leading-tight text-[#2D241E]">Let’s make your next event a memorable coffee experience.</p>
-              <a href="/contact" className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-full bg-[#2D241E] px-6 py-3 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:-translate-y-0.5 hover:bg-[#49372B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2D241E]">Talk to the Team <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></a>
+              <button type="button" onClick={onContact} className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-full bg-[#2D241E] px-6 py-3 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:-translate-y-0.5 hover:bg-[#49372B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2D241E]">Talk to the Team <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></button>
             </div>
           </div>
         </section>
@@ -245,7 +247,11 @@ const StoryPostModal: React.FC<StoryPostModalProps> = ({ post, imageIndex, onIma
   );
 };
 
-export const EventsStoriesSection: React.FC = () => {
+interface EventsStoriesSectionProps {
+  setCurrentPage: (page: PageView) => void;
+}
+
+export const EventsStoriesSection: React.FC<EventsStoriesSectionProps> = ({ setCurrentPage }) => {
   // EDITABLE CONTENT: add or update posts in src/data/eventsStoriesData.ts.
   const [activeCategory, setActiveCategory] = useState<'All' | StoryCategory>('All');
   const [activePost, setActivePost] = useState<StoryPost | null>(null);
@@ -255,6 +261,7 @@ export const EventsStoriesSection: React.FC = () => {
   const featuredPost = filteredPosts[0];
   const remainingPosts = filteredPosts.slice(1);
   const closePost = useCallback(() => setActivePost(null), []);
+  const goToContact = useCallback(() => setCurrentPage('contact'), [setCurrentPage]);
   const openPost = (post: StoryPost) => {
     setActivePost(post);
     setActiveImageIndex(0);
@@ -286,7 +293,7 @@ export const EventsStoriesSection: React.FC = () => {
         {featuredPost ? <><PostCard post={featuredPost} onOpen={openPost} featured /><div className="mt-5 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{remainingPosts.map((post) => <PostCard key={post.id} post={post} onOpen={openPost} />)}</div></> : <div className="rounded-2xl border border-dashed border-[#CFC0AE] bg-white/60 p-10 text-center"><p className="font-serif-display text-2xl">No stories in this category yet.</p><p className="mt-2 text-sm text-[#756B62]">New posts will appear here as the journal grows.</p></div>}
       </section>
 
-      <section className="border-t border-[#DDD1C2] bg-[#EEE6DB] py-14 sm:py-18 lg:py-20"><div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8"><div><span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#A85C16]">Have a story to share?</span><h2 className="mt-3 max-w-2xl font-serif-display text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">Bring First Cup to your next gathering.</h2></div><a href="/contact" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-[#2D241E] px-6 py-3 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:-translate-y-0.5 hover:bg-[#49372B]">Start a conversation <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></a></div></section>
+      <section className="border-t border-[#DDD1C2] bg-[#EEE6DB] py-14 sm:py-18 lg:py-20"><div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8"><div><span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#A85C16]">Have a story to share?</span><h2 className="mt-3 max-w-2xl font-serif-display text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">Bring First Cup to your next gathering.</h2></div><button type="button" onClick={goToContact} className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-[#2D241E] px-6 py-3 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:-translate-y-0.5 hover:bg-[#49372B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2D241E]">Start a conversation <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></button></div></section>
 
       {/* POST SLIDESHOW: image gallery, controls, thumbnails, and story detail. */}
       {activePost && (
@@ -295,6 +302,7 @@ export const EventsStoriesSection: React.FC = () => {
           imageIndex={activeImageIndex}
           onImageChange={setActiveImageIndex}
           onClose={closePost}
+          onContact={goToContact}
         />
       )}
     </div>
