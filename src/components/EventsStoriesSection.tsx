@@ -72,6 +72,128 @@ const PostCard: React.FC<{ post: StoryPost; onOpen: (post: StoryPost) => void; f
   );
 };
 
+
+interface StoryPostModalProps {
+  post: StoryPost;
+  imageIndex: number;
+  onImageChange: (index: number) => void;
+  onClose: () => void;
+}
+
+const StoryPostModal: React.FC<StoryPostModalProps> = ({ post, imageIndex, onImageChange, onClose }) => {
+  const config = CATEGORY_CONFIG[post.category];
+  const Icon = config.icon;
+  const previousImageIndex = (imageIndex - 1 + post.images.length) % post.images.length;
+  const nextImageIndex = (imageIndex + 1) % post.images.length;
+
+  return (
+    <div
+      className="fixed inset-0 z-[90] flex items-center justify-center bg-[#100D0A]/80 p-3 backdrop-blur-md sm:p-5"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="post-dialog-title"
+        className="relative grid max-h-[94vh] w-full max-w-6xl overflow-hidden rounded-[1.75rem] border border-white/70 bg-[#FFFCF8] text-[#2D241E] shadow-[0_35px_120px_rgba(0,0,0,0.5)] lg:grid-cols-[1.04fr_0.96fr]"
+      >
+        <section className="relative min-h-[21rem] overflow-hidden bg-[#201611] sm:min-h-[27rem] lg:min-h-[43rem]">
+          <img
+            src={post.images[imageIndex]}
+            alt={`${post.title} image ${imageIndex + 1}`}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#140E0B] via-[#140E0B]/10 to-[#140E0B]/10" />
+          <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#140E0B]/60 to-transparent" />
+
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close post"
+            className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-[#201611]/65 text-white backdrop-blur-md transition hover:bg-[#201611] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            <X className="h-5 w-5" />
+          </button>
+
+          <div className="absolute left-5 top-5 max-w-[75%] sm:left-7 sm:top-7">
+            <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.15em] backdrop-blur-md ${config.tagClassName}`}>
+              <Icon className="h-3 w-3" aria-hidden="true" />
+              {post.category}
+            </span>
+          </div>
+
+          <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#E9B66F]">The First Cup journal</p>
+                <p className="mt-2 max-w-md font-serif-display text-xl font-semibold leading-tight text-white sm:text-2xl">{post.title}</p>
+              </div>
+              <span className="shrink-0 rounded-full border border-white/20 bg-black/25 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-white/80 backdrop-blur-sm">
+                {imageIndex + 1} / {post.images.length}
+              </span>
+            </div>
+
+            <div className="mt-5 flex items-center justify-between gap-3">
+              <div className="flex gap-1.5 overflow-x-auto">
+                {post.images.map((image, index) => (
+                  <button
+                    key={image}
+                    type="button"
+                    onClick={() => onImageChange(index)}
+                    aria-label={`Show post image ${index + 1}`}
+                    aria-pressed={imageIndex === index}
+                    className={`h-12 w-16 shrink-0 overflow-hidden rounded-lg border-2 transition sm:h-14 sm:w-20 ${imageIndex === index ? 'border-[#E9B66F]' : 'border-white/15 opacity-65 hover:opacity-100'}`}
+                  >
+                    <img src={image} alt="" className="h-full w-full object-cover" />
+                  </button>
+                ))}
+              </div>
+              <div className="flex shrink-0 gap-2">
+                <button
+                  type="button"
+                  onClick={() => onImageChange(previousImageIndex)}
+                  aria-label="Previous post image"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-black/25 text-white backdrop-blur-sm transition hover:bg-black/45 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onImageChange(nextImageIndex)}
+                  aria-label="Next post image"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-black/25 text-white backdrop-blur-sm transition hover:bg-black/45 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="flex min-h-0 flex-col bg-[#FFFCF8]">
+          <div className="min-h-0 overflow-y-auto p-6 sm:p-9 lg:p-11">
+            <div className="flex flex-wrap items-center gap-3">
+              <PostMeta post={post} />
+            </div>
+            <h2 id="post-dialog-title" className="mt-6 max-w-xl font-serif-display text-3xl font-semibold leading-[1.02] tracking-[-0.04em] text-[#241B16] sm:text-5xl">{post.title}</h2>
+            <p className="mt-5 border-l-2 border-[#E9B66F] pl-4 text-sm font-medium leading-7 text-[#756B62] sm:text-base">{post.excerpt}</p>
+            <div className="my-7 h-px bg-[#E7DDD2]" />
+            <p className="whitespace-pre-line text-sm leading-7 text-[#5E554D] sm:text-[0.95rem] sm:leading-8">{post.body}</p>
+            <div className="mt-9 rounded-2xl border border-[#E5D9CC] bg-[#F7F1E9] p-5 sm:p-6">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A85C16]">Bring First Cup to your next gathering</p>
+              <p className="mt-2 font-serif-display text-xl font-semibold leading-tight text-[#2D241E]">Let’s make your next event a memorable coffee experience.</p>
+              <a href="/contact" className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-[#2D241E] px-5 py-3 text-[10px] font-bold uppercase tracking-[0.14em] text-white transition hover:-translate-y-0.5 hover:bg-[#49372B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2D241E]">Talk to the team <ArrowUpRight className="h-4 w-4" /></a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+};
+
 export const EventsStoriesSection: React.FC = () => {
   // EDITABLE CONTENT: add or update posts in src/data/eventsStoriesData.ts.
   const [activeCategory, setActiveCategory] = useState<'All' | StoryCategory>('All');
@@ -115,7 +237,14 @@ export const EventsStoriesSection: React.FC = () => {
       <section className="border-t border-[#DDD1C2] bg-[#EEE6DB] py-14 sm:py-18 lg:py-20"><div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8"><div><span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#A85C16]">Have a story to share?</span><h2 className="mt-3 max-w-2xl font-serif-display text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">Bring First Cup to your next gathering.</h2></div><a href="/contact" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-[#2D241E] px-6 py-3 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:-translate-y-0.5 hover:bg-[#49372B]">Start a conversation <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></a></div></section>
 
       {/* POST SLIDESHOW: image gallery, controls, thumbnails, and story detail. */}
-      {activePost && <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[#100D0A]/75 p-4 backdrop-blur-sm" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setActivePost(null); }}><div role="dialog" aria-modal="true" aria-labelledby="post-dialog-title" className="relative max-h-[88vh] w-full max-w-3xl overflow-y-auto rounded-[1.75rem] bg-[#FFFCF8] text-[#2D241E] shadow-[0_30px_100px_rgba(0,0,0,0.45)]"><button type="button" onClick={() => setActivePost(null)} aria-label="Close post" className="absolute right-4 top-4 z-20 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-[#201611]/70 text-white transition hover:bg-[#201611] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"><X className="h-5 w-5" aria-hidden="true" /></button><div className="relative h-56 bg-[#E7D9C8] sm:h-72"><img src={activePost.images[activeImageIndex]} alt={`${activePost.title} image ${activeImageIndex + 1}`} className="h-full w-full object-cover" /><button type="button" onClick={() => setActiveImageIndex((index) => (index - 1 + activePost.images.length) % activePost.images.length)} aria-label="Previous post image" className="absolute left-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-[#201611]/65 text-white backdrop-blur-sm transition hover:bg-[#201611] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"><ArrowLeft className="h-4 w-4" aria-hidden="true" /></button><button type="button" onClick={() => setActiveImageIndex((index) => (index + 1) % activePost.images.length)} aria-label="Next post image" className="absolute right-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-[#201611]/65 text-white backdrop-blur-sm transition hover:bg-[#201611] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"><ArrowRight className="h-4 w-4" aria-hidden="true" /></button><span className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-[#201611]/70 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-white backdrop-blur-sm">{activeImageIndex + 1} / {activePost.images.length}</span></div><div className="flex gap-1.5 bg-[#2D241E] p-2">{activePost.images.map((image, index) => <button key={image} type="button" onClick={() => setActiveImageIndex(index)} aria-label={`Show post image ${index + 1}`} aria-pressed={activeImageIndex === index} className={`h-12 flex-1 overflow-hidden rounded-lg border-2 transition ${activeImageIndex === index ? 'border-[#E9B66F]' : 'border-transparent opacity-65 hover:opacity-100'}`}><img src={image} alt="" className="h-full w-full object-cover" /></button>)}</div><div className="p-6 sm:p-9"><div className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.15em] ${CATEGORY_CONFIG[activePost.category].tagClassName}`}>{React.createElement(CATEGORY_CONFIG[activePost.category].icon, { className: 'h-3 w-3', 'aria-hidden': true })}{activePost.category}</div><PostMeta post={activePost} /><h2 id="post-dialog-title" className="mt-4 font-serif-display text-3xl font-semibold leading-tight tracking-[-0.03em] sm:text-5xl">{activePost.title}</h2><p className="mt-5 text-base leading-8 text-[#5E554D]">{activePost.body}</p><div className="mt-8 border-t border-[#E5D9CC] pt-5"><a href="/contact" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#A85C16]">Talk to the team <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></a></div></div></div></div>}
+      {activePost && (
+        <StoryPostModal
+          post={activePost}
+          imageIndex={activeImageIndex}
+          onImageChange={setActiveImageIndex}
+          onClose={() => setActivePost(null)}
+        />
+      )}
     </div>
   );
 };
