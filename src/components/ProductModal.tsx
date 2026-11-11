@@ -24,12 +24,6 @@ interface ProductModalContentProps {
   onAddToCart: (item: CartItem) => void;
 }
 
-const COFFEE_ROAST_OPTIONS: CoffeeProduct['roastLevel'][] = [
-  'Light City',
-  'Medium Full-City',
-  'Dark Espresso Roast',
-];
-
 const ProductModalContent: React.FC<ProductModalContentProps> = ({
   product,
   onClose,
@@ -180,48 +174,23 @@ const ProductModalContent: React.FC<ProductModalContentProps> = ({
                   <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.altitude}</dd>
                 </div>
                 <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
-                  <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Choose roast</dt>
-                  <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{selectedRoast}</dd>
-                </div>
-                <div className="rounded-xl border border-[#EAE2D8] bg-white p-3 sm:p-3.5">
                   <dt className="text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#8A8178]">Process</dt>
                   <dd className="mt-1 text-xs font-semibold leading-5 text-[#302721]">{coffee?.process}</dd>
                 </div>
               </dl>
             )}
 
-            <div>
-              <h3 className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.15em] text-[#8A5A2B]">Tasting notes</h3>
-              <div className="flex flex-wrap gap-2">
-                {(isCoffee ? coffee?.flavorNotes : tea?.tastingNotes)?.map((note) => (
-                  <span key={note} className="rounded-full border border-[#E5D9C9] bg-[#F5EFE6] px-3 py-1.5 text-xs font-medium text-[#4C4138]">
-                    {note}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {isCoffee && (
-              <fieldset>
-                <legend className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.15em] text-[#8A5A2B]">Choose roast</legend>
-                <div className="grid grid-cols-3 gap-2">
-                  {COFFEE_ROAST_OPTIONS.map((roast) => (
-                    <button
-                      key={roast}
-                      type="button"
-                      onClick={() => setSelectedRoast(roast)}
-                      aria-pressed={selectedRoast === roast}
-                      className={`min-h-11 rounded-xl border px-2 py-2 text-center text-[11px] font-semibold leading-4 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A46A32] sm:text-xs ${
-                        selectedRoast === roast
-                          ? 'border-[#34251B] bg-[#34251B] text-white shadow-sm'
-                          : 'border-[#DFD5C9] bg-white text-[#4E443B] hover:border-[#A46A32] hover:bg-[#FBF7F1]'
-                      }`}
-                    >
-                      {roast}
-                    </button>
+            {!isCoffee && (
+              <div>
+                <h3 className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.15em] text-[#8A5A2B]">Tasting notes</h3>
+                <div className="flex flex-wrap gap-2">
+                  {tea?.tastingNotes?.map((note) => (
+                    <span key={note} className="rounded-full border border-[#E5D9C9] bg-[#F5EFE6] px-3 py-1.5 text-xs font-medium text-[#4C4138]">
+                      {note}
+                    </span>
                   ))}
                 </div>
-              </fieldset>
+              </div>
             )}
 
             <fieldset>
