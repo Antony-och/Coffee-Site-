@@ -137,10 +137,11 @@ const StoryPostModal: React.FC<StoryPostModalProps> = ({ post, imageIndex, onIma
         className="relative flex h-[min(94dvh,54rem)] w-full max-w-6xl flex-col overflow-hidden rounded-[1.4rem] border border-white/70 bg-[#FFFCF8] text-[#2D241E] shadow-[0_35px_120px_rgba(0,0,0,0.5)] sm:rounded-[1.75rem] lg:grid lg:grid-cols-[1.04fr_0.96fr] lg:grid-rows-1"
       >
         <section aria-label="Story image gallery" className="relative h-[36dvh] min-h-[14rem] max-h-[21rem] shrink-0 overflow-hidden bg-[#201611] lg:h-auto lg:min-h-0 lg:max-h-none">
+          <img src={post.images[imageIndex]} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full scale-110 object-cover opacity-45 blur-2xl" />
           <img
             src={post.images[imageIndex]}
             alt={`${post.title} image ${imageIndex + 1}`}
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-contain"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#140E0B] via-[#140E0B]/10 to-[#140E0B]/10" />
           <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#140E0B]/60 to-transparent" />
