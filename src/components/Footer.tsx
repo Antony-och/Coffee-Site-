@@ -10,6 +10,7 @@ import {
   Phone,
   ShieldCheck,
 } from 'lucide-react';
+import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from '../data/contactData';
 
 interface FooterProps {
   setCurrentPage: (page: PageView) => void;
@@ -119,9 +120,9 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentPage }) => {
           <section aria-labelledby="footer-contact-title" className="pt-1">
             <h2 id="footer-contact-title" className="text-[0.62rem] font-bold uppercase tracking-[0.19em] text-[#D9A05F]">Talk to Our Team</h2>
             <div className="mt-4 space-y-3 text-[0.75rem]">
-              <a href="tel:+254725741543" className="flex items-center gap-2.5 text-[#F7F1E8] transition-colors hover:text-[#F3B867] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9A05F]">
+              <a href={`tel:${CONTACT_PHONE_TEL}`} className="flex items-center gap-2.5 text-[#F7F1E8] transition-colors hover:text-[#F3B867] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9A05F]">
                 <Phone className="h-3.5 w-3.5 shrink-0 text-[#D9A05F]" aria-hidden="true" />
-                <span>+254 725 741 543</span>
+                <span>{CONTACT_PHONE_DISPLAY}</span>
               </a>
               <a href="mailto:firstcupcoffeeltd@gmail.com" className="flex items-center gap-2.5 break-all text-[#DCCEB8]/75 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D9A05F]">
                 <Mail className="h-3.5 w-3.5 shrink-0 text-[#D9A05F]" aria-hidden="true" />

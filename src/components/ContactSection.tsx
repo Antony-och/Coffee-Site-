@@ -14,6 +14,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { CartItem } from '../types';
+import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_INTERNATIONAL, CONTACT_PHONE_TEL } from '../data/contactData';
 
 interface HubLocation {
   id: string;
@@ -85,7 +86,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ cartItems = [] }
     if (e) e.preventDefault();
     if (!submitted && !formRef.current?.reportValidity()) return;
 
-    const phone = '254725741543';
+    const phone = CONTACT_PHONE_INTERNATIONAL;
     const orderSummary = buildCartSummary();
     const defaultRequirements = buildDefaultRequirements();
     const clientRequirements = formData.message?.trim();
@@ -148,7 +149,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ cartItems = [] }
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </a>
                 <a
-                  href="https://wa.me/254725741543"
+                  href={`https://wa.me/${CONTACT_PHONE_INTERNATIONAL}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex min-h-12 items-center gap-2 rounded-full border border-white/35 bg-white/10 px-5 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white backdrop-blur-sm transition hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
@@ -166,9 +167,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ cartItems = [] }
                   <Mail className="mt-0.5 h-4 w-4 shrink-0 text-[#E9B66F]" aria-hidden="true" />
                   <span className="break-all">firstcupcoffeeltd@gmail.com</span>
                 </a>
-                <a href="tel:+254725741543" className="flex items-start gap-3 text-sm text-white transition hover:text-[#F0C47F]">
+                <a href={`tel:${CONTACT_PHONE_TEL}`} className="flex items-start gap-3 text-sm text-white transition hover:text-[#F0C47F]">
                   <Phone className="mt-0.5 h-4 w-4 shrink-0 text-[#E9B66F]" aria-hidden="true" />
-                  <span>+254 725 741 543</span>
+                  <span>{CONTACT_PHONE_DISPLAY}</span>
                 </a>
               </div>
               <div className="mt-5 border-t border-white/15 pt-4">
@@ -381,9 +382,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ cartItems = [] }
 
             <div className="rounded-[1.5rem] border border-[#E2D7CA] bg-[#FFFCF8] p-5 sm:p-6">
               <p className="text-[0.62rem] font-bold uppercase tracking-[0.18em] text-[#8A5A2B]">Prefer a quick call?</p>
-              <a href="tel:+254725741543" className="mt-2 inline-flex items-center gap-2 font-serif-display text-xl font-bold text-[#2A2522] transition hover:text-[#A46A32]">
+              <a href={`tel:${CONTACT_PHONE_TEL}`} className="mt-2 inline-flex items-center gap-2 font-serif-display text-xl font-bold text-[#2A2522] transition hover:text-[#A46A32]">
                 <Phone className="h-4 w-4 text-[#A46A32]" aria-hidden="true" />
-                +254 725 741 543
+                {CONTACT_PHONE_DISPLAY}
               </a>
               <p className="mt-2 text-xs leading-5 text-[#736A62]">We’re happy to talk through origin, lot availability, and export requirements.</p>
             </div>
