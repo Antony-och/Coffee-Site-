@@ -20,6 +20,58 @@ export const STORY_CATEGORY_ORDER: StoryCategory[] = ['Events', 'Activations', '
 /** Add future posts here. The feed automatically sorts every post newest first and uses the same gallery/card/detail template. */
 export const EVENT_STORY_POSTS: StoryPost[] = [
   {
+    id: 'nyayo-stadium-afc-leopards-shabana-fc-2026',
+    category: 'Events',
+    title: 'First Cup Coffee & Tea Returns to Nyayo Stadium for AFC Leopards vs Shabana FC',
+    date: '2026-11-11',
+    excerpt: 'Bringing the coffee experience to another exciting Kenyan Premier League matchday on 25th October 2026.',
+    body: `Great experiences are worth repeating, and for First Cup Coffee & Tea, the opportunity to be part of the sporting atmosphere at Nyayo National Stadium was another memorable milestone.
+
+On **25th October 2026**, First Cup Coffee & Tea had the pleasure of vending coffee in the **VVIP section at Nyayo National Stadium, Nairobi**, during the Kenyan Premier League (KPL) fixture between **AFC Leopards and Shabana FC**.
+
+Following our previous experience serving guests during the CAF Confederation Cup encounter between Tusker FC and Singida Black Stars FC, returning to the same prestigious setting was another exciting opportunity for our brand.
+
+### Another Matchday, Another Coffee Experience
+
+Nyayo National Stadium once again provided the perfect setting for a day where Kenyan football, hospitality, and great experiences came together.
+
+With two well-supported Kenyan football clubs taking to the pitch, the atmosphere was filled with the excitement and passion that make local football special.
+
+For our team, being part of the VVIP hospitality experience meant another opportunity to bring quality coffee service closer to guests attending the match.
+
+### Serving Coffee Beyond the Café
+
+At First Cup Coffee & Tea, we believe coffee should be part of every great experience.
+
+Whether it is a morning coffee break, a corporate gathering, a private function, or a major sporting event, our goal remains the same: delivering enjoyable coffee experiences wherever people come together.
+
+Our participation at Nyayo Stadium continues to demonstrate our commitment to taking our coffee services beyond traditional café settings and into unique hospitality environments.
+
+### Building on Our Sporting Event Experience
+
+Being invited back to serve at Nyayo Stadium was particularly meaningful. It represented an opportunity to build on our previous event experience, strengthen our presence in the hospitality space, and connect with a wider audience.
+
+From continental football to the Kenyan Premier League, we are proud to see First Cup Coffee & Tea becoming part of experiences that bring people together.
+
+We appreciate the opportunity, the hospitality, and everyone who made the experience possible.
+
+### The Journey Continues
+
+Every event creates a new opportunity to connect, serve, and grow.
+
+As we continue expanding our reach, we look forward to partnering with more event organisers, businesses, institutions, and sporting platforms to bring the First Cup Coffee & Tea experience to more people.
+
+**First Cup Coffee & Tea — Bringing people together, one cup at a time.**
+
+Planning a sporting event, corporate function, or special occasion? Let us bring the coffee experience to you.
+
+**Get in touch with First Cup Coffee & Tea for event vending and coffee catering partnerships.**`,
+    images: ['/hero/hero_first_cup_coffee_cups.webp', '/hero/hero_roastery_cupping.jpg', '/hero/hero_coffee_beans.jpg'],
+    readTime: '3 min read',
+    eventDate: '25 October 2026 · Kenyan Premier League matchday',
+    location: 'VVIP section · Nyayo National Stadium, Nairobi',
+  },
+  {
     id: 'nyayo-stadium-vvip-coffee-experience',
     category: 'Events',
     title: 'First Cup Coffee & Tea Takes the Coffee Experience to the VVIP Section at Nyayo Stadium',

@@ -37,7 +37,8 @@ const formatDate = (date: string) => new Intl.DateTimeFormat('en-GB', { day: 'nu
 
 const PostMeta: React.FC<{ post: StoryPost; muted?: boolean }> = ({ post, muted = false }) => {
   const config = CATEGORY_CONFIG[post.category];
-  const detail = post.location ?? post.eventDate ?? (post.category === 'Activations' ? post.partner : post.origin);
+  const eventDetails = [post.eventDate, post.location].filter(Boolean).join(' · ');
+  const detail = eventDetails || (post.category === 'Activations' ? post.partner : post.origin);
   const DetailIcon = post.location || post.eventDate ? MapPin : Coffee;
   return (
     <div className={`flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] font-bold uppercase tracking-[0.13em] ${muted ? 'text-current/65' : 'text-[#756B62]'}`}>
@@ -219,9 +220,18 @@ const StoryPostModal: React.FC<StoryPostModalProps> = ({ post, imageIndex, onIma
             <p className="mt-5 border-l-2 border-[#E9B66F] pl-4 text-sm font-medium leading-7 text-[#756B62] sm:text-base">{post.excerpt}</p>
             <div className="my-7 h-px bg-[#E7DDD2]" />
             <div className="space-y-5 text-sm leading-7 text-[#5E554D] sm:text-[0.95rem] sm:leading-8">
-              {post.body.split(/\n\s*\n/).map((paragraph, index) => (
-                <p key={`${post.id}-paragraph-${index}`} className="whitespace-pre-line">{paragraph}</p>
-              ))}
+              {post.body.split(/\n\s*\n/).map((paragraph, index) => {
+                const heading = paragraph.match(/^#{1,3}\s+(.+)$/);
+                if (heading) return <h3 key={`${post.id}-heading-${index}`} className="pt-2 font-serif-display text-xl font-semibold leading-tight text-[#2D241E] sm:text-2xl">{heading[1]}</h3>;
+
+                return (
+                  <p key={`${post.id}-paragraph-${index}`} className="whitespace-pre-line">
+                    {paragraph.split(/(\*\*.+?\*\*)/g).map((segment, segmentIndex) => segment.startsWith('**') && segment.endsWith('**')
+                      ? <strong key={`${post.id}-emphasis-${index}-${segmentIndex}`} className="font-semibold text-[#42362C]">{segment.slice(2, -2)}</strong>
+                      : segment)}
+                  </p>
+                );
+              })}
             </div>
             <div className="mt-9 rounded-2xl border border-[#E5D9CC] bg-[#F7F1E9] p-5 sm:p-6">
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A85C16]">Bring First Cup to your next gathering</p>
