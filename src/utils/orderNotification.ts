@@ -1,7 +1,8 @@
 import { OrderRequest } from '../types';
+import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_INTERNATIONAL } from '../data/contactData';
 
-export const EXPORT_WHATSAPP_PHONE = '254725741543';
-export const EXPORT_WHATSAPP_DISPLAY_PHONE = '+254 725 741 543';
+export const EXPORT_WHATSAPP_PHONE = CONTACT_PHONE_INTERNATIONAL;
+export const EXPORT_WHATSAPP_DISPLAY_PHONE = CONTACT_PHONE_DISPLAY;
 
 export function generateWhatsAppOrderMessage(request: OrderRequest): string {
   const { shippingDetails, items } = request;
