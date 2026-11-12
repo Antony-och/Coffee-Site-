@@ -95,9 +95,9 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ kind }) => {
                 {types.map((item) => (
                   <article key={item.label} className="group overflow-hidden rounded-2xl bg-[#253229] p-5 text-[#F5F7F1] shadow-[0_12px_24px_rgba(37,50,41,0.1)]">
                     {'image' in item && (
-                      <div className="relative -mx-5 -mt-5 mb-5 h-32 overflow-hidden">
-                        <img src={item.image} alt={`${item.label} coffee roast`} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#253229]/80 via-transparent to-transparent" />
+                      <div className="relative -mx-5 -mt-5 mb-5 h-40 overflow-hidden bg-[#3A2A20] sm:h-44">
+                        <img src={item.image} alt={`${item.label} coffee roast`} className="h-full w-full object-cover object-center transition duration-500 group-hover:scale-105" loading="lazy" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#253229]/55 via-transparent to-transparent" />
                       </div>
                     )}
                     <div className="flex items-center gap-3">
