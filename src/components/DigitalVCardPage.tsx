@@ -6,13 +6,17 @@ import {
   Clock,
   Coffee,
   Download,
+  Facebook,
   Globe,
   Instagram,
   Linkedin,
   Mail,
+  MessageCircle,
   MapPin,
   MessageSquare,
+  Music2,
   Phone,
+  X,
 } from 'lucide-react';
 import {
   CONTACT_EMAIL,
@@ -30,6 +34,13 @@ interface DigitalVCardPageProps {
 }
 
 const DIRECTIONS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT_OFFICE_LOCATION.mapQuery)}`;
+
+const SOCIAL_ICON_PLATFORMS = [
+  { name: 'TikTok', Icon: Music2 },
+  { name: 'Facebook', Icon: Facebook },
+  { name: 'WhatsApp', Icon: MessageCircle },
+  { name: 'X', Icon: X },
+];
 
 export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPage }) => {
   const contactActions = [
@@ -253,6 +264,17 @@ export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPa
                     <Icon className="h-4 w-4" aria-hidden="true" />
                     {name}
                   </a>
+                ))}
+                {SOCIAL_ICON_PLATFORMS.map(({ name, Icon }) => (
+                  <span
+                    key={name}
+                    role="img"
+                    aria-label={name}
+                    title={name}
+                    className="flex h-10 w-10 cursor-default items-center justify-center rounded-full border border-[#E2D7CA] bg-white text-[#34503B]"
+                  >
+                    <Icon className="h-4 w-4" aria-hidden="true" />
+                  </span>
                 ))}
                 <button
                   type="button"
