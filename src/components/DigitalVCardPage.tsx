@@ -93,16 +93,12 @@ export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPa
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#211713]/70 via-[#211713]/40 to-[#211713]/15" />
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#211713]/55 via-transparent to-[#211713]/20" />
           <div aria-hidden="true" className="pointer-events-none absolute -right-14 -top-16 h-56 w-56 rounded-full border-[20px] border-white/[0.04]" />
-          <div className="relative z-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative z-10">
             <img
               src="/brand/first-cup-logo-white-500.png"
               alt="First Cup Coffee & Tea"
               className="h-16 w-auto max-w-[12rem] object-contain object-left sm:h-[4.5rem] sm:max-w-[14rem]"
             />
-            <span className="inline-flex min-h-9 items-center gap-2 rounded-full border border-[#9CCB83]/25 bg-[#9CCB83]/10 px-3.5 py-2 text-[9px] font-bold uppercase tracking-[0.12em] text-[#D8F0C8] sm:text-[10px]">
-              <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[#86C86A] shadow-[0_0_0_3px_rgba(134,200,106,0.14)]" />
-              Open for Wholesale &amp; Inquiries
-            </span>
           </div>
 
           <div className="relative z-10 mt-7 sm:mt-9">
