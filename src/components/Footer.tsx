@@ -7,8 +7,11 @@ import {
   Instagram,
   Linkedin,
   Mail,
+  MessageCircle,
+  Music2,
   Phone,
   ShieldCheck,
+  X,
 } from 'lucide-react';
 import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from '../data/contactData';
 
@@ -32,6 +35,12 @@ const SOCIAL_LINKS = [
     href: 'https://www.linkedin.com/company/first-cup-coffee-and-tea/?viewAsMember=true',
     Icon: Linkedin,
   },
+];
+
+const SOCIAL_ICON_PLATFORMS = [
+  { name: 'TikTok', Icon: Music2 },
+  { name: 'WhatsApp', Icon: MessageCircle },
+  { name: 'X', Icon: X },
 ];
 
 const OFFICES = [
@@ -89,6 +98,17 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentPage }) => {
                   >
                     <Icon className="h-4 w-4" aria-hidden="true" />
                   </a>
+                ))}
+                {SOCIAL_ICON_PLATFORMS.map(({ name, Icon }) => (
+                  <span
+                    key={name}
+                    role="img"
+                    aria-label={name}
+                    title={name}
+                    className="flex h-8 w-8 cursor-default items-center justify-center rounded-full border border-[#E6D9C8]/15 text-[#E8D8C2]/80"
+                  >
+                    <Icon className="h-4 w-4" aria-hidden="true" />
+                  </span>
                 ))}
             </div>
           </section>
