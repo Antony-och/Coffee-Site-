@@ -11,7 +11,7 @@ const COFFEE_TYPES = [
     name: 'Americano',
     build: 'Espresso · hot water',
     description: 'Espresso topped with hot water for a smooth, rich cup with a lighter body.',
-    image: '/hero/hero_roastery_cupping.jpg',
+    image: '/coffee-types/americano-cup.webp',
     numberTone: 'bg-[#F2E6D7] text-[#8A542E]',
     iconTone: 'bg-[#F8EFE5] text-[#9B5B2C]',
   },
