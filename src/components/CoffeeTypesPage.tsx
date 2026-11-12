@@ -11,6 +11,7 @@ const COFFEE_TYPES = [
     name: 'Americano',
     build: 'Espresso · hot water',
     description: 'Espresso topped with hot water for a smooth, rich cup with a lighter body.',
+    image: '/hero/hero_roastery_cupping.jpg',
     numberTone: 'bg-[#F2E6D7] text-[#8A542E]',
     iconTone: 'bg-[#F8EFE5] text-[#9B5B2C]',
   },
@@ -18,6 +19,7 @@ const COFFEE_TYPES = [
     name: 'Latte',
     build: 'Espresso · steamed milk',
     description: 'Espresso softened with steamed milk and finished with a thin layer of silky foam.',
+    image: '/hero/hero_first_cup_coffee_cups.webp',
     numberTone: 'bg-[#E8ECDD] text-[#456044]',
     iconTone: 'bg-[#EEF2E9] text-[#456044]',
   },
@@ -25,6 +27,7 @@ const COFFEE_TYPES = [
     name: 'Cappuccino',
     build: 'Espresso · milk · foam',
     description: 'A balanced espresso drink with steamed milk and a generous cap of airy foam.',
+    image: '/hero/hero_first_cup_mug.webp',
     numberTone: 'bg-[#F0E7D6] text-[#8A652B]',
     iconTone: 'bg-[#F6F0E4] text-[#8A652B]',
   },
@@ -32,6 +35,7 @@ const COFFEE_TYPES = [
     name: 'Mocha',
     build: 'Espresso · chocolate · milk',
     description: 'Espresso meets chocolate and steamed milk for a rich, gently sweet cup.',
+    image: '/hero/hero_coffee_beans.jpg',
     numberTone: 'bg-[#EDE0DC] text-[#784539]',
     iconTone: 'bg-[#F3E9E6] text-[#784539]',
   },
@@ -39,6 +43,7 @@ const COFFEE_TYPES = [
     name: 'Espresso',
     build: 'A concentrated coffee shot',
     description: 'A small, concentrated serving of coffee with a bold aroma and intense finish.',
+    image: '/products/coffee/italian.webp',
     numberTone: 'bg-[#E4E1D9] text-[#4F493D]',
     iconTone: 'bg-[#EFEEE9] text-[#4F493D]',
   },
@@ -96,25 +101,31 @@ export const CoffeeTypesPage: React.FC<CoffeeTypesPageProps> = ({ setCurrentPage
         {COFFEE_TYPES.map((drink, index) => (
           <article
             key={drink.name}
-            className="group rounded-[1.5rem] border border-[#E2D7CA] bg-[#FFFCF8] p-5 shadow-[0_8px_24px_rgba(42,30,21,0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-[#A85C16]/35 hover:shadow-[0_14px_32px_rgba(42,30,21,0.08)] sm:p-6"
+            className="group overflow-hidden rounded-[1.5rem] border border-[#E2D7CA] bg-[#FFFCF8] shadow-[0_8px_24px_rgba(42,30,21,0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-[#A85C16]/35 hover:shadow-[0_14px_32px_rgba(42,30,21,0.08)]"
           >
-            <div className="flex items-center justify-between gap-3">
-              <span className={`inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2 text-[9px] font-bold tracking-[0.12em] ${drink.numberTone}`}>
-                0{index + 1}
-              </span>
-              <span className="text-right text-[8px] font-bold uppercase tracking-[0.11em] text-[#81766C] sm:text-[9px]">
-                {drink.build}
-              </span>
+            <div className="relative h-36 overflow-hidden bg-[#3A2A20] sm:h-40">
+              <img src={drink.image} alt={`${drink.name} coffee`} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#2A211B]/65 via-transparent to-transparent" />
             </div>
-            <span className={`mt-5 flex h-11 w-11 items-center justify-center rounded-2xl ${drink.iconTone}`}>
-              <Coffee className="h-5 w-5" strokeWidth={1.8} aria-hidden="true" />
-            </span>
-            <h2 className="mt-4 font-serif-display text-2xl font-semibold tracking-[-0.025em] text-[#2A2522]">
-              {drink.name}
-            </h2>
-            <p className="mt-2 text-xs leading-6 text-[#766C63] sm:text-[13px]">
-              {drink.description}
-            </p>
+            <div className="p-5 sm:p-6">
+              <div className="flex items-center justify-between gap-3">
+                <span className={`inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2 text-[9px] font-bold tracking-[0.12em] ${drink.numberTone}`}>
+                  0{index + 1}
+                </span>
+                <span className="text-right text-[8px] font-bold uppercase tracking-[0.11em] text-[#81766C] sm:text-[9px]">
+                  {drink.build}
+                </span>
+              </div>
+              <span className={`mt-5 flex h-11 w-11 items-center justify-center rounded-2xl ${drink.iconTone}`}>
+                <Coffee className="h-5 w-5" strokeWidth={1.8} aria-hidden="true" />
+              </span>
+              <h2 className="mt-4 font-serif-display text-2xl font-semibold tracking-[-0.025em] text-[#2A2522]">
+                {drink.name}
+              </h2>
+              <p className="mt-2 text-xs leading-6 text-[#766C63] sm:text-[13px]">
+                {drink.description}
+              </p>
+            </div>
           </article>
         ))}
       </div>
