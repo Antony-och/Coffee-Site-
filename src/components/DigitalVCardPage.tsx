@@ -97,7 +97,7 @@ export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPa
             <img
               src="/brand/first-cup-logo-white-500.png"
               alt="First Cup Coffee & Tea"
-              className="h-12 w-auto max-w-[9rem] object-contain object-left"
+              className="h-16 w-auto max-w-[12rem] object-contain object-left sm:h-[4.5rem] sm:max-w-[14rem]"
             />
             <span className="inline-flex min-h-9 items-center gap-2 rounded-full border border-[#9CCB83]/25 bg-[#9CCB83]/10 px-3.5 py-2 text-[9px] font-bold uppercase tracking-[0.12em] text-[#D8F0C8] sm:text-[10px]">
               <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[#86C86A] shadow-[0_0_0_3px_rgba(134,200,106,0.14)]" />
