@@ -45,7 +45,7 @@ export const HERO_SLIDES: HeroSlide[] = [
     title: 'Kenyan Premium Coffee',
     subtitle: 'Central Highlands',
     description: 'Sourced exclusively from high-altitude farms in the Central Highlands, our beans are hand-picked at peak ripeness and processed using traditional wet methods that enhance their natural brightness and complexity.',
-    image: '/hero/hero_coffee_beans.jpg',
+    image: '/hero/hero_classic_dark_roast.webp',
     primaryCtaText: 'DISCOVER COFFEE',
     primaryCtaAction: 'coffee',
     secondaryCtaText: 'ABOUT US',
