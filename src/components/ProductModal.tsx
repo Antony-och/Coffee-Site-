@@ -24,13 +24,6 @@ interface ProductModalContentProps {
   onAddToCart: (item: CartItem) => void;
 }
 
-const COFFEE_BEVERAGE_TYPES = [
-  { name: 'Espresso', detail: 'Short, concentrated, and full of crema.', image: '/products/coffee/italian.webp' },
-  { name: 'Latte', detail: 'Smooth espresso softened with steamed milk.', image: '/hero/hero_first_cup_coffee_cups.webp' },
-  { name: 'Americano', detail: 'Espresso lengthened with hot water for clarity.', image: '/hero/hero_roastery_cupping.jpg' },
-  { name: 'Cappuccino', detail: 'A balanced cup of espresso, milk, and foam.', image: '/products/coffee/classic-medium-roast.webp' },
-];
-
 const ProductModalContent: React.FC<ProductModalContentProps> = ({
   product,
   onClose,
@@ -198,29 +191,6 @@ const ProductModalContent: React.FC<ProductModalContentProps> = ({
                   ))}
                 </div>
               </div>
-            )}
-
-            {isCoffee && (
-              <section aria-labelledby="coffee-beverage-types-title">
-                <div className="mb-2 flex items-end justify-between gap-3">
-                  <div>
-                    <h3 id="coffee-beverage-types-title" className="text-[0.62rem] font-bold uppercase tracking-[0.15em] text-[#8A5A2B]">Types of coffee</h3>
-                    <p className="mt-1 text-xs text-[#756B62]">Ways to enjoy your roast.</p>
-                  </div>
-                  <Coffee className="h-4 w-4 text-[#A46A32]" aria-hidden="true" />
-                </div>
-                <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
-                  {COFFEE_BEVERAGE_TYPES.map((type) => (
-                    <article key={type.name} className="overflow-hidden rounded-xl border border-[#EAE2D8] bg-white">
-                      <img src={type.image} alt={`${type.name} coffee`} className="h-20 w-full object-cover sm:h-24" loading="lazy" />
-                      <div className="p-3">
-                        <h4 className="text-xs font-bold text-[#302721] sm:text-sm">{type.name}</h4>
-                        <p className="mt-1 text-[10px] leading-4 text-[#756B62] sm:text-[11px]">{type.detail}</p>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </section>
             )}
 
             <fieldset>
