@@ -222,7 +222,7 @@ export default function App() {
 
       {currentPage === 'home' && <TrustedBrands />}
 
-      <Footer setCurrentPage={handlePageChange} />
+      {currentPage !== 'vcard' && <Footer setCurrentPage={handlePageChange} />}
 
       <ProductModal
         product={selectedProduct}
