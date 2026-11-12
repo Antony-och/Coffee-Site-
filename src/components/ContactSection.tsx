@@ -14,7 +14,15 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { CartItem } from '../types';
-import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_INTERNATIONAL, CONTACT_PHONE_TEL } from '../data/contactData';
+import {
+  CONTACT_EMAIL,
+  CONTACT_OFFICE_HOURS,
+  CONTACT_OFFICE_LOCATION,
+  CONTACT_OFFICE_LOCATION_LABEL,
+  CONTACT_PHONE_DISPLAY,
+  CONTACT_PHONE_INTERNATIONAL,
+  CONTACT_PHONE_TEL,
+} from '../data/contactData';
 
 interface HubLocation {
   id: string;
@@ -26,17 +34,7 @@ interface HubLocation {
   mapQuery: string;
 }
 
-const HUBS: HubLocation[] = [
-  {
-    id: 'office',
-    name: 'First Cup Coffee & Tea Office',
-    region: 'Ruiru, Kiambu County',
-    address: 'First Cup Coffee and Tea, Ruiru, Kenya',
-    elevation: '1,520m',
-    purpose: 'Retail pickup, customer service, and order collection',
-    mapQuery: 'First+Cup+Coffee+and+Tea+Ruiru+Kenya',
-  },
-];
+const HUBS: HubLocation[] = [CONTACT_OFFICE_LOCATION];
 
 interface ContactSectionProps {
   cartItems?: CartItem[];
@@ -103,7 +101,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ cartItems = [] }
     if (e) e.preventDefault();
     if (!submitted && !formRef.current?.reportValidity()) return;
 
-    const emailTo = 'firstcupcoffeeltd@gmail.com';
+    const emailTo = CONTACT_EMAIL;
     const orderSummary = buildCartSummary();
     const defaultRequirements = buildDefaultRequirements();
     const clientRequirements = formData.message?.trim();
@@ -132,7 +130,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ cartItems = [] }
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 rounded-full border border-[#E9C99F]/30 bg-black/20 px-3.5 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-[#F1D6B1] backdrop-blur-sm">
                 <MapPin className="h-3.5 w-3.5 text-[#EBA74E]" aria-hidden="true" />
-                First Cup · Ruiru, Kenya · Since 2016
+                First Cup · {CONTACT_OFFICE_LOCATION_LABEL} · Since 2016
               </div>
               <h1 className="mt-5 max-w-xl font-serif-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
                 Experience Love At First Sip
@@ -142,7 +140,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ cartItems = [] }
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <a
-                  href="mailto:firstcupcoffeeltd@gmail.com"
+                  href={`mailto:${CONTACT_EMAIL}`}
                   className="inline-flex min-h-12 items-center gap-2 rounded-full bg-[#E39432] px-5 py-3 text-xs font-bold uppercase tracking-[0.12em] text-[#24170E] transition hover:-translate-y-0.5 hover:bg-[#F0AA4F] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   Email our team
@@ -163,9 +161,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ cartItems = [] }
             <div className="w-full rounded-[1.5rem] border border-white/15 bg-[#1C130F]/75 p-5 shadow-xl backdrop-blur-md sm:p-6 lg:justify-self-end">
               <p className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-[#E9B66F]">Reach us directly</p>
               <div className="mt-5 space-y-4">
-                <a href="mailto:firstcupcoffeeltd@gmail.com" className="flex items-start gap-3 text-sm text-white transition hover:text-[#F0C47F]">
+                <a href={`mailto:${CONTACT_EMAIL}`} className="flex items-start gap-3 text-sm text-white transition hover:text-[#F0C47F]">
                   <Mail className="mt-0.5 h-4 w-4 shrink-0 text-[#E9B66F]" aria-hidden="true" />
-                  <span className="break-all">firstcupcoffeeltd@gmail.com</span>
+                  <span className="break-all">{CONTACT_EMAIL}</span>
                 </a>
                 <a href={`tel:${CONTACT_PHONE_TEL}`} className="flex items-start gap-3 text-sm text-white transition hover:text-[#F0C47F]">
                   <Phone className="mt-0.5 h-4 w-4 shrink-0 text-[#E9B66F]" aria-hidden="true" />
@@ -178,7 +176,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ cartItems = [] }
                   Office hours · EAT
                 </p>
                 <p className="mt-2 pl-[1.375rem] text-xs leading-6 text-[#F1E4D2]/70">
-                  Mon–Fri, 8:00 AM–5:00 PM<br />Weekends, 8:00 AM–1:00 PM
+                  {CONTACT_OFFICE_HOURS.weekdays}<br />{CONTACT_OFFICE_HOURS.weekends}
                 </p>
               </div>
             </div>
@@ -340,7 +338,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ cartItems = [] }
               <div className="flex items-center justify-between gap-4 px-5 pb-4 pt-5 sm:px-6 sm:pt-6">
                 <div>
                   <p className="text-[0.62rem] font-bold uppercase tracking-[0.2em] text-[#D9A05F]">Come find us</p>
-                  <h2 className="mt-1 font-serif-display text-xl font-bold text-white">Ruiru, Kenya</h2>
+                  <h2 className="mt-1 font-serif-display text-xl font-bold text-white">{CONTACT_OFFICE_LOCATION_LABEL}</h2>
                 </div>
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-[#D4C3A3]/20 bg-white/5 px-3 py-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.1em] text-[#E7D7C1]">
                   <MapPin className="h-3.5 w-3.5 text-[#D9A05F]" aria-hidden="true" />

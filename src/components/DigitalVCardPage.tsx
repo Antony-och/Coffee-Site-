@@ -12,25 +12,24 @@ import {
   Mail,
   MapPin,
   MessageSquare,
-  Mountain,
   Phone,
 } from 'lucide-react';
-import { FACTORY_LOCATIONS } from '../data/companyData';
-import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_INTERNATIONAL, CONTACT_PHONE_TEL } from '../data/contactData';
+import {
+  CONTACT_EMAIL,
+  CONTACT_OFFICE_HOURS,
+  CONTACT_OFFICE_LOCATION,
+  CONTACT_OFFICE_LOCATION_LABEL,
+  CONTACT_PHONE_DISPLAY,
+  CONTACT_PHONE_INTERNATIONAL,
+  CONTACT_PHONE_TEL,
+} from '../data/contactData';
 import type { PageView } from '../types';
 
 interface DigitalVCardPageProps {
   setCurrentPage: (page: PageView) => void;
 }
 
-const NYERI_LOCATION = FACTORY_LOCATIONS.find(({ id }) => id === 'nyeri-plant');
-const BUSINESS_EMAIL = 'orders@nyerihighlands.com';
-const ESTATE_ADDRESS = NYERI_LOCATION?.address ?? 'Karatina-Nyeri Highway, Sector 4, Nyeri, Kenya';
-const ESTATE_HOURS = NYERI_LOCATION?.hours ?? 'Mon–Sat: 06:00–18:00 EAT';
-const ESTATE_MAP_QUERY = NYERI_LOCATION
-  ? `${NYERI_LOCATION.coords.lat},${NYERI_LOCATION.coords.lng}`
-  : ESTATE_ADDRESS;
-const DIRECTIONS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ESTATE_MAP_QUERY)}`;
+const DIRECTIONS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT_OFFICE_LOCATION.mapQuery)}`;
 
 export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPage }) => {
   const contactActions = [
@@ -44,7 +43,7 @@ export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPa
     {
       label: 'Email',
       detail: 'Wholesale & inquiries',
-      href: `mailto:${BUSINESS_EMAIL}`,
+      href: `mailto:${CONTACT_EMAIL}`,
       Icon: Mail,
       external: false,
     },
@@ -57,7 +56,7 @@ export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPa
     },
     {
       label: 'Directions',
-      detail: 'Nyeri Highlands',
+      detail: CONTACT_OFFICE_LOCATION_LABEL,
       href: DIRECTIONS_URL,
       Icon: MapPin,
       external: true,
@@ -98,7 +97,7 @@ export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPa
           </div>
 
           <div className="relative mt-7 sm:mt-9">
-            <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#E9B977]">Kenyan-owned · Nyeri Highlands</p>
+            <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#E9B977]">Kenyan-owned · {CONTACT_OFFICE_LOCATION_LABEL} · Since 2016</p>
             <h1 id="digital-vcard-title" className="mt-3 max-w-xl font-serif-display text-4xl font-semibold leading-[1.02] tracking-[-0.04em] sm:text-5xl">
               First Cup Coffee &amp; Tea
               <span className="mt-2 block text-[#E9B977]">Experience Love At First Sip.</span>
@@ -158,40 +157,11 @@ export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPa
             <ArrowUpRight className="h-5 w-5 shrink-0 text-[#F4C882] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
           </a>
 
-          <section aria-labelledby="vcard-estate-title" className="rounded-2xl border border-[#E7DED3] bg-[#F7F2EA] p-4 sm:p-5">
-            <div className="flex items-start gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E8DCCB] text-[#34503B]">
-                <Mountain className="h-5 w-5" aria-hidden="true" />
-              </span>
-              <div>
-                <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#A85C16]">Estate profile</p>
-                <h2 id="vcard-estate-title" className="mt-1 font-serif-display text-lg font-semibold text-[#2A2522]">Highland-grown, distinctly Kenyan.</h2>
-              </div>
-            </div>
-            <p className="mt-3 text-xs leading-5 text-[#6D6259]">
-              Grown in the volcanic soils of the Mount Kenya highlands, where altitude and careful cultivation shape the character of every cup.
-            </p>
-            <dl className="mt-4 grid gap-2.5 sm:grid-cols-3 sm:gap-3">
-              <div className="rounded-xl border border-[#E7DED3] bg-white/80 px-3 py-2.5">
-                <dt className="text-[8px] font-bold uppercase tracking-[0.13em] text-[#82766B]">Growing altitude</dt>
-                <dd className="mt-1 text-xs font-bold text-[#2F4335]">1,950–2,150 m</dd>
-              </div>
-              <div className="rounded-xl border border-[#E7DED3] bg-white/80 px-3 py-2.5">
-                <dt className="text-[8px] font-bold uppercase tracking-[0.13em] text-[#82766B]">Origin</dt>
-                <dd className="mt-1 text-xs font-bold text-[#2F4335]">Volcanic soil</dd>
-              </div>
-              <div className="rounded-xl border border-[#E7DED3] bg-white/80 px-3 py-2.5">
-                <dt className="text-[8px] font-bold uppercase tracking-[0.13em] text-[#82766B]">Cultivars</dt>
-                <dd className="mt-1 text-xs font-bold text-[#2F4335]">SL28 &amp; SL34</dd>
-              </div>
-            </dl>
-          </section>
-
           <section aria-labelledby="vcard-location-title" className="rounded-2xl border border-[#E7DED3] bg-white p-4 sm:p-5">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#A85C16]">Visit or enquire</p>
-                <h2 id="vcard-location-title" className="mt-1 font-serif-display text-lg font-semibold text-[#2A2522]">Nyeri Highlands</h2>
+                <h2 id="vcard-location-title" className="mt-1 font-serif-display text-lg font-semibold text-[#2A2522]">{CONTACT_OFFICE_LOCATION_LABEL}</h2>
               </div>
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F3EEE6] text-[#34503B]">
                 <MapPin className="h-5 w-5" aria-hidden="true" />
@@ -204,8 +174,8 @@ export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPa
                 <div>
                   <dt className="text-[8px] font-bold uppercase tracking-[0.15em] text-[#82766B]">Physical address</dt>
                   <dd className="mt-1 text-xs leading-5 text-[#514840]">
-                    <address className="not-italic">{ESTATE_ADDRESS}</address>
-                    <span className="mt-1 block font-medium text-[#6D6259]">{NYERI_LOCATION?.name ?? 'Mount Kenya Milling & Artisan Roastery'}</span>
+                    <address className="not-italic">{CONTACT_OFFICE_LOCATION.address}</address>
+                    <span className="mt-1 block font-medium text-[#6D6259]">{CONTACT_OFFICE_LOCATION.name}</span>
                   </dd>
                 </div>
               </div>
@@ -213,7 +183,9 @@ export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPa
                 <Clock className="mt-0.5 h-4 w-4 shrink-0 text-[#A85C16]" aria-hidden="true" />
                 <div>
                   <dt className="text-[8px] font-bold uppercase tracking-[0.15em] text-[#82766B]">Business hours · EAT</dt>
-                  <dd className="mt-1 text-xs leading-5 text-[#514840]">{ESTATE_HOURS}</dd>
+                  <dd className="mt-1 text-xs leading-5 text-[#514840]">
+                    {CONTACT_OFFICE_HOURS.weekdays}<br />{CONTACT_OFFICE_HOURS.weekends}
+                  </dd>
                 </div>
               </div>
               <div className="flex gap-3">
@@ -221,8 +193,8 @@ export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPa
                 <div className="min-w-0">
                   <dt className="text-[8px] font-bold uppercase tracking-[0.15em] text-[#82766B]">Contact email</dt>
                   <dd className="mt-1 break-all text-xs text-[#514840]">
-                    <a href={`mailto:${BUSINESS_EMAIL}`} className="font-semibold text-[#34503B] underline decoration-[#34503B]/30 underline-offset-4 hover:decoration-[#34503B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A85C16]">
-                      {BUSINESS_EMAIL}
+                    <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-[#34503B] underline decoration-[#34503B]/30 underline-offset-4 hover:decoration-[#34503B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A85C16]">
+                      {CONTACT_EMAIL}
                     </a>
                   </dd>
                 </div>
@@ -235,7 +207,7 @@ export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPa
               rel="noopener noreferrer"
               className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-[#D8CABB] px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.13em] text-[#34503B] transition hover:border-[#34503B] hover:bg-[#F7F2EA] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A85C16]"
             >
-              Open estate directions
+              Open office directions
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
             </a>
           </section>
