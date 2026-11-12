@@ -15,9 +15,9 @@ const coffeeGrades = [
 ];
 
 const roastLevels = [
-  { label: 'Light City', detail: 'Bright acidity, floral lift, and a vivid sense of place.', color: 'bg-[#EBCB9A]', image: '/products/coffee/classic-medium-roast.webp' },
-  { label: 'Medium Full-City', detail: 'The golden balance of fruit, caramel, and a rounded finish.', color: 'bg-[#B8743E]', image: '/products/coffee/premium-medium-roast.webp' },
-  { label: 'Dark Espresso', detail: 'Deep cocoa, toasted sweetness, and a generous, lasting body.', color: 'bg-[#4B291D]', image: '/products/coffee/premium-dark-roast.webp' },
+  { label: 'Light City', detail: 'Bright acidity, floral lift, and a vivid sense of place.', color: 'bg-[#EBCB9A]' },
+  { label: 'Medium Full-City', detail: 'The golden balance of fruit, caramel, and a rounded finish.', color: 'bg-[#B8743E]' },
+  { label: 'Dark Espresso', detail: 'Deep cocoa, toasted sweetness, and a generous, lasting body.', color: 'bg-[#4B291D]' },
 ];
 
 const teaGrades = [
@@ -93,13 +93,7 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ kind }) => {
               </div>
               <div className={`grid gap-3 ${isCoffee ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
                 {types.map((item) => (
-                  <article key={item.label} className="group overflow-hidden rounded-2xl bg-[#253229] p-5 text-[#F5F7F1] shadow-[0_12px_24px_rgba(37,50,41,0.1)]">
-                    {'image' in item && (
-                      <div className="relative -mx-5 -mt-5 mb-5 h-32 overflow-hidden">
-                        <img src={item.image} alt={`${item.label} coffee roast`} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#253229]/80 via-transparent to-transparent" />
-                      </div>
-                    )}
+                  <article key={item.label} className="rounded-2xl bg-[#253229] p-5 text-[#F5F7F1] shadow-[0_12px_24px_rgba(37,50,41,0.1)]">
                     <div className="flex items-center gap-3">
                       <span className={`h-3 w-3 rounded-full ${item.color} ring-4 ring-white/10`} aria-hidden="true" />
                       <h4 className="font-semibold tracking-[-0.01em]">{item.label}</h4>
