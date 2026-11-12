@@ -245,6 +245,23 @@ export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPa
             <ArrowRight className="h-4 w-4 shrink-0 text-[#A85C16] transition-transform group-hover:translate-x-1" aria-hidden="true" />
           </button>
 
+          <button
+            type="button"
+            onClick={() => setCurrentPage('coffeeTypes')}
+            className="group flex min-h-12 w-full items-center justify-between gap-3 rounded-2xl border border-[#D8CABB] bg-white px-4 py-3 text-left transition hover:border-[#34503B]/45 hover:bg-[#F8F6F1] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A85C16] sm:px-5"
+          >
+            <span className="flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#EEF2E9] text-[#34503B]">
+                <Coffee className="h-4 w-4" aria-hidden="true" />
+              </span>
+              <span>
+                <span className="block text-xs font-bold text-[#2A2522]">Types of Coffee</span>
+                <span className="mt-0.5 block text-[9px] text-[#766C63]">Five café favourites, explained simply</span>
+              </span>
+            </span>
+            <ArrowRight className="h-4 w-4 shrink-0 text-[#34503B] transition-transform group-hover:translate-x-1" aria-hidden="true" />
+          </button>
+
           <section aria-labelledby="vcard-social-title" className="border-t border-[#E7DED3] pt-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>

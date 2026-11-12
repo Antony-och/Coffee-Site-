@@ -11,6 +11,7 @@ import { ContactSection } from './components/ContactSection';
 import { EventsStoriesSection } from './components/EventsStoriesSection';
 import { HomePage } from './components/HomePage';
 import { DigitalVCardPage } from './components/DigitalVCardPage';
+import { CoffeeTypesPage } from './components/CoffeeTypesPage';
 import { TrustedBrands } from './components/TrustedBrands';
 import { ProductModal } from './components/ProductModal';
 import { SampleCartDrawer } from './components/SampleCartDrawer';
@@ -25,6 +26,7 @@ const PAGE_TITLES: Record<PageView, string> = {
   events: 'Events & Stories | First Cup Coffee & Tea',
   contact: 'Contact | First Cup Coffee & Tea',
   vcard: 'Digital Business Card | First Cup Coffee & Tea',
+  coffeeTypes: 'Types of Coffee | First Cup Coffee & Tea',
 };
 
 const PAGE_META: Record<PageView, { description: string; keywords: string }> = {
@@ -55,6 +57,10 @@ const PAGE_META: Record<PageView, { description: string; keywords: string }> = {
   vcard: {
     description: 'Save First Cup Coffee & Tea to your contacts, connect with our Nyeri Highlands team, and explore our Kenyan coffee catalog.',
     keywords: 'First Cup Coffee & Tea vCard, Nyeri Highlands coffee, wholesale coffee contact, SL28, SL34',
+  },
+  coffeeTypes: {
+    description: 'Discover five café favourites—Americano, latte, cappuccino, mocha, and espresso—with a simple explanation of each.',
+    keywords: 'types of coffee, Americano, latte, cappuccino, mocha, espresso, coffee guide',
   },
 };
 
@@ -198,6 +204,8 @@ export default function App() {
         );
       case 'vcard':
         return <DigitalVCardPage setCurrentPage={handlePageChange} />;
+      case 'coffeeTypes':
+        return <CoffeeTypesPage setCurrentPage={handlePageChange} />;
       default:
         return null;
     }
@@ -205,7 +213,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF7F2] text-[#2A2522] selection:bg-[#D97706] selection:text-white">
-      {currentPage !== 'vcard' && (
+      {currentPage !== 'vcard' && currentPage !== 'coffeeTypes' && (
         <Navbar
           currentPage={currentPage}
           setCurrentPage={handlePageChange}
@@ -222,7 +230,7 @@ export default function App() {
 
       {currentPage === 'home' && <TrustedBrands />}
 
-      {currentPage !== 'vcard' && <Footer setCurrentPage={handlePageChange} />}
+      {currentPage !== 'vcard' && currentPage !== 'coffeeTypes' && <Footer setCurrentPage={handlePageChange} />}
 
       <ProductModal
         product={selectedProduct}
