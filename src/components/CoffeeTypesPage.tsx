@@ -43,7 +43,7 @@ const COFFEE_TYPES = [
     name: 'Espresso',
     build: 'A concentrated coffee shot',
     description: 'A small, concentrated serving of coffee with a bold aroma and intense finish.',
-    image: '/products/coffee/italian.webp',
+    image: '/coffee-types/espresso-pull.webp',
     numberTone: 'bg-[#E4E1D9] text-[#4F493D]',
     iconTone: 'bg-[#EFEEE9] text-[#4F493D]',
   },
@@ -104,7 +104,20 @@ export const CoffeeTypesPage: React.FC<CoffeeTypesPageProps> = ({ setCurrentPage
             className="group overflow-hidden rounded-[1.5rem] border border-[#E2D7CA] bg-[#FFFCF8] shadow-[0_8px_24px_rgba(42,30,21,0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-[#A85C16]/35 hover:shadow-[0_14px_32px_rgba(42,30,21,0.08)]"
           >
             <div className="relative h-36 overflow-hidden bg-[#3A2A20] sm:h-40">
-              <img src={drink.image} alt={`${drink.name} coffee`} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />
+              {drink.name === 'Espresso' && (
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 scale-110 bg-cover bg-center bg-no-repeat opacity-75 blur-xl"
+                  style={{ backgroundImage: `url(${drink.image})` }}
+                />
+              )}
+              <img
+                src={drink.image}
+                alt={drink.name === 'Espresso' ? 'Fresh espresso flowing from a portafilter into a white cup' : `${drink.name} coffee`}
+                className={`relative h-full w-full transition duration-500 ${drink.name === 'Espresso' ? 'object-contain' : 'object-cover group-hover:scale-105'}`}
+                loading="lazy"
+                decoding="async"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-[#2A211B]/65 via-transparent to-transparent" />
             </div>
             <div className="p-5 sm:p-6">
