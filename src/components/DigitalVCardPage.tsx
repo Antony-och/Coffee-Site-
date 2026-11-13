@@ -263,12 +263,13 @@ export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPa
           </button>
 
           <section aria-labelledby="vcard-social-title" className="border-t border-[#E7DED3] pt-5">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4">
               <div>
                 <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#A85C16]">Stay connected</p>
                 <h2 id="vcard-social-title" className="mt-1 font-serif-display text-lg font-semibold text-[#2A2522]">Follow First Cup</h2>
+                <p className="mt-1 text-[10px] leading-5 text-[#766C63]">Instagram and LinkedIn are linked; other social profile links are not set yet.</p>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-2.5">
                 {socialLinks.map(({ name, href, Icon }) => (
                   <a
                     key={name}
@@ -276,7 +277,7 @@ export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPa
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`First Cup on ${name} (opens in a new tab)`}
-                    className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#E2D7CA] bg-white px-3.5 py-2 text-[10px] font-semibold text-[#514840] transition hover:border-[#A85C16]/45 hover:text-[#34503B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A85C16]"
+                    className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-[#E2D7CA] bg-white px-3 py-2 text-[10px] font-semibold text-[#514840] transition hover:border-[#A85C16]/45 hover:text-[#34503B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A85C16]"
                   >
                     <Icon className="h-4 w-4" aria-hidden="true" />
                     {name}
@@ -285,22 +286,24 @@ export const DigitalVCardPage: React.FC<DigitalVCardPageProps> = ({ setCurrentPa
                 {SOCIAL_ICON_PLATFORMS.map(({ name, Icon }) => (
                   <span
                     key={name}
-                    role="img"
-                    aria-label={name}
-                    title={name}
-                    className="flex h-10 w-10 cursor-default items-center justify-center rounded-full border border-[#E2D7CA] bg-white text-[#34503B]"
+                    title={`${name} profile link not set`}
+                    className="flex min-h-14 w-full cursor-default flex-col items-center justify-center gap-0.5 rounded-2xl border border-dashed border-[#D8CABB] bg-[#F8F6F1] px-2 py-2 text-center text-[#81766C]"
                   >
-                    <Icon className="h-4 w-4" aria-hidden="true" />
+                    <span className="inline-flex items-center gap-2 text-[10px] font-semibold">
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                      {name}
+                    </span>
+                    <span className="text-[8px] font-medium uppercase tracking-[0.1em] text-[#958B80]">Link not set</span>
                   </span>
                 ))}
                 <button
                   type="button"
                   onClick={() => setCurrentPage('home')}
                   aria-label="Visit the First Cup website"
-                  className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#E2D7CA] bg-white px-3.5 py-2 text-[10px] font-semibold text-[#514840] transition hover:border-[#A85C16]/45 hover:text-[#34503B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A85C16]"
+                  className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-[#E2D7CA] bg-white px-3 py-2 text-[10px] font-semibold text-[#514840] transition hover:border-[#A85C16]/45 hover:text-[#34503B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A85C16]"
                 >
                   <Globe className="h-4 w-4" aria-hidden="true" />
-                  Web
+                  Website
                 </button>
               </div>
             </div>
