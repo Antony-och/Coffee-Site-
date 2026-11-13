@@ -19,7 +19,7 @@ const COFFEE_TYPES = [
     name: 'Latte',
     build: 'Espresso · steamed milk',
     description: 'Espresso softened with steamed milk and finished with a thin layer of silky foam.',
-    image: '/hero/hero_first_cup_coffee_cups.webp',
+    image: '/coffee-types/latte-art.webp',
     numberTone: 'bg-[#E8ECDD] text-[#456044]',
     iconTone: 'bg-[#EEF2E9] text-[#456044]',
   },
@@ -43,7 +43,7 @@ const COFFEE_TYPES = [
     name: 'Espresso',
     build: 'A concentrated coffee shot',
     description: 'A small, concentrated serving of coffee with a bold aroma and intense finish.',
-    image: '/products/coffee/italian.webp',
+    image: '/coffee-types/espresso-pull.webp',
     numberTone: 'bg-[#E4E1D9] text-[#4F493D]',
     iconTone: 'bg-[#EFEEE9] text-[#4F493D]',
   },
@@ -98,36 +98,58 @@ export const CoffeeTypesPage: React.FC<CoffeeTypesPageProps> = ({ setCurrentPage
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
-        {COFFEE_TYPES.map((drink, index) => (
-          <article
-            key={drink.name}
-            className="group overflow-hidden rounded-[1.5rem] border border-[#E2D7CA] bg-[#FFFCF8] shadow-[0_8px_24px_rgba(42,30,21,0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-[#A85C16]/35 hover:shadow-[0_14px_32px_rgba(42,30,21,0.08)]"
-          >
-            <div className="relative h-36 overflow-hidden bg-[#3A2A20] sm:h-40">
-              <img src={drink.image} alt={`${drink.name} coffee`} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#2A211B]/65 via-transparent to-transparent" />
-            </div>
-            <div className="p-5 sm:p-6">
-              <div className="flex items-center justify-between gap-3">
-                <span className={`inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2 text-[9px] font-bold tracking-[0.12em] ${drink.numberTone}`}>
-                  0{index + 1}
-                </span>
-                <span className="text-right text-[8px] font-bold uppercase tracking-[0.11em] text-[#81766C] sm:text-[9px]">
-                  {drink.build}
-                </span>
+        {COFFEE_TYPES.map((drink, index) => {
+          const preserveImageRatio = drink.name === 'Espresso' || drink.name === 'Latte';
+          const imageAlt = drink.name === 'Espresso'
+            ? 'Fresh espresso flowing from a portafilter into a white cup'
+          : drink.name === 'Latte'
+              ? 'Latte art in a white cup on a saucer'
+              : `${drink.name} coffee`;
+
+          return (
+            <article
+              key={drink.name}
+              className="group overflow-hidden rounded-[1.5rem] border border-[#E2D7CA] bg-[#FFFCF8] shadow-[0_8px_24px_rgba(42,30,21,0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-[#A85C16]/35 hover:shadow-[0_14px_32px_rgba(42,30,21,0.08)]"
+            >
+              <div className="relative h-36 overflow-hidden bg-[#3A2A20] sm:h-40">
+                {preserveImageRatio && (
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 scale-110 bg-cover bg-center bg-no-repeat opacity-75 blur-xl"
+                    style={{ backgroundImage: `url(${drink.image})` }}
+                  />
+                )}
+                <img
+                  src={drink.image}
+                  alt={imageAlt}
+                  className={`relative h-full w-full transition duration-500 ${preserveImageRatio ? 'object-contain' : 'object-cover group-hover:scale-105'}`}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2A211B]/65 via-transparent to-transparent" />
               </div>
-              <span className={`mt-5 flex h-11 w-11 items-center justify-center rounded-2xl ${drink.iconTone}`}>
-                <Coffee className="h-5 w-5" strokeWidth={1.8} aria-hidden="true" />
-              </span>
-              <h2 className="mt-4 font-serif-display text-2xl font-semibold tracking-[-0.025em] text-[#2A2522]">
-                {drink.name}
-              </h2>
-              <p className="mt-2 text-xs leading-6 text-[#766C63] sm:text-[13px]">
-                {drink.description}
-              </p>
-            </div>
-          </article>
-        ))}
+              <div className="p-5 sm:p-6">
+                <div className="flex items-center justify-between gap-3">
+                  <span className={`inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2 text-[9px] font-bold tracking-[0.12em] ${drink.numberTone}`}>
+                    0{index + 1}
+                  </span>
+                  <span className="text-right text-[8px] font-bold uppercase tracking-[0.11em] text-[#81766C] sm:text-[9px]">
+                    {drink.build}
+                  </span>
+                </div>
+                <span className={`mt-5 flex h-11 w-11 items-center justify-center rounded-2xl ${drink.iconTone}`}>
+                  <Coffee className="h-5 w-5" strokeWidth={1.8} aria-hidden="true" />
+                </span>
+                <h2 className="mt-4 font-serif-display text-2xl font-semibold tracking-[-0.025em] text-[#2A2522]">
+                  {drink.name}
+                </h2>
+                <p className="mt-2 text-xs leading-6 text-[#766C63] sm:text-[13px]">
+                  {drink.description}
+                </p>
+              </div>
+            </article>
+          );
+        })}
       </div>
 
       <section className="mt-5 flex flex-col gap-4 rounded-[1.5rem] border border-[#E2D7CA] bg-white/75 p-5 sm:mt-6 sm:flex-row sm:items-center sm:justify-between sm:p-6">
