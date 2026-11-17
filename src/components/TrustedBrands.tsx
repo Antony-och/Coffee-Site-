@@ -7,6 +7,7 @@ const PARTNER_LOGOS = [
   { name: 'Bahari Beach Hotel', src: '/brands/trusted/bahari-beach-hotel.png' },
   { name: 'Marina EnglishPoint', src: '/brands/trusted/marina-english-point.png' },
   { name: 'Blue Room', src: '/brands/trusted/blue-room.png' },
+  { name: 'CrimeShield Security Ltd', src: '/brands/trusted/crimeshield-security.webp' },
 ];
 
 export const TrustedBrands = () => {
